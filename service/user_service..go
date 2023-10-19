@@ -35,6 +35,9 @@ func (s UserService) GetAllUsers(page int, itemsPerPage int) ([]*ent.User, error
 				sql.OrderDesc(),
 			),
 		).
+		WithQuestions().
+		WithAnswers().
+		WithTags().
 		Limit(itemsPerPage).
 		Offset(offset).
 		All(context.Background())
@@ -45,6 +48,8 @@ func (s UserService) GetAllUsers(page int, itemsPerPage int) ([]*ent.User, error
 func (s UserService) GetUser(id int) (*ent.User, error) {
 	user, err := s.Client.User.Query().
 		Where(user.IDEQ(id)).
+		WithAnswers().
+		WithQuestions().
 		Only(context.Background())
 	if err != nil {
 		return nil, err
@@ -96,4 +101,22 @@ func (s UserService) DeleteUser(id int) error {
 	}
 
 	return nil
+}
+
+func (s UserService) GetUserQuestions(id int) (*ent.User, error) {
+	user, _ := s.Client.User.Query().
+		Where(user.IDEQ(id)).
+		WithQuestions().
+		Only(context.Background())
+
+	return user, nil
+}
+
+func (s UserService) GetUserAnswers(id int) (*ent.User, error) {
+	user, _ := s.Client.User.Query().
+		Where(user.IDEQ(id)).
+		WithAnswers().
+		Only(context.Background())
+
+	return user, nil
 }
