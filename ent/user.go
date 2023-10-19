@@ -24,8 +24,51 @@ type User struct {
 	// Password holds the value of the "password" field.
 	Password string `json:"-"`
 	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt    time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges        UserEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Questions holds the value of the questions edge.
+	Questions []*Question `json:"questions,omitempty"`
+	// Answers holds the value of the answers edge.
+	Answers []*Answer `json:"answers,omitempty"`
+	// Tags holds the value of the tags edge.
+	Tags []*Tag `json:"tags,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [3]bool
+}
+
+// QuestionsOrErr returns the Questions value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) QuestionsOrErr() ([]*Question, error) {
+	if e.loadedTypes[0] {
+		return e.Questions, nil
+	}
+	return nil, &NotLoadedError{edge: "questions"}
+}
+
+// AnswersOrErr returns the Answers value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) AnswersOrErr() ([]*Answer, error) {
+	if e.loadedTypes[1] {
+		return e.Answers, nil
+	}
+	return nil, &NotLoadedError{edge: "answers"}
+}
+
+// TagsOrErr returns the Tags value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) TagsOrErr() ([]*Tag, error) {
+	if e.loadedTypes[2] {
+		return e.Tags, nil
+	}
+	return nil, &NotLoadedError{edge: "tags"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -95,6 +138,21 @@ func (u *User) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
+}
+
+// QueryQuestions queries the "questions" edge of the User entity.
+func (u *User) QueryQuestions() *QuestionQuery {
+	return NewUserClient(u.config).QueryQuestions(u)
+}
+
+// QueryAnswers queries the "answers" edge of the User entity.
+func (u *User) QueryAnswers() *AnswerQuery {
+	return NewUserClient(u.config).QueryAnswers(u)
+}
+
+// QueryTags queries the "tags" edge of the User entity.
+func (u *User) QueryTags() *TagQuery {
+	return NewUserClient(u.config).QueryTags(u)
 }
 
 // Update returns a builder for updating this User.

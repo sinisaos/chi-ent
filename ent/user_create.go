@@ -10,6 +10,9 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/sinisaos/chi-ent/ent/answer"
+	"github.com/sinisaos/chi-ent/ent/question"
+	"github.com/sinisaos/chi-ent/ent/tag"
 	"github.com/sinisaos/chi-ent/ent/user"
 )
 
@@ -50,6 +53,51 @@ func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
 		uc.SetCreatedAt(*t)
 	}
 	return uc
+}
+
+// AddQuestionIDs adds the "questions" edge to the Question entity by IDs.
+func (uc *UserCreate) AddQuestionIDs(ids ...int) *UserCreate {
+	uc.mutation.AddQuestionIDs(ids...)
+	return uc
+}
+
+// AddQuestions adds the "questions" edges to the Question entity.
+func (uc *UserCreate) AddQuestions(q ...*Question) *UserCreate {
+	ids := make([]int, len(q))
+	for i := range q {
+		ids[i] = q[i].ID
+	}
+	return uc.AddQuestionIDs(ids...)
+}
+
+// AddAnswerIDs adds the "answers" edge to the Answer entity by IDs.
+func (uc *UserCreate) AddAnswerIDs(ids ...int) *UserCreate {
+	uc.mutation.AddAnswerIDs(ids...)
+	return uc
+}
+
+// AddAnswers adds the "answers" edges to the Answer entity.
+func (uc *UserCreate) AddAnswers(a ...*Answer) *UserCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uc.AddAnswerIDs(ids...)
+}
+
+// AddTagIDs adds the "tags" edge to the Tag entity by IDs.
+func (uc *UserCreate) AddTagIDs(ids ...int) *UserCreate {
+	uc.mutation.AddTagIDs(ids...)
+	return uc
+}
+
+// AddTags adds the "tags" edges to the Tag entity.
+func (uc *UserCreate) AddTags(t ...*Tag) *UserCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uc.AddTagIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -148,6 +196,54 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
+	}
+	if nodes := uc.mutation.QuestionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.QuestionsTable,
+			Columns: []string{user.QuestionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(question.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.AnswersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AnswersTable,
+			Columns: []string{user.AnswersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(answer.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.TagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

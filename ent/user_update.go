@@ -10,7 +10,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/sinisaos/chi-ent/ent/answer"
 	"github.com/sinisaos/chi-ent/ent/predicate"
+	"github.com/sinisaos/chi-ent/ent/question"
+	"github.com/sinisaos/chi-ent/ent/tag"
 	"github.com/sinisaos/chi-ent/ent/user"
 )
 
@@ -45,9 +48,117 @@ func (uu *UserUpdate) SetPassword(s string) *UserUpdate {
 	return uu
 }
 
+// AddQuestionIDs adds the "questions" edge to the Question entity by IDs.
+func (uu *UserUpdate) AddQuestionIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddQuestionIDs(ids...)
+	return uu
+}
+
+// AddQuestions adds the "questions" edges to the Question entity.
+func (uu *UserUpdate) AddQuestions(q ...*Question) *UserUpdate {
+	ids := make([]int, len(q))
+	for i := range q {
+		ids[i] = q[i].ID
+	}
+	return uu.AddQuestionIDs(ids...)
+}
+
+// AddAnswerIDs adds the "answers" edge to the Answer entity by IDs.
+func (uu *UserUpdate) AddAnswerIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddAnswerIDs(ids...)
+	return uu
+}
+
+// AddAnswers adds the "answers" edges to the Answer entity.
+func (uu *UserUpdate) AddAnswers(a ...*Answer) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddAnswerIDs(ids...)
+}
+
+// AddTagIDs adds the "tags" edge to the Tag entity by IDs.
+func (uu *UserUpdate) AddTagIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddTagIDs(ids...)
+	return uu
+}
+
+// AddTags adds the "tags" edges to the Tag entity.
+func (uu *UserUpdate) AddTags(t ...*Tag) *UserUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.AddTagIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
+}
+
+// ClearQuestions clears all "questions" edges to the Question entity.
+func (uu *UserUpdate) ClearQuestions() *UserUpdate {
+	uu.mutation.ClearQuestions()
+	return uu
+}
+
+// RemoveQuestionIDs removes the "questions" edge to Question entities by IDs.
+func (uu *UserUpdate) RemoveQuestionIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveQuestionIDs(ids...)
+	return uu
+}
+
+// RemoveQuestions removes "questions" edges to Question entities.
+func (uu *UserUpdate) RemoveQuestions(q ...*Question) *UserUpdate {
+	ids := make([]int, len(q))
+	for i := range q {
+		ids[i] = q[i].ID
+	}
+	return uu.RemoveQuestionIDs(ids...)
+}
+
+// ClearAnswers clears all "answers" edges to the Answer entity.
+func (uu *UserUpdate) ClearAnswers() *UserUpdate {
+	uu.mutation.ClearAnswers()
+	return uu
+}
+
+// RemoveAnswerIDs removes the "answers" edge to Answer entities by IDs.
+func (uu *UserUpdate) RemoveAnswerIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveAnswerIDs(ids...)
+	return uu
+}
+
+// RemoveAnswers removes "answers" edges to Answer entities.
+func (uu *UserUpdate) RemoveAnswers(a ...*Answer) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveAnswerIDs(ids...)
+}
+
+// ClearTags clears all "tags" edges to the Tag entity.
+func (uu *UserUpdate) ClearTags() *UserUpdate {
+	uu.mutation.ClearTags()
+	return uu
+}
+
+// RemoveTagIDs removes the "tags" edge to Tag entities by IDs.
+func (uu *UserUpdate) RemoveTagIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveTagIDs(ids...)
+	return uu
+}
+
+// RemoveTags removes "tags" edges to Tag entities.
+func (uu *UserUpdate) RemoveTags(t ...*Tag) *UserUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.RemoveTagIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -95,6 +206,141 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
+	if uu.mutation.QuestionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.QuestionsTable,
+			Columns: []string{user.QuestionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(question.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedQuestionsIDs(); len(nodes) > 0 && !uu.mutation.QuestionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.QuestionsTable,
+			Columns: []string{user.QuestionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(question.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.QuestionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.QuestionsTable,
+			Columns: []string{user.QuestionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(question.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.AnswersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AnswersTable,
+			Columns: []string{user.AnswersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(answer.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedAnswersIDs(); len(nodes) > 0 && !uu.mutation.AnswersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AnswersTable,
+			Columns: []string{user.AnswersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(answer.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AnswersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AnswersTable,
+			Columns: []string{user.AnswersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(answer.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedTagsIDs(); len(nodes) > 0 && !uu.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.TagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -133,9 +379,117 @@ func (uuo *UserUpdateOne) SetPassword(s string) *UserUpdateOne {
 	return uuo
 }
 
+// AddQuestionIDs adds the "questions" edge to the Question entity by IDs.
+func (uuo *UserUpdateOne) AddQuestionIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddQuestionIDs(ids...)
+	return uuo
+}
+
+// AddQuestions adds the "questions" edges to the Question entity.
+func (uuo *UserUpdateOne) AddQuestions(q ...*Question) *UserUpdateOne {
+	ids := make([]int, len(q))
+	for i := range q {
+		ids[i] = q[i].ID
+	}
+	return uuo.AddQuestionIDs(ids...)
+}
+
+// AddAnswerIDs adds the "answers" edge to the Answer entity by IDs.
+func (uuo *UserUpdateOne) AddAnswerIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddAnswerIDs(ids...)
+	return uuo
+}
+
+// AddAnswers adds the "answers" edges to the Answer entity.
+func (uuo *UserUpdateOne) AddAnswers(a ...*Answer) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddAnswerIDs(ids...)
+}
+
+// AddTagIDs adds the "tags" edge to the Tag entity by IDs.
+func (uuo *UserUpdateOne) AddTagIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddTagIDs(ids...)
+	return uuo
+}
+
+// AddTags adds the "tags" edges to the Tag entity.
+func (uuo *UserUpdateOne) AddTags(t ...*Tag) *UserUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.AddTagIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
+}
+
+// ClearQuestions clears all "questions" edges to the Question entity.
+func (uuo *UserUpdateOne) ClearQuestions() *UserUpdateOne {
+	uuo.mutation.ClearQuestions()
+	return uuo
+}
+
+// RemoveQuestionIDs removes the "questions" edge to Question entities by IDs.
+func (uuo *UserUpdateOne) RemoveQuestionIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveQuestionIDs(ids...)
+	return uuo
+}
+
+// RemoveQuestions removes "questions" edges to Question entities.
+func (uuo *UserUpdateOne) RemoveQuestions(q ...*Question) *UserUpdateOne {
+	ids := make([]int, len(q))
+	for i := range q {
+		ids[i] = q[i].ID
+	}
+	return uuo.RemoveQuestionIDs(ids...)
+}
+
+// ClearAnswers clears all "answers" edges to the Answer entity.
+func (uuo *UserUpdateOne) ClearAnswers() *UserUpdateOne {
+	uuo.mutation.ClearAnswers()
+	return uuo
+}
+
+// RemoveAnswerIDs removes the "answers" edge to Answer entities by IDs.
+func (uuo *UserUpdateOne) RemoveAnswerIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveAnswerIDs(ids...)
+	return uuo
+}
+
+// RemoveAnswers removes "answers" edges to Answer entities.
+func (uuo *UserUpdateOne) RemoveAnswers(a ...*Answer) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveAnswerIDs(ids...)
+}
+
+// ClearTags clears all "tags" edges to the Tag entity.
+func (uuo *UserUpdateOne) ClearTags() *UserUpdateOne {
+	uuo.mutation.ClearTags()
+	return uuo
+}
+
+// RemoveTagIDs removes the "tags" edge to Tag entities by IDs.
+func (uuo *UserUpdateOne) RemoveTagIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveTagIDs(ids...)
+	return uuo
+}
+
+// RemoveTags removes "tags" edges to Tag entities.
+func (uuo *UserUpdateOne) RemoveTags(t ...*Tag) *UserUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.RemoveTagIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -212,6 +566,141 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
+	}
+	if uuo.mutation.QuestionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.QuestionsTable,
+			Columns: []string{user.QuestionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(question.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedQuestionsIDs(); len(nodes) > 0 && !uuo.mutation.QuestionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.QuestionsTable,
+			Columns: []string{user.QuestionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(question.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.QuestionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.QuestionsTable,
+			Columns: []string{user.QuestionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(question.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.AnswersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AnswersTable,
+			Columns: []string{user.AnswersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(answer.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedAnswersIDs(); len(nodes) > 0 && !uuo.mutation.AnswersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AnswersTable,
+			Columns: []string{user.AnswersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(answer.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AnswersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AnswersTable,
+			Columns: []string{user.AnswersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(answer.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedTagsIDs(); len(nodes) > 0 && !uuo.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.TagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

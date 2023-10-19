@@ -8,6 +8,114 @@ import (
 )
 
 var (
+	// AnswersColumns holds the columns for the "answers" table.
+	AnswersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "content", Type: field.TypeString, Size: 2147483647},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "question_answers", Type: field.TypeInt, Nullable: true},
+		{Name: "user_answers", Type: field.TypeInt, Nullable: true},
+	}
+	// AnswersTable holds the schema information for the "answers" table.
+	AnswersTable = &schema.Table{
+		Name:       "answers",
+		Columns:    AnswersColumns,
+		PrimaryKey: []*schema.Column{AnswersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "answers_questions_answers",
+				Columns:    []*schema.Column{AnswersColumns[3]},
+				RefColumns: []*schema.Column{QuestionsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "answers_users_answers",
+				Columns:    []*schema.Column{AnswersColumns[4]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// QuestionsColumns holds the columns for the "questions" table.
+	QuestionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "title", Type: field.TypeString},
+		{Name: "content", Type: field.TypeString, Size: 2147483647},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "user_questions", Type: field.TypeInt, Nullable: true},
+	}
+	// QuestionsTable holds the schema information for the "questions" table.
+	QuestionsTable = &schema.Table{
+		Name:       "questions",
+		Columns:    QuestionsColumns,
+		PrimaryKey: []*schema.Column{QuestionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "questions_users_questions",
+				Columns:    []*schema.Column{QuestionsColumns[4]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// QuestionTagsColumns holds the columns for the "question_tags" table.
+	QuestionTagsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "question_id", Type: field.TypeInt},
+		{Name: "tag_id", Type: field.TypeInt},
+	}
+	// QuestionTagsTable holds the schema information for the "question_tags" table.
+	QuestionTagsTable = &schema.Table{
+		Name:       "question_tags",
+		Columns:    QuestionTagsColumns,
+		PrimaryKey: []*schema.Column{QuestionTagsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "question_tags_questions_question",
+				Columns:    []*schema.Column{QuestionTagsColumns[1]},
+				RefColumns: []*schema.Column{QuestionsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "question_tags_tags_tag",
+				Columns:    []*schema.Column{QuestionTagsColumns[2]},
+				RefColumns: []*schema.Column{TagsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "questiontag_tag_id",
+				Unique:  true,
+				Columns: []*schema.Column{QuestionTagsColumns[2]},
+			},
+			{
+				Name:    "questiontag_question_id_tag_id",
+				Unique:  true,
+				Columns: []*schema.Column{QuestionTagsColumns[1], QuestionTagsColumns[2]},
+			},
+		},
+	}
+	// TagsColumns holds the columns for the "tags" table.
+	TagsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "user_tags", Type: field.TypeInt, Nullable: true},
+	}
+	// TagsTable holds the schema information for the "tags" table.
+	TagsTable = &schema.Table{
+		Name:       "tags",
+		Columns:    TagsColumns,
+		PrimaryKey: []*schema.Column{TagsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tags_users_tags",
+				Columns:    []*schema.Column{TagsColumns[2]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -24,9 +132,19 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AnswersTable,
+		QuestionsTable,
+		QuestionTagsTable,
+		TagsTable,
 		UsersTable,
 	}
 )
 
 func init() {
+	AnswersTable.ForeignKeys[0].RefTable = QuestionsTable
+	AnswersTable.ForeignKeys[1].RefTable = UsersTable
+	QuestionsTable.ForeignKeys[0].RefTable = UsersTable
+	QuestionTagsTable.ForeignKeys[0].RefTable = QuestionsTable
+	QuestionTagsTable.ForeignKeys[1].RefTable = TagsTable
+	TagsTable.ForeignKeys[0].RefTable = UsersTable
 }
