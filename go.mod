@@ -4,8 +4,10 @@ go 1.21.3
 
 require (
 	entgo.io/ent v0.12.4
+	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-faster/errors v0.6.1
 	github.com/go-faster/jx v1.1.0
+	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/joho/godotenv v1.5.1
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/ogen-go/ogen v0.76.0
