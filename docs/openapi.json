@@ -6,6 +6,44 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login user",
+        "description": "Login user.",
+        "operationId": "loginUser",
+        "requestBody": {
+          "description": "Auth user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Succesfully logged in"
+          }
+        }
+      }
+    },
     "/answers": {
       "get": {
         "tags": [
@@ -64,6 +102,11 @@
         }
       },
       "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "Answer"
         ],
@@ -168,6 +211,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "Answer"
         ],
@@ -204,6 +252,11 @@
         }
       },
       "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "Answer"
         ],
@@ -359,363 +412,6 @@
         }
       }
     },
-    "/question-tags": {
-      "get": {
-        "tags": [
-          "QuestionTag"
-        ],
-        "summary": "List QuestionTags",
-        "description": "List QuestionTags.",
-        "operationId": "listQuestionTag",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result QuestionTag list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/QuestionTagList"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "QuestionTag"
-        ],
-        "summary": "Create a new QuestionTag",
-        "description": "Creates a new QuestionTag and persists it to storage.",
-        "operationId": "createQuestionTag",
-        "requestBody": {
-          "description": "QuestionTag to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "question_id": {
-                    "type": "integer"
-                  },
-                  "tag_id": {
-                    "type": "integer"
-                  },
-                  "question": {
-                    "type": "integer"
-                  },
-                  "tag": {
-                    "type": "integer"
-                  }
-                },
-                "required": [
-                  "question_id",
-                  "tag_id",
-                  "question",
-                  "tag"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "QuestionTag created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuestionTagCreate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/question-tags/{id}": {
-      "get": {
-        "tags": [
-          "QuestionTag"
-        ],
-        "summary": "Find a QuestionTag by ID",
-        "description": "Finds the QuestionTag with the requested ID and returns it.",
-        "operationId": "readQuestionTag",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the QuestionTag",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "QuestionTag with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuestionTagRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "QuestionTag"
-        ],
-        "summary": "Deletes a QuestionTag by ID",
-        "description": "Deletes the QuestionTag with the requested ID.",
-        "operationId": "deleteQuestionTag",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the QuestionTag",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "QuestionTag with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "QuestionTag"
-        ],
-        "summary": "Updates a QuestionTag",
-        "description": "Updates a QuestionTag and persists changes to storage.",
-        "operationId": "updateQuestionTag",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the QuestionTag",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "QuestionTag properties to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "question_id": {
-                    "type": "integer"
-                  },
-                  "tag_id": {
-                    "type": "integer"
-                  },
-                  "question": {
-                    "type": "integer"
-                  },
-                  "tag": {
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "QuestionTag updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuestionTagUpdate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/question-tags/{id}/question": {
-      "get": {
-        "tags": [
-          "QuestionTag"
-        ],
-        "summary": "Find the attached Question",
-        "description": "Find the attached Question of the QuestionTag with the given ID",
-        "operationId": "readQuestionTagQuestion",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the QuestionTag",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Question attached to QuestionTag with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuestionTag_QuestionRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/question-tags/{id}/tag": {
-      "get": {
-        "tags": [
-          "QuestionTag"
-        ],
-        "summary": "Find the attached Tag",
-        "description": "Find the attached Tag of the QuestionTag with the given ID",
-        "operationId": "readQuestionTagTag",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the QuestionTag",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tag attached to QuestionTag with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuestionTag_TagRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
     "/questions": {
       "get": {
         "tags": [
@@ -774,6 +470,11 @@
         }
       },
       "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "Question"
         ],
@@ -897,6 +598,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "Question"
         ],
@@ -933,6 +639,11 @@
         }
       },
       "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "Question"
         ],
@@ -1125,70 +836,6 @@
         }
       }
     },
-    "/questions/{id}/question-tag": {
-      "get": {
-        "tags": [
-          "Question"
-        ],
-        "summary": "List attached QuestionTags",
-        "description": "List attached QuestionTags.",
-        "operationId": "listQuestionQuestionTag",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Question",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result Questions list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Question_QuestionTagList"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
     "/questions/{id}/tags": {
       "get": {
         "tags": [
@@ -1311,6 +958,11 @@
         }
       },
       "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "Tag"
         ],
@@ -1327,7 +979,7 @@
                   "name": {
                     "type": "string"
                   },
-                  "questions": {
+                  "question": {
                     "type": "array",
                     "items": {
                       "type": "integer"
@@ -1416,6 +1068,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "Tag"
         ],
@@ -1452,6 +1109,11 @@
         }
       },
       "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "Tag"
         ],
@@ -1479,7 +1141,7 @@
                   "name": {
                     "type": "string"
                   },
-                  "questions": {
+                  "question": {
                     "type": "array",
                     "items": {
                       "type": "integer"
@@ -1523,14 +1185,14 @@
         }
       }
     },
-    "/tags/{id}/questions": {
+    "/tags/{id}/question": {
       "get": {
         "tags": [
           "Tag"
         ],
         "summary": "List attached Questions",
         "description": "List attached Questions.",
-        "operationId": "listTagQuestions",
+        "operationId": "listTagQuestion",
         "parameters": [
           {
             "name": "id",
@@ -1566,71 +1228,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Tag_QuestionsList"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/tags/{id}/tag-question": {
-      "get": {
-        "tags": [
-          "Tag"
-        ],
-        "summary": "List attached TagQuestions",
-        "description": "List attached TagQuestions.",
-        "operationId": "listTagTagQuestion",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Tag",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result Tags list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Tag_TagQuestionList"
+                    "$ref": "#/components/schemas/Tag_QuestionList"
                   }
                 }
               }
@@ -1709,6 +1307,11 @@
         }
       },
       "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "User"
         ],
@@ -1833,6 +1436,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "User"
         ],
@@ -1869,6 +1477,11 @@
         }
       },
       "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": [
           "User"
         ],
@@ -2146,6 +1759,13 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
     "schemas": {
       "Answer": {
         "type": "object",
@@ -2671,7 +2291,7 @@
           "name": {
             "type": "string"
           },
-          "questions": {
+          "question": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Question"
@@ -2749,7 +2369,7 @@
           "name"
         ]
       },
-      "Tag_QuestionsList": {
+      "Tag_QuestionList": {
         "type": "object",
         "properties": {
           "id": {
