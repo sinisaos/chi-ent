@@ -1307,11 +1307,6 @@
         }
       },
       "post": {
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "tags": [
           "User"
         ],
