@@ -16,8 +16,6 @@ type Tx struct {
 	Answer *AnswerClient
 	// Question is the client for interacting with the Question builders.
 	Question *QuestionClient
-	// QuestionTag is the client for interacting with the QuestionTag builders.
-	QuestionTag *QuestionTagClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// User is the client for interacting with the User builders.
@@ -155,7 +153,6 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Answer = NewAnswerClient(tx.config)
 	tx.Question = NewQuestionClient(tx.config)
-	tx.QuestionTag = NewQuestionTagClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }

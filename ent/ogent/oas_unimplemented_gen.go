@@ -31,15 +31,6 @@ func (UnimplementedHandler) CreateQuestion(ctx context.Context, req *CreateQuest
 	return r, ht.ErrNotImplemented
 }
 
-// CreateQuestionTag implements createQuestionTag operation.
-//
-// Creates a new QuestionTag and persists it to storage.
-//
-// POST /question-tags
-func (UnimplementedHandler) CreateQuestionTag(ctx context.Context, req *CreateQuestionTagReq) (r CreateQuestionTagRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // CreateTag implements createTag operation.
 //
 // Creates a new Tag and persists it to storage.
@@ -73,15 +64,6 @@ func (UnimplementedHandler) DeleteAnswer(ctx context.Context, params DeleteAnswe
 //
 // DELETE /questions/{id}
 func (UnimplementedHandler) DeleteQuestion(ctx context.Context, params DeleteQuestionParams) (r DeleteQuestionRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// DeleteQuestionTag implements deleteQuestionTag operation.
-//
-// Deletes the QuestionTag with the requested ID.
-//
-// DELETE /question-tags/{id}
-func (UnimplementedHandler) DeleteQuestionTag(ctx context.Context, params DeleteQuestionTagParams) (r DeleteQuestionTagRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -130,24 +112,6 @@ func (UnimplementedHandler) ListQuestionAnswers(ctx context.Context, params List
 	return r, ht.ErrNotImplemented
 }
 
-// ListQuestionQuestionTag implements listQuestionQuestionTag operation.
-//
-// List attached QuestionTags.
-//
-// GET /questions/{id}/question-tag
-func (UnimplementedHandler) ListQuestionQuestionTag(ctx context.Context, params ListQuestionQuestionTagParams) (r ListQuestionQuestionTagRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ListQuestionTag implements listQuestionTag operation.
-//
-// List QuestionTags.
-//
-// GET /question-tags
-func (UnimplementedHandler) ListQuestionTag(ctx context.Context, params ListQuestionTagParams) (r ListQuestionTagRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // ListQuestionTags implements listQuestionTags operation.
 //
 // List attached Tags.
@@ -172,15 +136,6 @@ func (UnimplementedHandler) ListTag(ctx context.Context, params ListTagParams) (
 //
 // GET /tags/{id}/questions
 func (UnimplementedHandler) ListTagQuestions(ctx context.Context, params ListTagQuestionsParams) (r ListTagQuestionsRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ListTagTagQuestion implements listTagTagQuestion operation.
-//
-// List attached TagQuestions.
-//
-// GET /tags/{id}/tag-question
-func (UnimplementedHandler) ListTagTagQuestion(ctx context.Context, params ListTagTagQuestionParams) (r ListTagTagQuestionRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -265,33 +220,6 @@ func (UnimplementedHandler) ReadQuestionAuthor(ctx context.Context, params ReadQ
 	return r, ht.ErrNotImplemented
 }
 
-// ReadQuestionTag implements readQuestionTag operation.
-//
-// Finds the QuestionTag with the requested ID and returns it.
-//
-// GET /question-tags/{id}
-func (UnimplementedHandler) ReadQuestionTag(ctx context.Context, params ReadQuestionTagParams) (r ReadQuestionTagRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ReadQuestionTagQuestion implements readQuestionTagQuestion operation.
-//
-// Find the attached Question of the QuestionTag with the given ID.
-//
-// GET /question-tags/{id}/question
-func (UnimplementedHandler) ReadQuestionTagQuestion(ctx context.Context, params ReadQuestionTagQuestionParams) (r ReadQuestionTagQuestionRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ReadQuestionTagTag implements readQuestionTagTag operation.
-//
-// Find the attached Tag of the QuestionTag with the given ID.
-//
-// GET /question-tags/{id}/tag
-func (UnimplementedHandler) ReadQuestionTagTag(ctx context.Context, params ReadQuestionTagTagParams) (r ReadQuestionTagTagRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // ReadTag implements readTag operation.
 //
 // Finds the Tag with the requested ID and returns it.
@@ -325,15 +253,6 @@ func (UnimplementedHandler) UpdateAnswer(ctx context.Context, req *UpdateAnswerR
 //
 // PATCH /questions/{id}
 func (UnimplementedHandler) UpdateQuestion(ctx context.Context, req *UpdateQuestionReq, params UpdateQuestionParams) (r UpdateQuestionRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// UpdateQuestionTag implements updateQuestionTag operation.
-//
-// Updates a QuestionTag and persists changes to storage.
-//
-// PATCH /question-tags/{id}
-func (UnimplementedHandler) UpdateQuestionTag(ctx context.Context, req *UpdateQuestionTagReq, params UpdateQuestionTagParams) (r UpdateQuestionTagRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

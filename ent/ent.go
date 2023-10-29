@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/sinisaos/chi-ent/ent/answer"
 	"github.com/sinisaos/chi-ent/ent/question"
-	"github.com/sinisaos/chi-ent/ent/questiontag"
 	"github.com/sinisaos/chi-ent/ent/tag"
 	"github.com/sinisaos/chi-ent/ent/user"
 )
@@ -77,11 +76,10 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			answer.Table:      answer.ValidColumn,
-			question.Table:    question.ValidColumn,
-			questiontag.Table: questiontag.ValidColumn,
-			tag.Table:         tag.ValidColumn,
-			user.Table:        user.ValidColumn,
+			answer.Table:   answer.ValidColumn,
+			question.Table: question.ValidColumn,
+			tag.Table:      tag.ValidColumn,
+			user.Table:     user.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

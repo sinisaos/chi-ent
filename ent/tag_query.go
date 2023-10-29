@@ -13,20 +13,18 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/sinisaos/chi-ent/ent/predicate"
 	"github.com/sinisaos/chi-ent/ent/question"
-	"github.com/sinisaos/chi-ent/ent/questiontag"
 	"github.com/sinisaos/chi-ent/ent/tag"
 )
 
 // TagQuery is the builder for querying Tag entities.
 type TagQuery struct {
 	config
-	ctx             *QueryContext
-	order           []tag.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.Tag
-	withQuestions   *QuestionQuery
-	withTagQuestion *QuestionTagQuery
-	withFKs         bool
+	ctx           *QueryContext
+	order         []tag.OrderOption
+	inters        []Interceptor
+	predicates    []predicate.Tag
+	withQuestions *QuestionQuery
+	withFKs       bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -77,29 +75,7 @@ func (tq *TagQuery) QueryQuestions() *QuestionQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tag.Table, tag.FieldID, selector),
 			sqlgraph.To(question.Table, question.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, tag.QuestionsTable, tag.QuestionsPrimaryKey...),
-		)
-		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryTagQuestion chains the current query on the "tag_question" edge.
-func (tq *TagQuery) QueryTagQuestion() *QuestionTagQuery {
-	query := (&QuestionTagClient{config: tq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := tq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := tq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(tag.Table, tag.FieldID, selector),
-			sqlgraph.To(questiontag.Table, questiontag.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, tag.TagQuestionTable, tag.TagQuestionColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, tag.QuestionsTable, tag.QuestionsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -294,13 +270,12 @@ func (tq *TagQuery) Clone() *TagQuery {
 		return nil
 	}
 	return &TagQuery{
-		config:          tq.config,
-		ctx:             tq.ctx.Clone(),
-		order:           append([]tag.OrderOption{}, tq.order...),
-		inters:          append([]Interceptor{}, tq.inters...),
-		predicates:      append([]predicate.Tag{}, tq.predicates...),
-		withQuestions:   tq.withQuestions.Clone(),
-		withTagQuestion: tq.withTagQuestion.Clone(),
+		config:        tq.config,
+		ctx:           tq.ctx.Clone(),
+		order:         append([]tag.OrderOption{}, tq.order...),
+		inters:        append([]Interceptor{}, tq.inters...),
+		predicates:    append([]predicate.Tag{}, tq.predicates...),
+		withQuestions: tq.withQuestions.Clone(),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
@@ -315,17 +290,6 @@ func (tq *TagQuery) WithQuestions(opts ...func(*QuestionQuery)) *TagQuery {
 		opt(query)
 	}
 	tq.withQuestions = query
-	return tq
-}
-
-// WithTagQuestion tells the query-builder to eager-load the nodes that are connected to
-// the "tag_question" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TagQuery) WithTagQuestion(opts ...func(*QuestionTagQuery)) *TagQuery {
-	query := (&QuestionTagClient{config: tq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	tq.withTagQuestion = query
 	return tq
 }
 
@@ -408,9 +372,8 @@ func (tq *TagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tag, err
 		nodes       = []*Tag{}
 		withFKs     = tq.withFKs
 		_spec       = tq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [1]bool{
 			tq.withQuestions != nil,
-			tq.withTagQuestion != nil,
 		}
 	)
 	if withFKs {
@@ -441,13 +404,6 @@ func (tq *TagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tag, err
 			return nil, err
 		}
 	}
-	if query := tq.withTagQuestion; query != nil {
-		if err := tq.loadTagQuestion(ctx, query, nodes,
-			func(n *Tag) { n.Edges.TagQuestion = []*QuestionTag{} },
-			func(n *Tag, e *QuestionTag) { n.Edges.TagQuestion = append(n.Edges.TagQuestion, e) }); err != nil {
-			return nil, err
-		}
-	}
 	return nodes, nil
 }
 
@@ -464,10 +420,10 @@ func (tq *TagQuery) loadQuestions(ctx context.Context, query *QuestionQuery, nod
 	}
 	query.Where(func(s *sql.Selector) {
 		joinT := sql.Table(tag.QuestionsTable)
-		s.Join(joinT).On(s.C(question.FieldID), joinT.C(tag.QuestionsPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(tag.QuestionsPrimaryKey[1]), edgeIDs...))
+		s.Join(joinT).On(s.C(question.FieldID), joinT.C(tag.QuestionsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(tag.QuestionsPrimaryKey[0]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(tag.QuestionsPrimaryKey[1]))
+		s.Select(joinT.C(tag.QuestionsPrimaryKey[0]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -509,36 +465,6 @@ func (tq *TagQuery) loadQuestions(ctx context.Context, query *QuestionQuery, nod
 		for kn := range nodes {
 			assign(kn, n)
 		}
-	}
-	return nil
-}
-func (tq *TagQuery) loadTagQuestion(ctx context.Context, query *QuestionTagQuery, nodes []*Tag, init func(*Tag), assign func(*Tag, *QuestionTag)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Tag)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(questiontag.FieldTagID)
-	}
-	query.Where(predicate.QuestionTag(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(tag.TagQuestionColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.TagID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "tag_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
 	}
 	return nil
 }

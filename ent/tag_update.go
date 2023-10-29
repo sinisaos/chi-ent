@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/sinisaos/chi-ent/ent/predicate"
 	"github.com/sinisaos/chi-ent/ent/question"
-	"github.com/sinisaos/chi-ent/ent/questiontag"
 	"github.com/sinisaos/chi-ent/ent/tag"
 )
 
@@ -50,21 +49,6 @@ func (tu *TagUpdate) AddQuestions(q ...*Question) *TagUpdate {
 	return tu.AddQuestionIDs(ids...)
 }
 
-// AddTagQuestionIDs adds the "tag_question" edge to the QuestionTag entity by IDs.
-func (tu *TagUpdate) AddTagQuestionIDs(ids ...int) *TagUpdate {
-	tu.mutation.AddTagQuestionIDs(ids...)
-	return tu
-}
-
-// AddTagQuestion adds the "tag_question" edges to the QuestionTag entity.
-func (tu *TagUpdate) AddTagQuestion(q ...*QuestionTag) *TagUpdate {
-	ids := make([]int, len(q))
-	for i := range q {
-		ids[i] = q[i].ID
-	}
-	return tu.AddTagQuestionIDs(ids...)
-}
-
 // Mutation returns the TagMutation object of the builder.
 func (tu *TagUpdate) Mutation() *TagMutation {
 	return tu.mutation
@@ -89,27 +73,6 @@ func (tu *TagUpdate) RemoveQuestions(q ...*Question) *TagUpdate {
 		ids[i] = q[i].ID
 	}
 	return tu.RemoveQuestionIDs(ids...)
-}
-
-// ClearTagQuestion clears all "tag_question" edges to the QuestionTag entity.
-func (tu *TagUpdate) ClearTagQuestion() *TagUpdate {
-	tu.mutation.ClearTagQuestion()
-	return tu
-}
-
-// RemoveTagQuestionIDs removes the "tag_question" edge to QuestionTag entities by IDs.
-func (tu *TagUpdate) RemoveTagQuestionIDs(ids ...int) *TagUpdate {
-	tu.mutation.RemoveTagQuestionIDs(ids...)
-	return tu
-}
-
-// RemoveTagQuestion removes "tag_question" edges to QuestionTag entities.
-func (tu *TagUpdate) RemoveTagQuestion(q ...*QuestionTag) *TagUpdate {
-	ids := make([]int, len(q))
-	for i := range q {
-		ids[i] = q[i].ID
-	}
-	return tu.RemoveTagQuestionIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -154,7 +117,7 @@ func (tu *TagUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.QuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   tag.QuestionsTable,
 			Columns: tag.QuestionsPrimaryKey,
 			Bidi:    false,
@@ -167,7 +130,7 @@ func (tu *TagUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if nodes := tu.mutation.RemovedQuestionsIDs(); len(nodes) > 0 && !tu.mutation.QuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   tag.QuestionsTable,
 			Columns: tag.QuestionsPrimaryKey,
 			Bidi:    false,
@@ -183,57 +146,12 @@ func (tu *TagUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if nodes := tu.mutation.QuestionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   tag.QuestionsTable,
 			Columns: tag.QuestionsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(question.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if tu.mutation.TagQuestionCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   tag.TagQuestionTable,
-			Columns: []string{tag.TagQuestionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tu.mutation.RemovedTagQuestionIDs(); len(nodes) > 0 && !tu.mutation.TagQuestionCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   tag.TagQuestionTable,
-			Columns: []string{tag.TagQuestionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tu.mutation.TagQuestionIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   tag.TagQuestionTable,
-			Columns: []string{tag.TagQuestionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -282,21 +200,6 @@ func (tuo *TagUpdateOne) AddQuestions(q ...*Question) *TagUpdateOne {
 	return tuo.AddQuestionIDs(ids...)
 }
 
-// AddTagQuestionIDs adds the "tag_question" edge to the QuestionTag entity by IDs.
-func (tuo *TagUpdateOne) AddTagQuestionIDs(ids ...int) *TagUpdateOne {
-	tuo.mutation.AddTagQuestionIDs(ids...)
-	return tuo
-}
-
-// AddTagQuestion adds the "tag_question" edges to the QuestionTag entity.
-func (tuo *TagUpdateOne) AddTagQuestion(q ...*QuestionTag) *TagUpdateOne {
-	ids := make([]int, len(q))
-	for i := range q {
-		ids[i] = q[i].ID
-	}
-	return tuo.AddTagQuestionIDs(ids...)
-}
-
 // Mutation returns the TagMutation object of the builder.
 func (tuo *TagUpdateOne) Mutation() *TagMutation {
 	return tuo.mutation
@@ -321,27 +224,6 @@ func (tuo *TagUpdateOne) RemoveQuestions(q ...*Question) *TagUpdateOne {
 		ids[i] = q[i].ID
 	}
 	return tuo.RemoveQuestionIDs(ids...)
-}
-
-// ClearTagQuestion clears all "tag_question" edges to the QuestionTag entity.
-func (tuo *TagUpdateOne) ClearTagQuestion() *TagUpdateOne {
-	tuo.mutation.ClearTagQuestion()
-	return tuo
-}
-
-// RemoveTagQuestionIDs removes the "tag_question" edge to QuestionTag entities by IDs.
-func (tuo *TagUpdateOne) RemoveTagQuestionIDs(ids ...int) *TagUpdateOne {
-	tuo.mutation.RemoveTagQuestionIDs(ids...)
-	return tuo
-}
-
-// RemoveTagQuestion removes "tag_question" edges to QuestionTag entities.
-func (tuo *TagUpdateOne) RemoveTagQuestion(q ...*QuestionTag) *TagUpdateOne {
-	ids := make([]int, len(q))
-	for i := range q {
-		ids[i] = q[i].ID
-	}
-	return tuo.RemoveTagQuestionIDs(ids...)
 }
 
 // Where appends a list predicates to the TagUpdate builder.
@@ -416,7 +298,7 @@ func (tuo *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 	if tuo.mutation.QuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   tag.QuestionsTable,
 			Columns: tag.QuestionsPrimaryKey,
 			Bidi:    false,
@@ -429,7 +311,7 @@ func (tuo *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 	if nodes := tuo.mutation.RemovedQuestionsIDs(); len(nodes) > 0 && !tuo.mutation.QuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   tag.QuestionsTable,
 			Columns: tag.QuestionsPrimaryKey,
 			Bidi:    false,
@@ -445,57 +327,12 @@ func (tuo *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 	if nodes := tuo.mutation.QuestionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   tag.QuestionsTable,
 			Columns: tag.QuestionsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(question.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if tuo.mutation.TagQuestionCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   tag.TagQuestionTable,
-			Columns: []string{tag.TagQuestionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tuo.mutation.RemovedTagQuestionIDs(); len(nodes) > 0 && !tuo.mutation.TagQuestionCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   tag.TagQuestionTable,
-			Columns: []string{tag.TagQuestionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tuo.mutation.TagQuestionIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   tag.TagQuestionTable,
-			Columns: []string{tag.TagQuestionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

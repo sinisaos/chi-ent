@@ -12,9 +12,6 @@ type Answer func(*sql.Selector)
 // Question is the predicate function for question builders.
 type Question func(*sql.Selector)
 
-// QuestionTag is the predicate function for questiontag builders.
-type QuestionTag func(*sql.Selector)
-
 // Tag is the predicate function for tag builders.
 type Tag func(*sql.Selector)
 

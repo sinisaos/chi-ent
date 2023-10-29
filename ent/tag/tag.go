@@ -16,22 +16,13 @@ const (
 	FieldName = "name"
 	// EdgeQuestions holds the string denoting the questions edge name in mutations.
 	EdgeQuestions = "questions"
-	// EdgeTagQuestion holds the string denoting the tag_question edge name in mutations.
-	EdgeTagQuestion = "tag_question"
 	// Table holds the table name of the tag in the database.
 	Table = "tags"
 	// QuestionsTable is the table that holds the questions relation/edge. The primary key declared below.
-	QuestionsTable = "question_tags"
+	QuestionsTable = "tag_questions"
 	// QuestionsInverseTable is the table name for the Question entity.
 	// It exists in this package in order to avoid circular dependency with the "question" package.
 	QuestionsInverseTable = "questions"
-	// TagQuestionTable is the table that holds the tag_question relation/edge.
-	TagQuestionTable = "question_tags"
-	// TagQuestionInverseTable is the table name for the QuestionTag entity.
-	// It exists in this package in order to avoid circular dependency with the "questiontag" package.
-	TagQuestionInverseTable = "question_tags"
-	// TagQuestionColumn is the table column denoting the tag_question relation/edge.
-	TagQuestionColumn = "tag_id"
 )
 
 // Columns holds all SQL columns for tag fields.
@@ -49,7 +40,7 @@ var ForeignKeys = []string{
 var (
 	// QuestionsPrimaryKey and QuestionsColumn2 are the table columns denoting the
 	// primary key for the questions relation (M2M).
-	QuestionsPrimaryKey = []string{"question_id", "tag_id"}
+	QuestionsPrimaryKey = []string{"tag_id", "question_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -93,31 +84,10 @@ func ByQuestions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newQuestionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-
-// ByTagQuestionCount orders the results by tag_question count.
-func ByTagQuestionCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newTagQuestionStep(), opts...)
-	}
-}
-
-// ByTagQuestion orders the results by tag_question terms.
-func ByTagQuestion(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newTagQuestionStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
 func newQuestionsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(QuestionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, QuestionsTable, QuestionsPrimaryKey...),
-	)
-}
-func newTagQuestionStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(TagQuestionInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, true, TagQuestionTable, TagQuestionColumn),
+		sqlgraph.Edge(sqlgraph.M2M, false, QuestionsTable, QuestionsPrimaryKey...),
 	)
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/sinisaos/chi-ent/ent"
 	"github.com/sinisaos/chi-ent/ent/answer"
 	"github.com/sinisaos/chi-ent/ent/question"
-	"github.com/sinisaos/chi-ent/ent/questiontag"
 	"github.com/sinisaos/chi-ent/ent/tag"
 	"github.com/sinisaos/chi-ent/ent/user"
 )
@@ -273,7 +272,6 @@ func (h *OgentHandler) CreateQuestion(ctx context.Context, req *CreateQuestionRe
 		b.SetAuthorID(v)
 	}
 	b.AddTagIDs(req.Tags...)
-	b.AddQuestionTagIDs(req.QuestionTag...)
 	// Persist to storage.
 	e, err := b.Save(ctx)
 	if err != nil {
@@ -350,9 +348,6 @@ func (h *OgentHandler) UpdateQuestion(ctx context.Context, req *UpdateQuestionRe
 	}
 	if req.Tags != nil {
 		b.ClearTags().AddTagIDs(req.Tags...)
-	}
-	if req.QuestionTag != nil {
-		b.ClearQuestionTag().AddQuestionTagIDs(req.QuestionTag...)
 	}
 	// Persist to storage.
 	e, err := b.Save(ctx)
@@ -546,271 +541,6 @@ func (h *OgentHandler) ListQuestionTags(ctx context.Context, params ListQuestion
 	return (*ListQuestionTagsOKApplicationJSON)(&r), nil
 }
 
-// ListQuestionQuestionTag handles GET /questions/{id}/question-tag requests.
-func (h *OgentHandler) ListQuestionQuestionTag(ctx context.Context, params ListQuestionQuestionTagParams) (ListQuestionQuestionTagRes, error) {
-	q := h.client.Question.Query().Where(question.IDEQ(params.ID)).QueryQuestionTag()
-	page := 1
-	if v, ok := params.Page.Get(); ok {
-		page = v
-	}
-	itemsPerPage := 30
-	if v, ok := params.ItemsPerPage.Get(); ok {
-		itemsPerPage = v
-	}
-	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
-	es, err := q.All(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	r := NewQuestionQuestionTagLists(es)
-	return (*ListQuestionQuestionTagOKApplicationJSON)(&r), nil
-}
-
-// CreateQuestionTag handles POST /question-tags requests.
-func (h *OgentHandler) CreateQuestionTag(ctx context.Context, req *CreateQuestionTagReq) (CreateQuestionTagRes, error) {
-	b := h.client.QuestionTag.Create()
-	// Add all fields.
-	b.SetQuestionID(req.QuestionID)
-	b.SetTagID(req.TagID)
-	// Add all edges.
-	b.SetQuestionID(req.Question)
-	b.SetTagID(req.Tag)
-	// Persist to storage.
-	e, err := b.Save(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsConstraintError(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	// Reload the entity to attach all eager-loaded edges.
-	q := h.client.QuestionTag.Query().Where(questiontag.ID(e.ID))
-	e, err = q.Only(ctx)
-	if err != nil {
-		// This should never happen.
-		return nil, err
-	}
-	return NewQuestionTagCreate(e), nil
-}
-
-// ReadQuestionTag handles GET /question-tags/{id} requests.
-func (h *OgentHandler) ReadQuestionTag(ctx context.Context, params ReadQuestionTagParams) (ReadQuestionTagRes, error) {
-	q := h.client.QuestionTag.Query().Where(questiontag.IDEQ(params.ID))
-	e, err := q.Only(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	return NewQuestionTagRead(e), nil
-}
-
-// UpdateQuestionTag handles PATCH /question-tags/{id} requests.
-func (h *OgentHandler) UpdateQuestionTag(ctx context.Context, req *UpdateQuestionTagReq, params UpdateQuestionTagParams) (UpdateQuestionTagRes, error) {
-	b := h.client.QuestionTag.UpdateOneID(params.ID)
-	// Add all fields.
-	if v, ok := req.QuestionID.Get(); ok {
-		b.SetQuestionID(v)
-	}
-	if v, ok := req.TagID.Get(); ok {
-		b.SetTagID(v)
-	}
-	// Add all edges.
-	if v, ok := req.Question.Get(); ok {
-		b.SetQuestionID(v)
-	}
-	if v, ok := req.Tag.Get(); ok {
-		b.SetTagID(v)
-	}
-	// Persist to storage.
-	e, err := b.Save(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsConstraintError(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	// Reload the entity to attach all eager-loaded edges.
-	q := h.client.QuestionTag.Query().Where(questiontag.ID(e.ID))
-	e, err = q.Only(ctx)
-	if err != nil {
-		// This should never happen.
-		return nil, err
-	}
-	return NewQuestionTagUpdate(e), nil
-}
-
-// DeleteQuestionTag handles DELETE /question-tags/{id} requests.
-func (h *OgentHandler) DeleteQuestionTag(ctx context.Context, params DeleteQuestionTagParams) (DeleteQuestionTagRes, error) {
-	err := h.client.QuestionTag.DeleteOneID(params.ID).Exec(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsConstraintError(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	return new(DeleteQuestionTagNoContent), nil
-
-}
-
-// ListQuestionTag handles GET /question-tags requests.
-func (h *OgentHandler) ListQuestionTag(ctx context.Context, params ListQuestionTagParams) (ListQuestionTagRes, error) {
-	q := h.client.QuestionTag.Query()
-	page := 1
-	if v, ok := params.Page.Get(); ok {
-		page = v
-	}
-	itemsPerPage := 30
-	if v, ok := params.ItemsPerPage.Get(); ok {
-		itemsPerPage = v
-	}
-	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
-
-	es, err := q.All(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	r := NewQuestionTagLists(es)
-	return (*ListQuestionTagOKApplicationJSON)(&r), nil
-}
-
-// ReadQuestionTagQuestion handles GET /question-tags/{id}/question requests.
-func (h *OgentHandler) ReadQuestionTagQuestion(ctx context.Context, params ReadQuestionTagQuestionParams) (ReadQuestionTagQuestionRes, error) {
-	q := h.client.QuestionTag.Query().Where(questiontag.IDEQ(params.ID)).QueryQuestion()
-	e, err := q.Only(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	return NewQuestionTagQuestionRead(e), nil
-}
-
-// ReadQuestionTagTag handles GET /question-tags/{id}/tag requests.
-func (h *OgentHandler) ReadQuestionTagTag(ctx context.Context, params ReadQuestionTagTagParams) (ReadQuestionTagTagRes, error) {
-	q := h.client.QuestionTag.Query().Where(questiontag.IDEQ(params.ID)).QueryTag()
-	e, err := q.Only(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	return NewQuestionTagTagRead(e), nil
-}
-
 // CreateTag handles POST /tags requests.
 func (h *OgentHandler) CreateTag(ctx context.Context, req *CreateTagReq) (CreateTagRes, error) {
 	b := h.client.Tag.Create()
@@ -818,7 +548,6 @@ func (h *OgentHandler) CreateTag(ctx context.Context, req *CreateTagReq) (Create
 	b.SetName(req.Name)
 	// Add all edges.
 	b.AddQuestionIDs(req.Questions...)
-	b.AddTagQuestionIDs(req.TagQuestion...)
 	// Persist to storage.
 	e, err := b.Save(ctx)
 	if err != nil {
@@ -886,9 +615,6 @@ func (h *OgentHandler) UpdateTag(ctx context.Context, req *UpdateTagReq, params 
 	// Add all edges.
 	if req.Questions != nil {
 		b.ClearQuestions().AddQuestionIDs(req.Questions...)
-	}
-	if req.TagQuestion != nil {
-		b.ClearTagQuestion().AddTagQuestionIDs(req.TagQuestion...)
 	}
 	// Persist to storage.
 	e, err := b.Save(ctx)
@@ -1018,42 +744,6 @@ func (h *OgentHandler) ListTagQuestions(ctx context.Context, params ListTagQuest
 	}
 	r := NewTagQuestionsLists(es)
 	return (*ListTagQuestionsOKApplicationJSON)(&r), nil
-}
-
-// ListTagTagQuestion handles GET /tags/{id}/tag-question requests.
-func (h *OgentHandler) ListTagTagQuestion(ctx context.Context, params ListTagTagQuestionParams) (ListTagTagQuestionRes, error) {
-	q := h.client.Tag.Query().Where(tag.IDEQ(params.ID)).QueryTagQuestion()
-	page := 1
-	if v, ok := params.Page.Get(); ok {
-		page = v
-	}
-	itemsPerPage := 30
-	if v, ok := params.ItemsPerPage.Get(); ok {
-		itemsPerPage = v
-	}
-	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
-	es, err := q.All(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	r := NewTagTagQuestionLists(es)
-	return (*ListTagTagQuestionOKApplicationJSON)(&r), nil
 }
 
 // CreateUser handles POST /users requests.

@@ -310,13 +310,12 @@ func (s *CreateAnswerReq) SetAuthor(val OptInt) {
 }
 
 type CreateQuestionReq struct {
-	Title       string    `json:"title"`
-	Content     string    `json:"content"`
-	CreatedAt   time.Time `json:"created_at"`
-	Answers     []int     `json:"answers"`
-	Author      OptInt    `json:"author"`
-	Tags        []int     `json:"tags"`
-	QuestionTag []int     `json:"question_tag"`
+	Title     string    `json:"title"`
+	Content   string    `json:"content"`
+	CreatedAt time.Time `json:"created_at"`
+	Answers   []int     `json:"answers"`
+	Author    OptInt    `json:"author"`
+	Tags      []int     `json:"tags"`
 }
 
 // GetTitle returns the value of Title.
@@ -349,11 +348,6 @@ func (s *CreateQuestionReq) GetTags() []int {
 	return s.Tags
 }
 
-// GetQuestionTag returns the value of QuestionTag.
-func (s *CreateQuestionReq) GetQuestionTag() []int {
-	return s.QuestionTag
-}
-
 // SetTitle sets the value of Title.
 func (s *CreateQuestionReq) SetTitle(val string) {
 	s.Title = val
@@ -384,62 +378,9 @@ func (s *CreateQuestionReq) SetTags(val []int) {
 	s.Tags = val
 }
 
-// SetQuestionTag sets the value of QuestionTag.
-func (s *CreateQuestionReq) SetQuestionTag(val []int) {
-	s.QuestionTag = val
-}
-
-type CreateQuestionTagReq struct {
-	QuestionID int `json:"question_id"`
-	TagID      int `json:"tag_id"`
-	Question   int `json:"question"`
-	Tag        int `json:"tag"`
-}
-
-// GetQuestionID returns the value of QuestionID.
-func (s *CreateQuestionTagReq) GetQuestionID() int {
-	return s.QuestionID
-}
-
-// GetTagID returns the value of TagID.
-func (s *CreateQuestionTagReq) GetTagID() int {
-	return s.TagID
-}
-
-// GetQuestion returns the value of Question.
-func (s *CreateQuestionTagReq) GetQuestion() int {
-	return s.Question
-}
-
-// GetTag returns the value of Tag.
-func (s *CreateQuestionTagReq) GetTag() int {
-	return s.Tag
-}
-
-// SetQuestionID sets the value of QuestionID.
-func (s *CreateQuestionTagReq) SetQuestionID(val int) {
-	s.QuestionID = val
-}
-
-// SetTagID sets the value of TagID.
-func (s *CreateQuestionTagReq) SetTagID(val int) {
-	s.TagID = val
-}
-
-// SetQuestion sets the value of Question.
-func (s *CreateQuestionTagReq) SetQuestion(val int) {
-	s.Question = val
-}
-
-// SetTag sets the value of Tag.
-func (s *CreateQuestionTagReq) SetTag(val int) {
-	s.Tag = val
-}
-
 type CreateTagReq struct {
-	Name        string `json:"name"`
-	Questions   []int  `json:"questions"`
-	TagQuestion []int  `json:"tag_question"`
+	Name      string `json:"name"`
+	Questions []int  `json:"questions"`
 }
 
 // GetName returns the value of Name.
@@ -452,11 +393,6 @@ func (s *CreateTagReq) GetQuestions() []int {
 	return s.Questions
 }
 
-// GetTagQuestion returns the value of TagQuestion.
-func (s *CreateTagReq) GetTagQuestion() []int {
-	return s.TagQuestion
-}
-
 // SetName sets the value of Name.
 func (s *CreateTagReq) SetName(val string) {
 	s.Name = val
@@ -465,11 +401,6 @@ func (s *CreateTagReq) SetName(val string) {
 // SetQuestions sets the value of Questions.
 func (s *CreateTagReq) SetQuestions(val []int) {
 	s.Questions = val
-}
-
-// SetTagQuestion sets the value of TagQuestion.
-func (s *CreateTagReq) SetTagQuestion(val []int) {
-	s.TagQuestion = val
 }
 
 type CreateUserReq struct {
@@ -562,11 +493,6 @@ type DeleteQuestionNoContent struct{}
 
 func (*DeleteQuestionNoContent) deleteQuestionRes() {}
 
-// DeleteQuestionTagNoContent is response for DeleteQuestionTag operation.
-type DeleteQuestionTagNoContent struct{}
-
-func (*DeleteQuestionTagNoContent) deleteQuestionTagRes() {}
-
 // DeleteTagNoContent is response for DeleteTag operation.
 type DeleteTagNoContent struct{}
 
@@ -589,14 +515,6 @@ type ListQuestionOKApplicationJSON []QuestionList
 
 func (*ListQuestionOKApplicationJSON) listQuestionRes() {}
 
-type ListQuestionQuestionTagOKApplicationJSON []QuestionQuestionTagList
-
-func (*ListQuestionQuestionTagOKApplicationJSON) listQuestionQuestionTagRes() {}
-
-type ListQuestionTagOKApplicationJSON []QuestionTagList
-
-func (*ListQuestionTagOKApplicationJSON) listQuestionTagRes() {}
-
 type ListQuestionTagsOKApplicationJSON []QuestionTagsList
 
 func (*ListQuestionTagsOKApplicationJSON) listQuestionTagsRes() {}
@@ -608,10 +526,6 @@ func (*ListTagOKApplicationJSON) listTagRes() {}
 type ListTagQuestionsOKApplicationJSON []TagQuestionsList
 
 func (*ListTagQuestionsOKApplicationJSON) listTagQuestionsRes() {}
-
-type ListTagTagQuestionOKApplicationJSON []TagTagQuestionList
-
-func (*ListTagTagQuestionOKApplicationJSON) listTagTagQuestionRes() {}
 
 type ListUserAnswersOKApplicationJSON []UserAnswersList
 
@@ -906,43 +820,6 @@ func (s *QuestionList) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
-// Ref: #/components/schemas/Question_QuestionTagList
-type QuestionQuestionTagList struct {
-	ID         int `json:"id"`
-	QuestionID int `json:"question_id"`
-	TagID      int `json:"tag_id"`
-}
-
-// GetID returns the value of ID.
-func (s *QuestionQuestionTagList) GetID() int {
-	return s.ID
-}
-
-// GetQuestionID returns the value of QuestionID.
-func (s *QuestionQuestionTagList) GetQuestionID() int {
-	return s.QuestionID
-}
-
-// GetTagID returns the value of TagID.
-func (s *QuestionQuestionTagList) GetTagID() int {
-	return s.TagID
-}
-
-// SetID sets the value of ID.
-func (s *QuestionQuestionTagList) SetID(val int) {
-	s.ID = val
-}
-
-// SetQuestionID sets the value of QuestionID.
-func (s *QuestionQuestionTagList) SetQuestionID(val int) {
-	s.QuestionID = val
-}
-
-// SetTagID sets the value of TagID.
-func (s *QuestionQuestionTagList) SetTagID(val int) {
-	s.TagID = val
-}
-
 // Ref: #/components/schemas/QuestionRead
 type QuestionRead struct {
 	ID        int       `json:"id"`
@@ -992,238 +869,6 @@ func (s *QuestionRead) SetCreatedAt(val time.Time) {
 }
 
 func (*QuestionRead) readQuestionRes() {}
-
-// Ref: #/components/schemas/QuestionTagCreate
-type QuestionTagCreate struct {
-	ID         int `json:"id"`
-	QuestionID int `json:"question_id"`
-	TagID      int `json:"tag_id"`
-}
-
-// GetID returns the value of ID.
-func (s *QuestionTagCreate) GetID() int {
-	return s.ID
-}
-
-// GetQuestionID returns the value of QuestionID.
-func (s *QuestionTagCreate) GetQuestionID() int {
-	return s.QuestionID
-}
-
-// GetTagID returns the value of TagID.
-func (s *QuestionTagCreate) GetTagID() int {
-	return s.TagID
-}
-
-// SetID sets the value of ID.
-func (s *QuestionTagCreate) SetID(val int) {
-	s.ID = val
-}
-
-// SetQuestionID sets the value of QuestionID.
-func (s *QuestionTagCreate) SetQuestionID(val int) {
-	s.QuestionID = val
-}
-
-// SetTagID sets the value of TagID.
-func (s *QuestionTagCreate) SetTagID(val int) {
-	s.TagID = val
-}
-
-func (*QuestionTagCreate) createQuestionTagRes() {}
-
-// Ref: #/components/schemas/QuestionTagList
-type QuestionTagList struct {
-	ID         int `json:"id"`
-	QuestionID int `json:"question_id"`
-	TagID      int `json:"tag_id"`
-}
-
-// GetID returns the value of ID.
-func (s *QuestionTagList) GetID() int {
-	return s.ID
-}
-
-// GetQuestionID returns the value of QuestionID.
-func (s *QuestionTagList) GetQuestionID() int {
-	return s.QuestionID
-}
-
-// GetTagID returns the value of TagID.
-func (s *QuestionTagList) GetTagID() int {
-	return s.TagID
-}
-
-// SetID sets the value of ID.
-func (s *QuestionTagList) SetID(val int) {
-	s.ID = val
-}
-
-// SetQuestionID sets the value of QuestionID.
-func (s *QuestionTagList) SetQuestionID(val int) {
-	s.QuestionID = val
-}
-
-// SetTagID sets the value of TagID.
-func (s *QuestionTagList) SetTagID(val int) {
-	s.TagID = val
-}
-
-// Ref: #/components/schemas/QuestionTag_QuestionRead
-type QuestionTagQuestionRead struct {
-	ID        int       `json:"id"`
-	Title     string    `json:"title"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
-// GetID returns the value of ID.
-func (s *QuestionTagQuestionRead) GetID() int {
-	return s.ID
-}
-
-// GetTitle returns the value of Title.
-func (s *QuestionTagQuestionRead) GetTitle() string {
-	return s.Title
-}
-
-// GetContent returns the value of Content.
-func (s *QuestionTagQuestionRead) GetContent() string {
-	return s.Content
-}
-
-// GetCreatedAt returns the value of CreatedAt.
-func (s *QuestionTagQuestionRead) GetCreatedAt() time.Time {
-	return s.CreatedAt
-}
-
-// SetID sets the value of ID.
-func (s *QuestionTagQuestionRead) SetID(val int) {
-	s.ID = val
-}
-
-// SetTitle sets the value of Title.
-func (s *QuestionTagQuestionRead) SetTitle(val string) {
-	s.Title = val
-}
-
-// SetContent sets the value of Content.
-func (s *QuestionTagQuestionRead) SetContent(val string) {
-	s.Content = val
-}
-
-// SetCreatedAt sets the value of CreatedAt.
-func (s *QuestionTagQuestionRead) SetCreatedAt(val time.Time) {
-	s.CreatedAt = val
-}
-
-func (*QuestionTagQuestionRead) readQuestionTagQuestionRes() {}
-
-// Ref: #/components/schemas/QuestionTagRead
-type QuestionTagRead struct {
-	ID         int `json:"id"`
-	QuestionID int `json:"question_id"`
-	TagID      int `json:"tag_id"`
-}
-
-// GetID returns the value of ID.
-func (s *QuestionTagRead) GetID() int {
-	return s.ID
-}
-
-// GetQuestionID returns the value of QuestionID.
-func (s *QuestionTagRead) GetQuestionID() int {
-	return s.QuestionID
-}
-
-// GetTagID returns the value of TagID.
-func (s *QuestionTagRead) GetTagID() int {
-	return s.TagID
-}
-
-// SetID sets the value of ID.
-func (s *QuestionTagRead) SetID(val int) {
-	s.ID = val
-}
-
-// SetQuestionID sets the value of QuestionID.
-func (s *QuestionTagRead) SetQuestionID(val int) {
-	s.QuestionID = val
-}
-
-// SetTagID sets the value of TagID.
-func (s *QuestionTagRead) SetTagID(val int) {
-	s.TagID = val
-}
-
-func (*QuestionTagRead) readQuestionTagRes() {}
-
-// Ref: #/components/schemas/QuestionTag_TagRead
-type QuestionTagTagRead struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-// GetID returns the value of ID.
-func (s *QuestionTagTagRead) GetID() int {
-	return s.ID
-}
-
-// GetName returns the value of Name.
-func (s *QuestionTagTagRead) GetName() string {
-	return s.Name
-}
-
-// SetID sets the value of ID.
-func (s *QuestionTagTagRead) SetID(val int) {
-	s.ID = val
-}
-
-// SetName sets the value of Name.
-func (s *QuestionTagTagRead) SetName(val string) {
-	s.Name = val
-}
-
-func (*QuestionTagTagRead) readQuestionTagTagRes() {}
-
-// Ref: #/components/schemas/QuestionTagUpdate
-type QuestionTagUpdate struct {
-	ID         int `json:"id"`
-	QuestionID int `json:"question_id"`
-	TagID      int `json:"tag_id"`
-}
-
-// GetID returns the value of ID.
-func (s *QuestionTagUpdate) GetID() int {
-	return s.ID
-}
-
-// GetQuestionID returns the value of QuestionID.
-func (s *QuestionTagUpdate) GetQuestionID() int {
-	return s.QuestionID
-}
-
-// GetTagID returns the value of TagID.
-func (s *QuestionTagUpdate) GetTagID() int {
-	return s.TagID
-}
-
-// SetID sets the value of ID.
-func (s *QuestionTagUpdate) SetID(val int) {
-	s.ID = val
-}
-
-// SetQuestionID sets the value of QuestionID.
-func (s *QuestionTagUpdate) SetQuestionID(val int) {
-	s.QuestionID = val
-}
-
-// SetTagID sets the value of TagID.
-func (s *QuestionTagUpdate) SetTagID(val int) {
-	s.TagID = val
-}
-
-func (*QuestionTagUpdate) updateQuestionTagRes() {}
 
 // Ref: #/components/schemas/Question_TagsList
 type QuestionTagsList struct {
@@ -1337,44 +982,35 @@ func (s *R400) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
-func (*R400) createAnswerRes()            {}
-func (*R400) createQuestionRes()          {}
-func (*R400) createQuestionTagRes()       {}
-func (*R400) createTagRes()               {}
-func (*R400) createUserRes()              {}
-func (*R400) deleteAnswerRes()            {}
-func (*R400) deleteQuestionRes()          {}
-func (*R400) deleteQuestionTagRes()       {}
-func (*R400) deleteTagRes()               {}
-func (*R400) deleteUserRes()              {}
-func (*R400) listAnswerRes()              {}
-func (*R400) listQuestionAnswersRes()     {}
-func (*R400) listQuestionQuestionTagRes() {}
-func (*R400) listQuestionRes()            {}
-func (*R400) listQuestionTagRes()         {}
-func (*R400) listQuestionTagsRes()        {}
-func (*R400) listTagQuestionsRes()        {}
-func (*R400) listTagRes()                 {}
-func (*R400) listTagTagQuestionRes()      {}
-func (*R400) listUserAnswersRes()         {}
-func (*R400) listUserQuestionsRes()       {}
-func (*R400) listUserRes()                {}
-func (*R400) listUserTagsRes()            {}
-func (*R400) readAnswerAuthorRes()        {}
-func (*R400) readAnswerQuestionRes()      {}
-func (*R400) readAnswerRes()              {}
-func (*R400) readQuestionAuthorRes()      {}
-func (*R400) readQuestionRes()            {}
-func (*R400) readQuestionTagQuestionRes() {}
-func (*R400) readQuestionTagRes()         {}
-func (*R400) readQuestionTagTagRes()      {}
-func (*R400) readTagRes()                 {}
-func (*R400) readUserRes()                {}
-func (*R400) updateAnswerRes()            {}
-func (*R400) updateQuestionRes()          {}
-func (*R400) updateQuestionTagRes()       {}
-func (*R400) updateTagRes()               {}
-func (*R400) updateUserRes()              {}
+func (*R400) createAnswerRes()        {}
+func (*R400) createQuestionRes()      {}
+func (*R400) createTagRes()           {}
+func (*R400) createUserRes()          {}
+func (*R400) deleteAnswerRes()        {}
+func (*R400) deleteQuestionRes()      {}
+func (*R400) deleteTagRes()           {}
+func (*R400) deleteUserRes()          {}
+func (*R400) listAnswerRes()          {}
+func (*R400) listQuestionAnswersRes() {}
+func (*R400) listQuestionRes()        {}
+func (*R400) listQuestionTagsRes()    {}
+func (*R400) listTagQuestionsRes()    {}
+func (*R400) listTagRes()             {}
+func (*R400) listUserAnswersRes()     {}
+func (*R400) listUserQuestionsRes()   {}
+func (*R400) listUserRes()            {}
+func (*R400) listUserTagsRes()        {}
+func (*R400) readAnswerAuthorRes()    {}
+func (*R400) readAnswerQuestionRes()  {}
+func (*R400) readAnswerRes()          {}
+func (*R400) readQuestionAuthorRes()  {}
+func (*R400) readQuestionRes()        {}
+func (*R400) readTagRes()             {}
+func (*R400) readUserRes()            {}
+func (*R400) updateAnswerRes()        {}
+func (*R400) updateQuestionRes()      {}
+func (*R400) updateTagRes()           {}
+func (*R400) updateUserRes()          {}
 
 type R404 struct {
 	Code   int    `json:"code"`
@@ -1412,39 +1048,31 @@ func (s *R404) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
-func (*R404) deleteAnswerRes()            {}
-func (*R404) deleteQuestionRes()          {}
-func (*R404) deleteQuestionTagRes()       {}
-func (*R404) deleteTagRes()               {}
-func (*R404) deleteUserRes()              {}
-func (*R404) listAnswerRes()              {}
-func (*R404) listQuestionAnswersRes()     {}
-func (*R404) listQuestionQuestionTagRes() {}
-func (*R404) listQuestionRes()            {}
-func (*R404) listQuestionTagRes()         {}
-func (*R404) listQuestionTagsRes()        {}
-func (*R404) listTagQuestionsRes()        {}
-func (*R404) listTagRes()                 {}
-func (*R404) listTagTagQuestionRes()      {}
-func (*R404) listUserAnswersRes()         {}
-func (*R404) listUserQuestionsRes()       {}
-func (*R404) listUserRes()                {}
-func (*R404) listUserTagsRes()            {}
-func (*R404) readAnswerAuthorRes()        {}
-func (*R404) readAnswerQuestionRes()      {}
-func (*R404) readAnswerRes()              {}
-func (*R404) readQuestionAuthorRes()      {}
-func (*R404) readQuestionRes()            {}
-func (*R404) readQuestionTagQuestionRes() {}
-func (*R404) readQuestionTagRes()         {}
-func (*R404) readQuestionTagTagRes()      {}
-func (*R404) readTagRes()                 {}
-func (*R404) readUserRes()                {}
-func (*R404) updateAnswerRes()            {}
-func (*R404) updateQuestionRes()          {}
-func (*R404) updateQuestionTagRes()       {}
-func (*R404) updateTagRes()               {}
-func (*R404) updateUserRes()              {}
+func (*R404) deleteAnswerRes()        {}
+func (*R404) deleteQuestionRes()      {}
+func (*R404) deleteTagRes()           {}
+func (*R404) deleteUserRes()          {}
+func (*R404) listAnswerRes()          {}
+func (*R404) listQuestionAnswersRes() {}
+func (*R404) listQuestionRes()        {}
+func (*R404) listQuestionTagsRes()    {}
+func (*R404) listTagQuestionsRes()    {}
+func (*R404) listTagRes()             {}
+func (*R404) listUserAnswersRes()     {}
+func (*R404) listUserQuestionsRes()   {}
+func (*R404) listUserRes()            {}
+func (*R404) listUserTagsRes()        {}
+func (*R404) readAnswerAuthorRes()    {}
+func (*R404) readAnswerQuestionRes()  {}
+func (*R404) readAnswerRes()          {}
+func (*R404) readQuestionAuthorRes()  {}
+func (*R404) readQuestionRes()        {}
+func (*R404) readTagRes()             {}
+func (*R404) readUserRes()            {}
+func (*R404) updateAnswerRes()        {}
+func (*R404) updateQuestionRes()      {}
+func (*R404) updateTagRes()           {}
+func (*R404) updateUserRes()          {}
 
 type R409 struct {
 	Code   int    `json:"code"`
@@ -1482,44 +1110,35 @@ func (s *R409) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
-func (*R409) createAnswerRes()            {}
-func (*R409) createQuestionRes()          {}
-func (*R409) createQuestionTagRes()       {}
-func (*R409) createTagRes()               {}
-func (*R409) createUserRes()              {}
-func (*R409) deleteAnswerRes()            {}
-func (*R409) deleteQuestionRes()          {}
-func (*R409) deleteQuestionTagRes()       {}
-func (*R409) deleteTagRes()               {}
-func (*R409) deleteUserRes()              {}
-func (*R409) listAnswerRes()              {}
-func (*R409) listQuestionAnswersRes()     {}
-func (*R409) listQuestionQuestionTagRes() {}
-func (*R409) listQuestionRes()            {}
-func (*R409) listQuestionTagRes()         {}
-func (*R409) listQuestionTagsRes()        {}
-func (*R409) listTagQuestionsRes()        {}
-func (*R409) listTagRes()                 {}
-func (*R409) listTagTagQuestionRes()      {}
-func (*R409) listUserAnswersRes()         {}
-func (*R409) listUserQuestionsRes()       {}
-func (*R409) listUserRes()                {}
-func (*R409) listUserTagsRes()            {}
-func (*R409) readAnswerAuthorRes()        {}
-func (*R409) readAnswerQuestionRes()      {}
-func (*R409) readAnswerRes()              {}
-func (*R409) readQuestionAuthorRes()      {}
-func (*R409) readQuestionRes()            {}
-func (*R409) readQuestionTagQuestionRes() {}
-func (*R409) readQuestionTagRes()         {}
-func (*R409) readQuestionTagTagRes()      {}
-func (*R409) readTagRes()                 {}
-func (*R409) readUserRes()                {}
-func (*R409) updateAnswerRes()            {}
-func (*R409) updateQuestionRes()          {}
-func (*R409) updateQuestionTagRes()       {}
-func (*R409) updateTagRes()               {}
-func (*R409) updateUserRes()              {}
+func (*R409) createAnswerRes()        {}
+func (*R409) createQuestionRes()      {}
+func (*R409) createTagRes()           {}
+func (*R409) createUserRes()          {}
+func (*R409) deleteAnswerRes()        {}
+func (*R409) deleteQuestionRes()      {}
+func (*R409) deleteTagRes()           {}
+func (*R409) deleteUserRes()          {}
+func (*R409) listAnswerRes()          {}
+func (*R409) listQuestionAnswersRes() {}
+func (*R409) listQuestionRes()        {}
+func (*R409) listQuestionTagsRes()    {}
+func (*R409) listTagQuestionsRes()    {}
+func (*R409) listTagRes()             {}
+func (*R409) listUserAnswersRes()     {}
+func (*R409) listUserQuestionsRes()   {}
+func (*R409) listUserRes()            {}
+func (*R409) listUserTagsRes()        {}
+func (*R409) readAnswerAuthorRes()    {}
+func (*R409) readAnswerQuestionRes()  {}
+func (*R409) readAnswerRes()          {}
+func (*R409) readQuestionAuthorRes()  {}
+func (*R409) readQuestionRes()        {}
+func (*R409) readTagRes()             {}
+func (*R409) readUserRes()            {}
+func (*R409) updateAnswerRes()        {}
+func (*R409) updateQuestionRes()      {}
+func (*R409) updateTagRes()           {}
+func (*R409) updateUserRes()          {}
 
 type R500 struct {
 	Code   int    `json:"code"`
@@ -1557,44 +1176,35 @@ func (s *R500) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
-func (*R500) createAnswerRes()            {}
-func (*R500) createQuestionRes()          {}
-func (*R500) createQuestionTagRes()       {}
-func (*R500) createTagRes()               {}
-func (*R500) createUserRes()              {}
-func (*R500) deleteAnswerRes()            {}
-func (*R500) deleteQuestionRes()          {}
-func (*R500) deleteQuestionTagRes()       {}
-func (*R500) deleteTagRes()               {}
-func (*R500) deleteUserRes()              {}
-func (*R500) listAnswerRes()              {}
-func (*R500) listQuestionAnswersRes()     {}
-func (*R500) listQuestionQuestionTagRes() {}
-func (*R500) listQuestionRes()            {}
-func (*R500) listQuestionTagRes()         {}
-func (*R500) listQuestionTagsRes()        {}
-func (*R500) listTagQuestionsRes()        {}
-func (*R500) listTagRes()                 {}
-func (*R500) listTagTagQuestionRes()      {}
-func (*R500) listUserAnswersRes()         {}
-func (*R500) listUserQuestionsRes()       {}
-func (*R500) listUserRes()                {}
-func (*R500) listUserTagsRes()            {}
-func (*R500) readAnswerAuthorRes()        {}
-func (*R500) readAnswerQuestionRes()      {}
-func (*R500) readAnswerRes()              {}
-func (*R500) readQuestionAuthorRes()      {}
-func (*R500) readQuestionRes()            {}
-func (*R500) readQuestionTagQuestionRes() {}
-func (*R500) readQuestionTagRes()         {}
-func (*R500) readQuestionTagTagRes()      {}
-func (*R500) readTagRes()                 {}
-func (*R500) readUserRes()                {}
-func (*R500) updateAnswerRes()            {}
-func (*R500) updateQuestionRes()          {}
-func (*R500) updateQuestionTagRes()       {}
-func (*R500) updateTagRes()               {}
-func (*R500) updateUserRes()              {}
+func (*R500) createAnswerRes()        {}
+func (*R500) createQuestionRes()      {}
+func (*R500) createTagRes()           {}
+func (*R500) createUserRes()          {}
+func (*R500) deleteAnswerRes()        {}
+func (*R500) deleteQuestionRes()      {}
+func (*R500) deleteTagRes()           {}
+func (*R500) deleteUserRes()          {}
+func (*R500) listAnswerRes()          {}
+func (*R500) listQuestionAnswersRes() {}
+func (*R500) listQuestionRes()        {}
+func (*R500) listQuestionTagsRes()    {}
+func (*R500) listTagQuestionsRes()    {}
+func (*R500) listTagRes()             {}
+func (*R500) listUserAnswersRes()     {}
+func (*R500) listUserQuestionsRes()   {}
+func (*R500) listUserRes()            {}
+func (*R500) listUserTagsRes()        {}
+func (*R500) readAnswerAuthorRes()    {}
+func (*R500) readAnswerQuestionRes()  {}
+func (*R500) readAnswerRes()          {}
+func (*R500) readQuestionAuthorRes()  {}
+func (*R500) readQuestionRes()        {}
+func (*R500) readTagRes()             {}
+func (*R500) readUserRes()            {}
+func (*R500) updateAnswerRes()        {}
+func (*R500) updateQuestionRes()      {}
+func (*R500) updateTagRes()           {}
+func (*R500) updateUserRes()          {}
 
 // Ref: #/components/schemas/TagCreate
 type TagCreate struct {
@@ -1726,43 +1336,6 @@ func (s *TagRead) SetName(val string) {
 
 func (*TagRead) readTagRes() {}
 
-// Ref: #/components/schemas/Tag_TagQuestionList
-type TagTagQuestionList struct {
-	ID         int `json:"id"`
-	QuestionID int `json:"question_id"`
-	TagID      int `json:"tag_id"`
-}
-
-// GetID returns the value of ID.
-func (s *TagTagQuestionList) GetID() int {
-	return s.ID
-}
-
-// GetQuestionID returns the value of QuestionID.
-func (s *TagTagQuestionList) GetQuestionID() int {
-	return s.QuestionID
-}
-
-// GetTagID returns the value of TagID.
-func (s *TagTagQuestionList) GetTagID() int {
-	return s.TagID
-}
-
-// SetID sets the value of ID.
-func (s *TagTagQuestionList) SetID(val int) {
-	s.ID = val
-}
-
-// SetQuestionID sets the value of QuestionID.
-func (s *TagTagQuestionList) SetQuestionID(val int) {
-	s.QuestionID = val
-}
-
-// SetTagID sets the value of TagID.
-func (s *TagTagQuestionList) SetTagID(val int) {
-	s.TagID = val
-}
-
 // Ref: #/components/schemas/TagUpdate
 type TagUpdate struct {
 	ID   int    `json:"id"`
@@ -1828,12 +1401,11 @@ func (s *UpdateAnswerReq) SetAuthor(val OptInt) {
 }
 
 type UpdateQuestionReq struct {
-	Title       OptString `json:"title"`
-	Content     OptString `json:"content"`
-	Answers     []int     `json:"answers"`
-	Author      OptInt    `json:"author"`
-	Tags        []int     `json:"tags"`
-	QuestionTag []int     `json:"question_tag"`
+	Title   OptString `json:"title"`
+	Content OptString `json:"content"`
+	Answers []int     `json:"answers"`
+	Author  OptInt    `json:"author"`
+	Tags    []int     `json:"tags"`
 }
 
 // GetTitle returns the value of Title.
@@ -1861,11 +1433,6 @@ func (s *UpdateQuestionReq) GetTags() []int {
 	return s.Tags
 }
 
-// GetQuestionTag returns the value of QuestionTag.
-func (s *UpdateQuestionReq) GetQuestionTag() []int {
-	return s.QuestionTag
-}
-
 // SetTitle sets the value of Title.
 func (s *UpdateQuestionReq) SetTitle(val OptString) {
 	s.Title = val
@@ -1891,62 +1458,9 @@ func (s *UpdateQuestionReq) SetTags(val []int) {
 	s.Tags = val
 }
 
-// SetQuestionTag sets the value of QuestionTag.
-func (s *UpdateQuestionReq) SetQuestionTag(val []int) {
-	s.QuestionTag = val
-}
-
-type UpdateQuestionTagReq struct {
-	QuestionID OptInt `json:"question_id"`
-	TagID      OptInt `json:"tag_id"`
-	Question   OptInt `json:"question"`
-	Tag        OptInt `json:"tag"`
-}
-
-// GetQuestionID returns the value of QuestionID.
-func (s *UpdateQuestionTagReq) GetQuestionID() OptInt {
-	return s.QuestionID
-}
-
-// GetTagID returns the value of TagID.
-func (s *UpdateQuestionTagReq) GetTagID() OptInt {
-	return s.TagID
-}
-
-// GetQuestion returns the value of Question.
-func (s *UpdateQuestionTagReq) GetQuestion() OptInt {
-	return s.Question
-}
-
-// GetTag returns the value of Tag.
-func (s *UpdateQuestionTagReq) GetTag() OptInt {
-	return s.Tag
-}
-
-// SetQuestionID sets the value of QuestionID.
-func (s *UpdateQuestionTagReq) SetQuestionID(val OptInt) {
-	s.QuestionID = val
-}
-
-// SetTagID sets the value of TagID.
-func (s *UpdateQuestionTagReq) SetTagID(val OptInt) {
-	s.TagID = val
-}
-
-// SetQuestion sets the value of Question.
-func (s *UpdateQuestionTagReq) SetQuestion(val OptInt) {
-	s.Question = val
-}
-
-// SetTag sets the value of Tag.
-func (s *UpdateQuestionTagReq) SetTag(val OptInt) {
-	s.Tag = val
-}
-
 type UpdateTagReq struct {
-	Name        OptString `json:"name"`
-	Questions   []int     `json:"questions"`
-	TagQuestion []int     `json:"tag_question"`
+	Name      OptString `json:"name"`
+	Questions []int     `json:"questions"`
 }
 
 // GetName returns the value of Name.
@@ -1959,11 +1473,6 @@ func (s *UpdateTagReq) GetQuestions() []int {
 	return s.Questions
 }
 
-// GetTagQuestion returns the value of TagQuestion.
-func (s *UpdateTagReq) GetTagQuestion() []int {
-	return s.TagQuestion
-}
-
 // SetName sets the value of Name.
 func (s *UpdateTagReq) SetName(val OptString) {
 	s.Name = val
@@ -1972,11 +1481,6 @@ func (s *UpdateTagReq) SetName(val OptString) {
 // SetQuestions sets the value of Questions.
 func (s *UpdateTagReq) SetQuestions(val []int) {
 	s.Questions = val
-}
-
-// SetTagQuestion sets the value of TagQuestion.
-func (s *UpdateTagReq) SetTagQuestion(val []int) {
-	s.TagQuestion = val
 }
 
 type UpdateUserReq struct {

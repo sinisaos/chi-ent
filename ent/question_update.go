@@ -13,7 +13,6 @@ import (
 	"github.com/sinisaos/chi-ent/ent/answer"
 	"github.com/sinisaos/chi-ent/ent/predicate"
 	"github.com/sinisaos/chi-ent/ent/question"
-	"github.com/sinisaos/chi-ent/ent/questiontag"
 	"github.com/sinisaos/chi-ent/ent/tag"
 	"github.com/sinisaos/chi-ent/ent/user"
 )
@@ -92,21 +91,6 @@ func (qu *QuestionUpdate) AddTags(t ...*Tag) *QuestionUpdate {
 	return qu.AddTagIDs(ids...)
 }
 
-// AddQuestionTagIDs adds the "question_tag" edge to the QuestionTag entity by IDs.
-func (qu *QuestionUpdate) AddQuestionTagIDs(ids ...int) *QuestionUpdate {
-	qu.mutation.AddQuestionTagIDs(ids...)
-	return qu
-}
-
-// AddQuestionTag adds the "question_tag" edges to the QuestionTag entity.
-func (qu *QuestionUpdate) AddQuestionTag(q ...*QuestionTag) *QuestionUpdate {
-	ids := make([]int, len(q))
-	for i := range q {
-		ids[i] = q[i].ID
-	}
-	return qu.AddQuestionTagIDs(ids...)
-}
-
 // Mutation returns the QuestionMutation object of the builder.
 func (qu *QuestionUpdate) Mutation() *QuestionMutation {
 	return qu.mutation
@@ -158,27 +142,6 @@ func (qu *QuestionUpdate) RemoveTags(t ...*Tag) *QuestionUpdate {
 		ids[i] = t[i].ID
 	}
 	return qu.RemoveTagIDs(ids...)
-}
-
-// ClearQuestionTag clears all "question_tag" edges to the QuestionTag entity.
-func (qu *QuestionUpdate) ClearQuestionTag() *QuestionUpdate {
-	qu.mutation.ClearQuestionTag()
-	return qu
-}
-
-// RemoveQuestionTagIDs removes the "question_tag" edge to QuestionTag entities by IDs.
-func (qu *QuestionUpdate) RemoveQuestionTagIDs(ids ...int) *QuestionUpdate {
-	qu.mutation.RemoveQuestionTagIDs(ids...)
-	return qu
-}
-
-// RemoveQuestionTag removes "question_tag" edges to QuestionTag entities.
-func (qu *QuestionUpdate) RemoveQuestionTag(q ...*QuestionTag) *QuestionUpdate {
-	ids := make([]int, len(q))
-	for i := range q {
-		ids[i] = q[i].ID
-	}
-	return qu.RemoveQuestionTagIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -300,7 +263,7 @@ func (qu *QuestionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if qu.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   question.TagsTable,
 			Columns: question.TagsPrimaryKey,
 			Bidi:    false,
@@ -313,7 +276,7 @@ func (qu *QuestionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if nodes := qu.mutation.RemovedTagsIDs(); len(nodes) > 0 && !qu.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   question.TagsTable,
 			Columns: question.TagsPrimaryKey,
 			Bidi:    false,
@@ -329,57 +292,12 @@ func (qu *QuestionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if nodes := qu.mutation.TagsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   question.TagsTable,
 			Columns: question.TagsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if qu.mutation.QuestionTagCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   question.QuestionTagTable,
-			Columns: []string{question.QuestionTagColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := qu.mutation.RemovedQuestionTagIDs(); len(nodes) > 0 && !qu.mutation.QuestionTagCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   question.QuestionTagTable,
-			Columns: []string{question.QuestionTagColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := qu.mutation.QuestionTagIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   question.QuestionTagTable,
-			Columns: []string{question.QuestionTagColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -468,21 +386,6 @@ func (quo *QuestionUpdateOne) AddTags(t ...*Tag) *QuestionUpdateOne {
 	return quo.AddTagIDs(ids...)
 }
 
-// AddQuestionTagIDs adds the "question_tag" edge to the QuestionTag entity by IDs.
-func (quo *QuestionUpdateOne) AddQuestionTagIDs(ids ...int) *QuestionUpdateOne {
-	quo.mutation.AddQuestionTagIDs(ids...)
-	return quo
-}
-
-// AddQuestionTag adds the "question_tag" edges to the QuestionTag entity.
-func (quo *QuestionUpdateOne) AddQuestionTag(q ...*QuestionTag) *QuestionUpdateOne {
-	ids := make([]int, len(q))
-	for i := range q {
-		ids[i] = q[i].ID
-	}
-	return quo.AddQuestionTagIDs(ids...)
-}
-
 // Mutation returns the QuestionMutation object of the builder.
 func (quo *QuestionUpdateOne) Mutation() *QuestionMutation {
 	return quo.mutation
@@ -534,27 +437,6 @@ func (quo *QuestionUpdateOne) RemoveTags(t ...*Tag) *QuestionUpdateOne {
 		ids[i] = t[i].ID
 	}
 	return quo.RemoveTagIDs(ids...)
-}
-
-// ClearQuestionTag clears all "question_tag" edges to the QuestionTag entity.
-func (quo *QuestionUpdateOne) ClearQuestionTag() *QuestionUpdateOne {
-	quo.mutation.ClearQuestionTag()
-	return quo
-}
-
-// RemoveQuestionTagIDs removes the "question_tag" edge to QuestionTag entities by IDs.
-func (quo *QuestionUpdateOne) RemoveQuestionTagIDs(ids ...int) *QuestionUpdateOne {
-	quo.mutation.RemoveQuestionTagIDs(ids...)
-	return quo
-}
-
-// RemoveQuestionTag removes "question_tag" edges to QuestionTag entities.
-func (quo *QuestionUpdateOne) RemoveQuestionTag(q ...*QuestionTag) *QuestionUpdateOne {
-	ids := make([]int, len(q))
-	for i := range q {
-		ids[i] = q[i].ID
-	}
-	return quo.RemoveQuestionTagIDs(ids...)
 }
 
 // Where appends a list predicates to the QuestionUpdate builder.
@@ -706,7 +588,7 @@ func (quo *QuestionUpdateOne) sqlSave(ctx context.Context) (_node *Question, err
 	if quo.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   question.TagsTable,
 			Columns: question.TagsPrimaryKey,
 			Bidi:    false,
@@ -719,7 +601,7 @@ func (quo *QuestionUpdateOne) sqlSave(ctx context.Context) (_node *Question, err
 	if nodes := quo.mutation.RemovedTagsIDs(); len(nodes) > 0 && !quo.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   question.TagsTable,
 			Columns: question.TagsPrimaryKey,
 			Bidi:    false,
@@ -735,57 +617,12 @@ func (quo *QuestionUpdateOne) sqlSave(ctx context.Context) (_node *Question, err
 	if nodes := quo.mutation.TagsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   question.TagsTable,
 			Columns: question.TagsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if quo.mutation.QuestionTagCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   question.QuestionTagTable,
-			Columns: []string{question.QuestionTagColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := quo.mutation.RemovedQuestionTagIDs(); len(nodes) > 0 && !quo.mutation.QuestionTagCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   question.QuestionTagTable,
-			Columns: []string{question.QuestionTagColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := quo.mutation.QuestionTagIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   question.QuestionTagTable,
-			Columns: []string{question.QuestionTagColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

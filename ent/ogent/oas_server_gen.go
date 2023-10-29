@@ -20,12 +20,6 @@ type Handler interface {
 	//
 	// POST /questions
 	CreateQuestion(ctx context.Context, req *CreateQuestionReq) (CreateQuestionRes, error)
-	// CreateQuestionTag implements createQuestionTag operation.
-	//
-	// Creates a new QuestionTag and persists it to storage.
-	//
-	// POST /question-tags
-	CreateQuestionTag(ctx context.Context, req *CreateQuestionTagReq) (CreateQuestionTagRes, error)
 	// CreateTag implements createTag operation.
 	//
 	// Creates a new Tag and persists it to storage.
@@ -50,12 +44,6 @@ type Handler interface {
 	//
 	// DELETE /questions/{id}
 	DeleteQuestion(ctx context.Context, params DeleteQuestionParams) (DeleteQuestionRes, error)
-	// DeleteQuestionTag implements deleteQuestionTag operation.
-	//
-	// Deletes the QuestionTag with the requested ID.
-	//
-	// DELETE /question-tags/{id}
-	DeleteQuestionTag(ctx context.Context, params DeleteQuestionTagParams) (DeleteQuestionTagRes, error)
 	// DeleteTag implements deleteTag operation.
 	//
 	// Deletes the Tag with the requested ID.
@@ -86,18 +74,6 @@ type Handler interface {
 	//
 	// GET /questions/{id}/answers
 	ListQuestionAnswers(ctx context.Context, params ListQuestionAnswersParams) (ListQuestionAnswersRes, error)
-	// ListQuestionQuestionTag implements listQuestionQuestionTag operation.
-	//
-	// List attached QuestionTags.
-	//
-	// GET /questions/{id}/question-tag
-	ListQuestionQuestionTag(ctx context.Context, params ListQuestionQuestionTagParams) (ListQuestionQuestionTagRes, error)
-	// ListQuestionTag implements listQuestionTag operation.
-	//
-	// List QuestionTags.
-	//
-	// GET /question-tags
-	ListQuestionTag(ctx context.Context, params ListQuestionTagParams) (ListQuestionTagRes, error)
 	// ListQuestionTags implements listQuestionTags operation.
 	//
 	// List attached Tags.
@@ -116,12 +92,6 @@ type Handler interface {
 	//
 	// GET /tags/{id}/questions
 	ListTagQuestions(ctx context.Context, params ListTagQuestionsParams) (ListTagQuestionsRes, error)
-	// ListTagTagQuestion implements listTagTagQuestion operation.
-	//
-	// List attached TagQuestions.
-	//
-	// GET /tags/{id}/tag-question
-	ListTagTagQuestion(ctx context.Context, params ListTagTagQuestionParams) (ListTagTagQuestionRes, error)
 	// ListUser implements listUser operation.
 	//
 	// List Users.
@@ -176,24 +146,6 @@ type Handler interface {
 	//
 	// GET /questions/{id}/author
 	ReadQuestionAuthor(ctx context.Context, params ReadQuestionAuthorParams) (ReadQuestionAuthorRes, error)
-	// ReadQuestionTag implements readQuestionTag operation.
-	//
-	// Finds the QuestionTag with the requested ID and returns it.
-	//
-	// GET /question-tags/{id}
-	ReadQuestionTag(ctx context.Context, params ReadQuestionTagParams) (ReadQuestionTagRes, error)
-	// ReadQuestionTagQuestion implements readQuestionTagQuestion operation.
-	//
-	// Find the attached Question of the QuestionTag with the given ID.
-	//
-	// GET /question-tags/{id}/question
-	ReadQuestionTagQuestion(ctx context.Context, params ReadQuestionTagQuestionParams) (ReadQuestionTagQuestionRes, error)
-	// ReadQuestionTagTag implements readQuestionTagTag operation.
-	//
-	// Find the attached Tag of the QuestionTag with the given ID.
-	//
-	// GET /question-tags/{id}/tag
-	ReadQuestionTagTag(ctx context.Context, params ReadQuestionTagTagParams) (ReadQuestionTagTagRes, error)
 	// ReadTag implements readTag operation.
 	//
 	// Finds the Tag with the requested ID and returns it.
@@ -218,12 +170,6 @@ type Handler interface {
 	//
 	// PATCH /questions/{id}
 	UpdateQuestion(ctx context.Context, req *UpdateQuestionReq, params UpdateQuestionParams) (UpdateQuestionRes, error)
-	// UpdateQuestionTag implements updateQuestionTag operation.
-	//
-	// Updates a QuestionTag and persists changes to storage.
-	//
-	// PATCH /question-tags/{id}
-	UpdateQuestionTag(ctx context.Context, req *UpdateQuestionTagReq, params UpdateQuestionTagParams) (UpdateQuestionTagRes, error)
 	// UpdateTag implements updateTag operation.
 	//
 	// Updates a Tag and persists changes to storage.

@@ -57,7 +57,7 @@ func SetupRoutes(app chi.Router) {
 		app.Get("/questions/{id}/tags", questionHandler.GetQuestionTagsHandler)
 		app.Group(func(r chi.Router) {
 			r.Use(middleware.AuthMiddleware)
-			r.Patch("/questions", questionHandler.CreateQuestionHandler)
+			r.Post("/questions", questionHandler.CreateQuestionHandler)
 			r.Patch("/questions/{id}", questionHandler.UpdateQuestionHandler)
 			r.Delete("/questions/{id}", questionHandler.DeleteQuestionHandler)
 		})
@@ -71,7 +71,7 @@ func SetupRoutes(app chi.Router) {
 		app.Get("/answers/{id}/question", answerHandler.GetAnswerQuestionHandler)
 		app.Group(func(r chi.Router) {
 			r.Use(middleware.AuthMiddleware)
-			r.Patch("/answers", answerHandler.CreateAnswerHandler)
+			r.Post("/answers", answerHandler.CreateAnswerHandler)
 			r.Patch("/answers/{id}", answerHandler.UpdateAnswerHandler)
 			r.Delete("/answers/{id}", answerHandler.DeleteAnswerHandler)
 		})
@@ -84,8 +84,8 @@ func SetupRoutes(app chi.Router) {
 		app.Get("/tags/{id}/question", tagHandler.GetTagQuestionHandler)
 		app.Group(func(r chi.Router) {
 			r.Use(middleware.AuthMiddleware)
-			r.Patch("/tags", tagHandler.CreateTagHandler)
-			r.Patch("/tags/id}", tagHandler.UpdateTagHandler)
+			r.Post("/tags", tagHandler.CreateTagHandler)
+			r.Patch("/tags/{id}", tagHandler.UpdateTagHandler)
 			r.Delete("/tags/{id}", tagHandler.DeleteTagHandler)
 		})
 	})

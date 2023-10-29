@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/sinisaos/chi-ent/ent/answer"
 	"github.com/sinisaos/chi-ent/ent/question"
-	"github.com/sinisaos/chi-ent/ent/questiontag"
 	"github.com/sinisaos/chi-ent/ent/tag"
 	"github.com/sinisaos/chi-ent/ent/user"
 )
@@ -97,21 +96,6 @@ func (qc *QuestionCreate) AddTags(t ...*Tag) *QuestionCreate {
 		ids[i] = t[i].ID
 	}
 	return qc.AddTagIDs(ids...)
-}
-
-// AddQuestionTagIDs adds the "question_tag" edge to the QuestionTag entity by IDs.
-func (qc *QuestionCreate) AddQuestionTagIDs(ids ...int) *QuestionCreate {
-	qc.mutation.AddQuestionTagIDs(ids...)
-	return qc
-}
-
-// AddQuestionTag adds the "question_tag" edges to the QuestionTag entity.
-func (qc *QuestionCreate) AddQuestionTag(q ...*QuestionTag) *QuestionCreate {
-	ids := make([]int, len(q))
-	for i := range q {
-		ids[i] = q[i].ID
-	}
-	return qc.AddQuestionTagIDs(ids...)
 }
 
 // Mutation returns the QuestionMutation object of the builder.
@@ -240,28 +224,12 @@ func (qc *QuestionCreate) createSpec() (*Question, *sqlgraph.CreateSpec) {
 	if nodes := qc.mutation.TagsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   question.TagsTable,
 			Columns: question.TagsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := qc.mutation.QuestionTagIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   question.QuestionTagTable,
-			Columns: []string{question.QuestionTagColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(questiontag.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -29,11 +29,9 @@ type Tag struct {
 type TagEdges struct {
 	// Questions holds the value of the questions edge.
 	Questions []*Question `json:"questions,omitempty"`
-	// TagQuestion holds the value of the tag_question edge.
-	TagQuestion []*QuestionTag `json:"tag_question,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [1]bool
 }
 
 // QuestionsOrErr returns the Questions value or an error if the edge
@@ -43,15 +41,6 @@ func (e TagEdges) QuestionsOrErr() ([]*Question, error) {
 		return e.Questions, nil
 	}
 	return nil, &NotLoadedError{edge: "questions"}
-}
-
-// TagQuestionOrErr returns the TagQuestion value or an error if the edge
-// was not loaded in eager-loading.
-func (e TagEdges) TagQuestionOrErr() ([]*QuestionTag, error) {
-	if e.loadedTypes[1] {
-		return e.TagQuestion, nil
-	}
-	return nil, &NotLoadedError{edge: "tag_question"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -115,11 +104,6 @@ func (t *Tag) Value(name string) (ent.Value, error) {
 // QueryQuestions queries the "questions" edge of the Tag entity.
 func (t *Tag) QueryQuestions() *QuestionQuery {
 	return NewTagClient(t.config).QueryQuestions(t)
-}
-
-// QueryTagQuestion queries the "tag_question" edge of the Tag entity.
-func (t *Tag) QueryTagQuestion() *QuestionTagQuery {
-	return NewTagClient(t.config).QueryTagQuestion(t)
 }
 
 // Update returns a builder for updating this Tag.

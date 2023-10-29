@@ -9,10 +9,6 @@ type CreateQuestionRes interface {
 	createQuestionRes()
 }
 
-type CreateQuestionTagRes interface {
-	createQuestionTagRes()
-}
-
 type CreateTagRes interface {
 	createTagRes()
 }
@@ -27,10 +23,6 @@ type DeleteAnswerRes interface {
 
 type DeleteQuestionRes interface {
 	deleteQuestionRes()
-}
-
-type DeleteQuestionTagRes interface {
-	deleteQuestionTagRes()
 }
 
 type DeleteTagRes interface {
@@ -49,16 +41,8 @@ type ListQuestionAnswersRes interface {
 	listQuestionAnswersRes()
 }
 
-type ListQuestionQuestionTagRes interface {
-	listQuestionQuestionTagRes()
-}
-
 type ListQuestionRes interface {
 	listQuestionRes()
-}
-
-type ListQuestionTagRes interface {
-	listQuestionTagRes()
 }
 
 type ListQuestionTagsRes interface {
@@ -71,10 +55,6 @@ type ListTagQuestionsRes interface {
 
 type ListTagRes interface {
 	listTagRes()
-}
-
-type ListTagTagQuestionRes interface {
-	listTagTagQuestionRes()
 }
 
 type ListUserAnswersRes interface {
@@ -113,18 +93,6 @@ type ReadQuestionRes interface {
 	readQuestionRes()
 }
 
-type ReadQuestionTagQuestionRes interface {
-	readQuestionTagQuestionRes()
-}
-
-type ReadQuestionTagRes interface {
-	readQuestionTagRes()
-}
-
-type ReadQuestionTagTagRes interface {
-	readQuestionTagTagRes()
-}
-
 type ReadTagRes interface {
 	readTagRes()
 }
@@ -139,10 +107,6 @@ type UpdateAnswerRes interface {
 
 type UpdateQuestionRes interface {
 	updateQuestionRes()
-}
-
-type UpdateQuestionTagRes interface {
-	updateQuestionTagRes()
 }
 
 type UpdateTagRes interface {

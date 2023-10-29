@@ -171,32 +171,58 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 				}
-			case 'q': // Prefix: "question"
-				if l := len("question"); len(elem) >= l && elem[0:l] == "question" {
+			case 'q': // Prefix: "questions"
+				if l := len("questions"); len(elem) >= l && elem[0:l] == "questions" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					break
+					switch r.Method {
+					case "GET":
+						s.handleListQuestionRequest([0]string{}, elemIsEscaped, w, r)
+					case "POST":
+						s.handleCreateQuestionRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET,POST")
+					}
+
+					return
 				}
 				switch elem[0] {
-				case '-': // Prefix: "-tags"
-					if l := len("-tags"); len(elem) >= l && elem[0:l] == "-tags" {
+				case '/': // Prefix: "/"
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
+					// Param: "id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
+
 					if len(elem) == 0 {
 						switch r.Method {
+						case "DELETE":
+							s.handleDeleteQuestionRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
 						case "GET":
-							s.handleListQuestionTagRequest([0]string{}, elemIsEscaped, w, r)
-						case "POST":
-							s.handleCreateQuestionTagRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleReadQuestionRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						case "PATCH":
+							s.handleUpdateQuestionRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
 						default:
-							s.notAllowed(w, r, "GET,POST")
+							s.notAllowed(w, r, "DELETE,GET,PATCH")
 						}
 
 						return
@@ -209,149 +235,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							break
 						}
 
-						// Param: "id"
-						// Match until "/"
-						idx := strings.IndexByte(elem, '/')
-						if idx < 0 {
-							idx = len(elem)
-						}
-						args[0] = elem[:idx]
-						elem = elem[idx:]
-
 						if len(elem) == 0 {
-							switch r.Method {
-							case "DELETE":
-								s.handleDeleteQuestionTagRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							case "GET":
-								s.handleReadQuestionTagRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							case "PATCH":
-								s.handleUpdateQuestionTagRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "DELETE,GET,PATCH")
-							}
-
-							return
-						}
-						switch elem[0] {
-						case '/': // Prefix: "/"
-							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								break
-							}
-							switch elem[0] {
-							case 'q': // Prefix: "question"
-								if l := len("question"); len(elem) >= l && elem[0:l] == "question" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch r.Method {
-									case "GET":
-										s.handleReadQuestionTagQuestionRequest([1]string{
-											args[0],
-										}, elemIsEscaped, w, r)
-									default:
-										s.notAllowed(w, r, "GET")
-									}
-
-									return
-								}
-							case 't': // Prefix: "tag"
-								if l := len("tag"); len(elem) >= l && elem[0:l] == "tag" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch r.Method {
-									case "GET":
-										s.handleReadQuestionTagTagRequest([1]string{
-											args[0],
-										}, elemIsEscaped, w, r)
-									default:
-										s.notAllowed(w, r, "GET")
-									}
-
-									return
-								}
-							}
-						}
-					}
-				case 's': // Prefix: "s"
-					if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					if len(elem) == 0 {
-						switch r.Method {
-						case "GET":
-							s.handleListQuestionRequest([0]string{}, elemIsEscaped, w, r)
-						case "POST":
-							s.handleCreateQuestionRequest([0]string{}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "GET,POST")
-						}
-
-						return
-					}
-					switch elem[0] {
-					case '/': // Prefix: "/"
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-							elem = elem[l:]
-						} else {
 							break
 						}
-
-						// Param: "id"
-						// Match until "/"
-						idx := strings.IndexByte(elem, '/')
-						if idx < 0 {
-							idx = len(elem)
-						}
-						args[0] = elem[:idx]
-						elem = elem[idx:]
-
-						if len(elem) == 0 {
-							switch r.Method {
-							case "DELETE":
-								s.handleDeleteQuestionRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							case "GET":
-								s.handleReadQuestionRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							case "PATCH":
-								s.handleUpdateQuestionRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "DELETE,GET,PATCH")
-							}
-
-							return
-						}
 						switch elem[0] {
-						case '/': // Prefix: "/"
-							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						case 'a': // Prefix: "a"
+							if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
 								elem = elem[l:]
 							} else {
 								break
@@ -361,60 +250,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 								break
 							}
 							switch elem[0] {
-							case 'a': // Prefix: "a"
-								if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									break
-								}
-								switch elem[0] {
-								case 'n': // Prefix: "nswers"
-									if l := len("nswers"); len(elem) >= l && elem[0:l] == "nswers" {
-										elem = elem[l:]
-									} else {
-										break
-									}
-
-									if len(elem) == 0 {
-										// Leaf node.
-										switch r.Method {
-										case "GET":
-											s.handleListQuestionAnswersRequest([1]string{
-												args[0],
-											}, elemIsEscaped, w, r)
-										default:
-											s.notAllowed(w, r, "GET")
-										}
-
-										return
-									}
-								case 'u': // Prefix: "uthor"
-									if l := len("uthor"); len(elem) >= l && elem[0:l] == "uthor" {
-										elem = elem[l:]
-									} else {
-										break
-									}
-
-									if len(elem) == 0 {
-										// Leaf node.
-										switch r.Method {
-										case "GET":
-											s.handleReadQuestionAuthorRequest([1]string{
-												args[0],
-											}, elemIsEscaped, w, r)
-										default:
-											s.notAllowed(w, r, "GET")
-										}
-
-										return
-									}
-								}
-							case 'q': // Prefix: "question-tag"
-								if l := len("question-tag"); len(elem) >= l && elem[0:l] == "question-tag" {
+							case 'n': // Prefix: "nswers"
+								if l := len("nswers"); len(elem) >= l && elem[0:l] == "nswers" {
 									elem = elem[l:]
 								} else {
 									break
@@ -424,7 +261,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 									// Leaf node.
 									switch r.Method {
 									case "GET":
-										s.handleListQuestionQuestionTagRequest([1]string{
+										s.handleListQuestionAnswersRequest([1]string{
 											args[0],
 										}, elemIsEscaped, w, r)
 									default:
@@ -433,8 +270,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 									return
 								}
-							case 't': // Prefix: "tags"
-								if l := len("tags"); len(elem) >= l && elem[0:l] == "tags" {
+							case 'u': // Prefix: "uthor"
+								if l := len("uthor"); len(elem) >= l && elem[0:l] == "uthor" {
 									elem = elem[l:]
 								} else {
 									break
@@ -444,7 +281,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 									// Leaf node.
 									switch r.Method {
 									case "GET":
-										s.handleListQuestionTagsRequest([1]string{
+										s.handleReadQuestionAuthorRequest([1]string{
 											args[0],
 										}, elemIsEscaped, w, r)
 									default:
@@ -453,6 +290,26 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 									return
 								}
+							}
+						case 't': // Prefix: "tags"
+							if l := len("tags"); len(elem) >= l && elem[0:l] == "tags" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleListQuestionTagsRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
 							}
 						}
 					}
@@ -514,57 +371,25 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/"
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+					case '/': // Prefix: "/questions"
+						if l := len("/questions"); len(elem) >= l && elem[0:l] == "/questions" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							break
-						}
-						switch elem[0] {
-						case 'q': // Prefix: "questions"
-							if l := len("questions"); len(elem) >= l && elem[0:l] == "questions" {
-								elem = elem[l:]
-							} else {
-								break
+							// Leaf node.
+							switch r.Method {
+							case "GET":
+								s.handleListTagQuestionsRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "GET")
 							}
 
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "GET":
-									s.handleListTagQuestionsRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET")
-								}
-
-								return
-							}
-						case 't': // Prefix: "tag-question"
-							if l := len("tag-question"); len(elem) >= l && elem[0:l] == "tag-question" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "GET":
-									s.handleListTagTagQuestionRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET")
-								}
-
-								return
-							}
+							return
 						}
 					}
 				}
@@ -926,41 +751,77 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						}
 					}
 				}
-			case 'q': // Prefix: "question"
-				if l := len("question"); len(elem) >= l && elem[0:l] == "question" {
+			case 'q': // Prefix: "questions"
+				if l := len("questions"); len(elem) >= l && elem[0:l] == "questions" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					break
+					switch method {
+					case "GET":
+						r.name = "ListQuestion"
+						r.summary = "List Questions"
+						r.operationID = "listQuestion"
+						r.pathPattern = "/questions"
+						r.args = args
+						r.count = 0
+						return r, true
+					case "POST":
+						r.name = "CreateQuestion"
+						r.summary = "Create a new Question"
+						r.operationID = "createQuestion"
+						r.pathPattern = "/questions"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
 				}
 				switch elem[0] {
-				case '-': // Prefix: "-tags"
-					if l := len("-tags"); len(elem) >= l && elem[0:l] == "-tags" {
+				case '/': // Prefix: "/"
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
+					// Param: "id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
+
 					if len(elem) == 0 {
 						switch method {
-						case "GET":
-							r.name = "ListQuestionTag"
-							r.summary = "List QuestionTags"
-							r.operationID = "listQuestionTag"
-							r.pathPattern = "/question-tags"
+						case "DELETE":
+							r.name = "DeleteQuestion"
+							r.summary = "Deletes a Question by ID"
+							r.operationID = "deleteQuestion"
+							r.pathPattern = "/questions/{id}"
 							r.args = args
-							r.count = 0
+							r.count = 1
 							return r, true
-						case "POST":
-							r.name = "CreateQuestionTag"
-							r.summary = "Create a new QuestionTag"
-							r.operationID = "createQuestionTag"
-							r.pathPattern = "/question-tags"
+						case "GET":
+							r.name = "ReadQuestion"
+							r.summary = "Find a Question by ID"
+							r.operationID = "readQuestion"
+							r.pathPattern = "/questions/{id}"
 							r.args = args
-							r.count = 0
+							r.count = 1
+							return r, true
+						case "PATCH":
+							r.name = "UpdateQuestion"
+							r.summary = "Updates a Question"
+							r.operationID = "updateQuestion"
+							r.pathPattern = "/questions/{id}"
+							r.args = args
+							r.count = 1
 							return r, true
 						default:
 							return
@@ -974,183 +835,12 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							break
 						}
 
-						// Param: "id"
-						// Match until "/"
-						idx := strings.IndexByte(elem, '/')
-						if idx < 0 {
-							idx = len(elem)
-						}
-						args[0] = elem[:idx]
-						elem = elem[idx:]
-
 						if len(elem) == 0 {
-							switch method {
-							case "DELETE":
-								r.name = "DeleteQuestionTag"
-								r.summary = "Deletes a QuestionTag by ID"
-								r.operationID = "deleteQuestionTag"
-								r.pathPattern = "/question-tags/{id}"
-								r.args = args
-								r.count = 1
-								return r, true
-							case "GET":
-								r.name = "ReadQuestionTag"
-								r.summary = "Find a QuestionTag by ID"
-								r.operationID = "readQuestionTag"
-								r.pathPattern = "/question-tags/{id}"
-								r.args = args
-								r.count = 1
-								return r, true
-							case "PATCH":
-								r.name = "UpdateQuestionTag"
-								r.summary = "Updates a QuestionTag"
-								r.operationID = "updateQuestionTag"
-								r.pathPattern = "/question-tags/{id}"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
-							}
-						}
-						switch elem[0] {
-						case '/': // Prefix: "/"
-							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								break
-							}
-							switch elem[0] {
-							case 'q': // Prefix: "question"
-								if l := len("question"); len(elem) >= l && elem[0:l] == "question" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									switch method {
-									case "GET":
-										// Leaf: ReadQuestionTagQuestion
-										r.name = "ReadQuestionTagQuestion"
-										r.summary = "Find the attached Question"
-										r.operationID = "readQuestionTagQuestion"
-										r.pathPattern = "/question-tags/{id}/question"
-										r.args = args
-										r.count = 1
-										return r, true
-									default:
-										return
-									}
-								}
-							case 't': // Prefix: "tag"
-								if l := len("tag"); len(elem) >= l && elem[0:l] == "tag" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									switch method {
-									case "GET":
-										// Leaf: ReadQuestionTagTag
-										r.name = "ReadQuestionTagTag"
-										r.summary = "Find the attached Tag"
-										r.operationID = "readQuestionTagTag"
-										r.pathPattern = "/question-tags/{id}/tag"
-										r.args = args
-										r.count = 1
-										return r, true
-									default:
-										return
-									}
-								}
-							}
-						}
-					}
-				case 's': // Prefix: "s"
-					if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					if len(elem) == 0 {
-						switch method {
-						case "GET":
-							r.name = "ListQuestion"
-							r.summary = "List Questions"
-							r.operationID = "listQuestion"
-							r.pathPattern = "/questions"
-							r.args = args
-							r.count = 0
-							return r, true
-						case "POST":
-							r.name = "CreateQuestion"
-							r.summary = "Create a new Question"
-							r.operationID = "createQuestion"
-							r.pathPattern = "/questions"
-							r.args = args
-							r.count = 0
-							return r, true
-						default:
-							return
-						}
-					}
-					switch elem[0] {
-					case '/': // Prefix: "/"
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-							elem = elem[l:]
-						} else {
 							break
 						}
-
-						// Param: "id"
-						// Match until "/"
-						idx := strings.IndexByte(elem, '/')
-						if idx < 0 {
-							idx = len(elem)
-						}
-						args[0] = elem[:idx]
-						elem = elem[idx:]
-
-						if len(elem) == 0 {
-							switch method {
-							case "DELETE":
-								r.name = "DeleteQuestion"
-								r.summary = "Deletes a Question by ID"
-								r.operationID = "deleteQuestion"
-								r.pathPattern = "/questions/{id}"
-								r.args = args
-								r.count = 1
-								return r, true
-							case "GET":
-								r.name = "ReadQuestion"
-								r.summary = "Find a Question by ID"
-								r.operationID = "readQuestion"
-								r.pathPattern = "/questions/{id}"
-								r.args = args
-								r.count = 1
-								return r, true
-							case "PATCH":
-								r.name = "UpdateQuestion"
-								r.summary = "Updates a Question"
-								r.operationID = "updateQuestion"
-								r.pathPattern = "/questions/{id}"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
-							}
-						}
 						switch elem[0] {
-						case '/': // Prefix: "/"
-							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						case 'a': // Prefix: "a"
+							if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
 								elem = elem[l:]
 							} else {
 								break
@@ -1160,64 +850,8 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								break
 							}
 							switch elem[0] {
-							case 'a': // Prefix: "a"
-								if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									break
-								}
-								switch elem[0] {
-								case 'n': // Prefix: "nswers"
-									if l := len("nswers"); len(elem) >= l && elem[0:l] == "nswers" {
-										elem = elem[l:]
-									} else {
-										break
-									}
-
-									if len(elem) == 0 {
-										switch method {
-										case "GET":
-											// Leaf: ListQuestionAnswers
-											r.name = "ListQuestionAnswers"
-											r.summary = "List attached Answers"
-											r.operationID = "listQuestionAnswers"
-											r.pathPattern = "/questions/{id}/answers"
-											r.args = args
-											r.count = 1
-											return r, true
-										default:
-											return
-										}
-									}
-								case 'u': // Prefix: "uthor"
-									if l := len("uthor"); len(elem) >= l && elem[0:l] == "uthor" {
-										elem = elem[l:]
-									} else {
-										break
-									}
-
-									if len(elem) == 0 {
-										switch method {
-										case "GET":
-											// Leaf: ReadQuestionAuthor
-											r.name = "ReadQuestionAuthor"
-											r.summary = "Find the attached User"
-											r.operationID = "readQuestionAuthor"
-											r.pathPattern = "/questions/{id}/author"
-											r.args = args
-											r.count = 1
-											return r, true
-										default:
-											return
-										}
-									}
-								}
-							case 'q': // Prefix: "question-tag"
-								if l := len("question-tag"); len(elem) >= l && elem[0:l] == "question-tag" {
+							case 'n': // Prefix: "nswers"
+								if l := len("nswers"); len(elem) >= l && elem[0:l] == "nswers" {
 									elem = elem[l:]
 								} else {
 									break
@@ -1226,11 +860,11 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								if len(elem) == 0 {
 									switch method {
 									case "GET":
-										// Leaf: ListQuestionQuestionTag
-										r.name = "ListQuestionQuestionTag"
-										r.summary = "List attached QuestionTags"
-										r.operationID = "listQuestionQuestionTag"
-										r.pathPattern = "/questions/{id}/question-tag"
+										// Leaf: ListQuestionAnswers
+										r.name = "ListQuestionAnswers"
+										r.summary = "List attached Answers"
+										r.operationID = "listQuestionAnswers"
+										r.pathPattern = "/questions/{id}/answers"
 										r.args = args
 										r.count = 1
 										return r, true
@@ -1238,8 +872,8 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 										return
 									}
 								}
-							case 't': // Prefix: "tags"
-								if l := len("tags"); len(elem) >= l && elem[0:l] == "tags" {
+							case 'u': // Prefix: "uthor"
+								if l := len("uthor"); len(elem) >= l && elem[0:l] == "uthor" {
 									elem = elem[l:]
 								} else {
 									break
@@ -1248,17 +882,39 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								if len(elem) == 0 {
 									switch method {
 									case "GET":
-										// Leaf: ListQuestionTags
-										r.name = "ListQuestionTags"
-										r.summary = "List attached Tags"
-										r.operationID = "listQuestionTags"
-										r.pathPattern = "/questions/{id}/tags"
+										// Leaf: ReadQuestionAuthor
+										r.name = "ReadQuestionAuthor"
+										r.summary = "Find the attached User"
+										r.operationID = "readQuestionAuthor"
+										r.pathPattern = "/questions/{id}/author"
 										r.args = args
 										r.count = 1
 										return r, true
 									default:
 										return
 									}
+								}
+							}
+						case 't': // Prefix: "tags"
+							if l := len("tags"); len(elem) >= l && elem[0:l] == "tags" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								switch method {
+								case "GET":
+									// Leaf: ListQuestionTags
+									r.name = "ListQuestionTags"
+									r.summary = "List attached Tags"
+									r.operationID = "listQuestionTags"
+									r.pathPattern = "/questions/{id}/tags"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
 								}
 							}
 						}
@@ -1341,60 +997,26 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						}
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/"
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+					case '/': // Prefix: "/questions"
+						if l := len("/questions"); len(elem) >= l && elem[0:l] == "/questions" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							break
-						}
-						switch elem[0] {
-						case 'q': // Prefix: "questions"
-							if l := len("questions"); len(elem) >= l && elem[0:l] == "questions" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								switch method {
-								case "GET":
-									// Leaf: ListTagQuestions
-									r.name = "ListTagQuestions"
-									r.summary = "List attached Questions"
-									r.operationID = "listTagQuestions"
-									r.pathPattern = "/tags/{id}/questions"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
-							}
-						case 't': // Prefix: "tag-question"
-							if l := len("tag-question"); len(elem) >= l && elem[0:l] == "tag-question" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								switch method {
-								case "GET":
-									// Leaf: ListTagTagQuestion
-									r.name = "ListTagTagQuestion"
-									r.summary = "List attached TagQuestions"
-									r.operationID = "listTagTagQuestion"
-									r.pathPattern = "/tags/{id}/tag-question"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
+							switch method {
+							case "GET":
+								// Leaf: ListTagQuestions
+								r.name = "ListTagQuestions"
+								r.summary = "List attached Questions"
+								r.operationID = "listTagQuestions"
+								r.pathPattern = "/tags/{id}/questions"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
 							}
 						}
 					}

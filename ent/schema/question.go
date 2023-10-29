@@ -34,8 +34,8 @@ func (Question) Edges() []ent.Edge {
 			Annotations(entsql.OnDelete(entsql.Cascade)).
 			Ref("questions").
 			Unique(),
-		edge.To("tags", Tag.Type).
+		edge.From("tags", Tag.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)).
-			Through("question_tag", QuestionTag.Type),
+			Ref("questions"),
 	}
 }

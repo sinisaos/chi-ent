@@ -128,7 +128,7 @@ func HasQuestions() predicate.Tag {
 	return predicate.Tag(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, QuestionsTable, QuestionsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, QuestionsTable, QuestionsPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -138,29 +138,6 @@ func HasQuestions() predicate.Tag {
 func HasQuestionsWith(preds ...predicate.Question) predicate.Tag {
 	return predicate.Tag(func(s *sql.Selector) {
 		step := newQuestionsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasTagQuestion applies the HasEdge predicate on the "tag_question" edge.
-func HasTagQuestion() predicate.Tag {
-	return predicate.Tag(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, TagQuestionTable, TagQuestionColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasTagQuestionWith applies the HasEdge predicate on the "tag_question" edge with a given conditions (other predicates).
-func HasTagQuestionWith(preds ...predicate.QuestionTag) predicate.Tag {
-	return predicate.Tag(func(s *sql.Selector) {
-		step := newTagQuestionStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

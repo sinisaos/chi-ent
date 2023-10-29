@@ -14,7 +14,6 @@ import (
 	"github.com/sinisaos/chi-ent/ent/answer"
 	"github.com/sinisaos/chi-ent/ent/predicate"
 	"github.com/sinisaos/chi-ent/ent/question"
-	"github.com/sinisaos/chi-ent/ent/questiontag"
 	"github.com/sinisaos/chi-ent/ent/tag"
 	"github.com/sinisaos/chi-ent/ent/user"
 )
@@ -28,11 +27,10 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAnswer      = "Answer"
-	TypeQuestion    = "Question"
-	TypeQuestionTag = "QuestionTag"
-	TypeTag         = "Tag"
-	TypeUser        = "User"
+	TypeAnswer   = "Answer"
+	TypeQuestion = "Question"
+	TypeTag      = "Tag"
+	TypeUser     = "User"
 )
 
 // AnswerMutation represents an operation that mutates the Answer nodes in the graph.
@@ -544,27 +542,24 @@ func (m *AnswerMutation) ResetEdge(name string) error {
 // QuestionMutation represents an operation that mutates the Question nodes in the graph.
 type QuestionMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int
-	title               *string
-	content             *string
-	created_at          *time.Time
-	clearedFields       map[string]struct{}
-	answers             map[int]struct{}
-	removedanswers      map[int]struct{}
-	clearedanswers      bool
-	author              *int
-	clearedauthor       bool
-	tags                map[int]struct{}
-	removedtags         map[int]struct{}
-	clearedtags         bool
-	question_tag        map[int]struct{}
-	removedquestion_tag map[int]struct{}
-	clearedquestion_tag bool
-	done                bool
-	oldValue            func(context.Context) (*Question, error)
-	predicates          []predicate.Question
+	op             Op
+	typ            string
+	id             *int
+	title          *string
+	content        *string
+	created_at     *time.Time
+	clearedFields  map[string]struct{}
+	answers        map[int]struct{}
+	removedanswers map[int]struct{}
+	clearedanswers bool
+	author         *int
+	clearedauthor  bool
+	tags           map[int]struct{}
+	removedtags    map[int]struct{}
+	clearedtags    bool
+	done           bool
+	oldValue       func(context.Context) (*Question, error)
+	predicates     []predicate.Question
 }
 
 var _ ent.Mutation = (*QuestionMutation)(nil)
@@ -920,60 +915,6 @@ func (m *QuestionMutation) ResetTags() {
 	m.removedtags = nil
 }
 
-// AddQuestionTagIDs adds the "question_tag" edge to the QuestionTag entity by ids.
-func (m *QuestionMutation) AddQuestionTagIDs(ids ...int) {
-	if m.question_tag == nil {
-		m.question_tag = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.question_tag[ids[i]] = struct{}{}
-	}
-}
-
-// ClearQuestionTag clears the "question_tag" edge to the QuestionTag entity.
-func (m *QuestionMutation) ClearQuestionTag() {
-	m.clearedquestion_tag = true
-}
-
-// QuestionTagCleared reports if the "question_tag" edge to the QuestionTag entity was cleared.
-func (m *QuestionMutation) QuestionTagCleared() bool {
-	return m.clearedquestion_tag
-}
-
-// RemoveQuestionTagIDs removes the "question_tag" edge to the QuestionTag entity by IDs.
-func (m *QuestionMutation) RemoveQuestionTagIDs(ids ...int) {
-	if m.removedquestion_tag == nil {
-		m.removedquestion_tag = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.question_tag, ids[i])
-		m.removedquestion_tag[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedQuestionTag returns the removed IDs of the "question_tag" edge to the QuestionTag entity.
-func (m *QuestionMutation) RemovedQuestionTagIDs() (ids []int) {
-	for id := range m.removedquestion_tag {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// QuestionTagIDs returns the "question_tag" edge IDs in the mutation.
-func (m *QuestionMutation) QuestionTagIDs() (ids []int) {
-	for id := range m.question_tag {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetQuestionTag resets all changes to the "question_tag" edge.
-func (m *QuestionMutation) ResetQuestionTag() {
-	m.question_tag = nil
-	m.clearedquestion_tag = false
-	m.removedquestion_tag = nil
-}
-
 // Where appends a list predicates to the QuestionMutation builder.
 func (m *QuestionMutation) Where(ps ...predicate.Question) {
 	m.predicates = append(m.predicates, ps...)
@@ -1141,7 +1082,7 @@ func (m *QuestionMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *QuestionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 3)
 	if m.answers != nil {
 		edges = append(edges, question.EdgeAnswers)
 	}
@@ -1150,9 +1091,6 @@ func (m *QuestionMutation) AddedEdges() []string {
 	}
 	if m.tags != nil {
 		edges = append(edges, question.EdgeTags)
-	}
-	if m.question_tag != nil {
-		edges = append(edges, question.EdgeQuestionTag)
 	}
 	return edges
 }
@@ -1177,27 +1115,18 @@ func (m *QuestionMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case question.EdgeQuestionTag:
-		ids := make([]ent.Value, 0, len(m.question_tag))
-		for id := range m.question_tag {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *QuestionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 3)
 	if m.removedanswers != nil {
 		edges = append(edges, question.EdgeAnswers)
 	}
 	if m.removedtags != nil {
 		edges = append(edges, question.EdgeTags)
-	}
-	if m.removedquestion_tag != nil {
-		edges = append(edges, question.EdgeQuestionTag)
 	}
 	return edges
 }
@@ -1218,19 +1147,13 @@ func (m *QuestionMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case question.EdgeQuestionTag:
-		ids := make([]ent.Value, 0, len(m.removedquestion_tag))
-		for id := range m.removedquestion_tag {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *QuestionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 3)
 	if m.clearedanswers {
 		edges = append(edges, question.EdgeAnswers)
 	}
@@ -1239,9 +1162,6 @@ func (m *QuestionMutation) ClearedEdges() []string {
 	}
 	if m.clearedtags {
 		edges = append(edges, question.EdgeTags)
-	}
-	if m.clearedquestion_tag {
-		edges = append(edges, question.EdgeQuestionTag)
 	}
 	return edges
 }
@@ -1256,8 +1176,6 @@ func (m *QuestionMutation) EdgeCleared(name string) bool {
 		return m.clearedauthor
 	case question.EdgeTags:
 		return m.clearedtags
-	case question.EdgeQuestionTag:
-		return m.clearedquestion_tag
 	}
 	return false
 }
@@ -1286,513 +1204,24 @@ func (m *QuestionMutation) ResetEdge(name string) error {
 	case question.EdgeTags:
 		m.ResetTags()
 		return nil
-	case question.EdgeQuestionTag:
-		m.ResetQuestionTag()
-		return nil
 	}
 	return fmt.Errorf("unknown Question edge %s", name)
-}
-
-// QuestionTagMutation represents an operation that mutates the QuestionTag nodes in the graph.
-type QuestionTagMutation struct {
-	config
-	op              Op
-	typ             string
-	id              *int
-	clearedFields   map[string]struct{}
-	question        *int
-	clearedquestion bool
-	tag             *int
-	clearedtag      bool
-	done            bool
-	oldValue        func(context.Context) (*QuestionTag, error)
-	predicates      []predicate.QuestionTag
-}
-
-var _ ent.Mutation = (*QuestionTagMutation)(nil)
-
-// questiontagOption allows management of the mutation configuration using functional options.
-type questiontagOption func(*QuestionTagMutation)
-
-// newQuestionTagMutation creates new mutation for the QuestionTag entity.
-func newQuestionTagMutation(c config, op Op, opts ...questiontagOption) *QuestionTagMutation {
-	m := &QuestionTagMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeQuestionTag,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withQuestionTagID sets the ID field of the mutation.
-func withQuestionTagID(id int) questiontagOption {
-	return func(m *QuestionTagMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *QuestionTag
-		)
-		m.oldValue = func(ctx context.Context) (*QuestionTag, error) {
-			once.Do(func() {
-				if m.done {
-					err = errors.New("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().QuestionTag.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withQuestionTag sets the old QuestionTag of the mutation.
-func withQuestionTag(node *QuestionTag) questiontagOption {
-	return func(m *QuestionTagMutation) {
-		m.oldValue = func(context.Context) (*QuestionTag, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m QuestionTagMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m QuestionTagMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, errors.New("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *QuestionTagMutation) ID() (id int, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// IDs queries the database and returns the entity ids that match the mutation's predicate.
-// That means, if the mutation is applied within a transaction with an isolation level such
-// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
-// or updated by the mutation.
-func (m *QuestionTagMutation) IDs(ctx context.Context) ([]int, error) {
-	switch {
-	case m.op.Is(OpUpdateOne | OpDeleteOne):
-		id, exists := m.ID()
-		if exists {
-			return []int{id}, nil
-		}
-		fallthrough
-	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().QuestionTag.Query().Where(m.predicates...).IDs(ctx)
-	default:
-		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
-	}
-}
-
-// SetQuestionID sets the "question_id" field.
-func (m *QuestionTagMutation) SetQuestionID(i int) {
-	m.question = &i
-}
-
-// QuestionID returns the value of the "question_id" field in the mutation.
-func (m *QuestionTagMutation) QuestionID() (r int, exists bool) {
-	v := m.question
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldQuestionID returns the old "question_id" field's value of the QuestionTag entity.
-// If the QuestionTag object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *QuestionTagMutation) OldQuestionID(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldQuestionID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldQuestionID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldQuestionID: %w", err)
-	}
-	return oldValue.QuestionID, nil
-}
-
-// ResetQuestionID resets all changes to the "question_id" field.
-func (m *QuestionTagMutation) ResetQuestionID() {
-	m.question = nil
-}
-
-// SetTagID sets the "tag_id" field.
-func (m *QuestionTagMutation) SetTagID(i int) {
-	m.tag = &i
-}
-
-// TagID returns the value of the "tag_id" field in the mutation.
-func (m *QuestionTagMutation) TagID() (r int, exists bool) {
-	v := m.tag
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTagID returns the old "tag_id" field's value of the QuestionTag entity.
-// If the QuestionTag object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *QuestionTagMutation) OldTagID(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTagID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTagID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTagID: %w", err)
-	}
-	return oldValue.TagID, nil
-}
-
-// ResetTagID resets all changes to the "tag_id" field.
-func (m *QuestionTagMutation) ResetTagID() {
-	m.tag = nil
-}
-
-// ClearQuestion clears the "question" edge to the Question entity.
-func (m *QuestionTagMutation) ClearQuestion() {
-	m.clearedquestion = true
-	m.clearedFields[questiontag.FieldQuestionID] = struct{}{}
-}
-
-// QuestionCleared reports if the "question" edge to the Question entity was cleared.
-func (m *QuestionTagMutation) QuestionCleared() bool {
-	return m.clearedquestion
-}
-
-// QuestionIDs returns the "question" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// QuestionID instead. It exists only for internal usage by the builders.
-func (m *QuestionTagMutation) QuestionIDs() (ids []int) {
-	if id := m.question; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetQuestion resets all changes to the "question" edge.
-func (m *QuestionTagMutation) ResetQuestion() {
-	m.question = nil
-	m.clearedquestion = false
-}
-
-// ClearTag clears the "tag" edge to the Tag entity.
-func (m *QuestionTagMutation) ClearTag() {
-	m.clearedtag = true
-	m.clearedFields[questiontag.FieldTagID] = struct{}{}
-}
-
-// TagCleared reports if the "tag" edge to the Tag entity was cleared.
-func (m *QuestionTagMutation) TagCleared() bool {
-	return m.clearedtag
-}
-
-// TagIDs returns the "tag" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// TagID instead. It exists only for internal usage by the builders.
-func (m *QuestionTagMutation) TagIDs() (ids []int) {
-	if id := m.tag; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetTag resets all changes to the "tag" edge.
-func (m *QuestionTagMutation) ResetTag() {
-	m.tag = nil
-	m.clearedtag = false
-}
-
-// Where appends a list predicates to the QuestionTagMutation builder.
-func (m *QuestionTagMutation) Where(ps ...predicate.QuestionTag) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// WhereP appends storage-level predicates to the QuestionTagMutation builder. Using this method,
-// users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *QuestionTagMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.QuestionTag, len(ps))
-	for i := range ps {
-		p[i] = ps[i]
-	}
-	m.Where(p...)
-}
-
-// Op returns the operation name.
-func (m *QuestionTagMutation) Op() Op {
-	return m.op
-}
-
-// SetOp allows setting the mutation operation.
-func (m *QuestionTagMutation) SetOp(op Op) {
-	m.op = op
-}
-
-// Type returns the node type of this mutation (QuestionTag).
-func (m *QuestionTagMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *QuestionTagMutation) Fields() []string {
-	fields := make([]string, 0, 2)
-	if m.question != nil {
-		fields = append(fields, questiontag.FieldQuestionID)
-	}
-	if m.tag != nil {
-		fields = append(fields, questiontag.FieldTagID)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *QuestionTagMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case questiontag.FieldQuestionID:
-		return m.QuestionID()
-	case questiontag.FieldTagID:
-		return m.TagID()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *QuestionTagMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case questiontag.FieldQuestionID:
-		return m.OldQuestionID(ctx)
-	case questiontag.FieldTagID:
-		return m.OldTagID(ctx)
-	}
-	return nil, fmt.Errorf("unknown QuestionTag field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *QuestionTagMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case questiontag.FieldQuestionID:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetQuestionID(v)
-		return nil
-	case questiontag.FieldTagID:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTagID(v)
-		return nil
-	}
-	return fmt.Errorf("unknown QuestionTag field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *QuestionTagMutation) AddedFields() []string {
-	var fields []string
-	return fields
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *QuestionTagMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	}
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *QuestionTagMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown QuestionTag numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *QuestionTagMutation) ClearedFields() []string {
-	return nil
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *QuestionTagMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *QuestionTagMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown QuestionTag nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *QuestionTagMutation) ResetField(name string) error {
-	switch name {
-	case questiontag.FieldQuestionID:
-		m.ResetQuestionID()
-		return nil
-	case questiontag.FieldTagID:
-		m.ResetTagID()
-		return nil
-	}
-	return fmt.Errorf("unknown QuestionTag field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *QuestionTagMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.question != nil {
-		edges = append(edges, questiontag.EdgeQuestion)
-	}
-	if m.tag != nil {
-		edges = append(edges, questiontag.EdgeTag)
-	}
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *QuestionTagMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case questiontag.EdgeQuestion:
-		if id := m.question; id != nil {
-			return []ent.Value{*id}
-		}
-	case questiontag.EdgeTag:
-		if id := m.tag; id != nil {
-			return []ent.Value{*id}
-		}
-	}
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *QuestionTagMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *QuestionTagMutation) RemovedIDs(name string) []ent.Value {
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *QuestionTagMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.clearedquestion {
-		edges = append(edges, questiontag.EdgeQuestion)
-	}
-	if m.clearedtag {
-		edges = append(edges, questiontag.EdgeTag)
-	}
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *QuestionTagMutation) EdgeCleared(name string) bool {
-	switch name {
-	case questiontag.EdgeQuestion:
-		return m.clearedquestion
-	case questiontag.EdgeTag:
-		return m.clearedtag
-	}
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *QuestionTagMutation) ClearEdge(name string) error {
-	switch name {
-	case questiontag.EdgeQuestion:
-		m.ClearQuestion()
-		return nil
-	case questiontag.EdgeTag:
-		m.ClearTag()
-		return nil
-	}
-	return fmt.Errorf("unknown QuestionTag unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *QuestionTagMutation) ResetEdge(name string) error {
-	switch name {
-	case questiontag.EdgeQuestion:
-		m.ResetQuestion()
-		return nil
-	case questiontag.EdgeTag:
-		m.ResetTag()
-		return nil
-	}
-	return fmt.Errorf("unknown QuestionTag edge %s", name)
 }
 
 // TagMutation represents an operation that mutates the Tag nodes in the graph.
 type TagMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int
-	name                *string
-	clearedFields       map[string]struct{}
-	questions           map[int]struct{}
-	removedquestions    map[int]struct{}
-	clearedquestions    bool
-	tag_question        map[int]struct{}
-	removedtag_question map[int]struct{}
-	clearedtag_question bool
-	done                bool
-	oldValue            func(context.Context) (*Tag, error)
-	predicates          []predicate.Tag
+	op               Op
+	typ              string
+	id               *int
+	name             *string
+	clearedFields    map[string]struct{}
+	questions        map[int]struct{}
+	removedquestions map[int]struct{}
+	clearedquestions bool
+	done             bool
+	oldValue         func(context.Context) (*Tag, error)
+	predicates       []predicate.Tag
 }
 
 var _ ent.Mutation = (*TagMutation)(nil)
@@ -1983,60 +1412,6 @@ func (m *TagMutation) ResetQuestions() {
 	m.removedquestions = nil
 }
 
-// AddTagQuestionIDs adds the "tag_question" edge to the QuestionTag entity by ids.
-func (m *TagMutation) AddTagQuestionIDs(ids ...int) {
-	if m.tag_question == nil {
-		m.tag_question = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.tag_question[ids[i]] = struct{}{}
-	}
-}
-
-// ClearTagQuestion clears the "tag_question" edge to the QuestionTag entity.
-func (m *TagMutation) ClearTagQuestion() {
-	m.clearedtag_question = true
-}
-
-// TagQuestionCleared reports if the "tag_question" edge to the QuestionTag entity was cleared.
-func (m *TagMutation) TagQuestionCleared() bool {
-	return m.clearedtag_question
-}
-
-// RemoveTagQuestionIDs removes the "tag_question" edge to the QuestionTag entity by IDs.
-func (m *TagMutation) RemoveTagQuestionIDs(ids ...int) {
-	if m.removedtag_question == nil {
-		m.removedtag_question = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.tag_question, ids[i])
-		m.removedtag_question[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedTagQuestion returns the removed IDs of the "tag_question" edge to the QuestionTag entity.
-func (m *TagMutation) RemovedTagQuestionIDs() (ids []int) {
-	for id := range m.removedtag_question {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// TagQuestionIDs returns the "tag_question" edge IDs in the mutation.
-func (m *TagMutation) TagQuestionIDs() (ids []int) {
-	for id := range m.tag_question {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetTagQuestion resets all changes to the "tag_question" edge.
-func (m *TagMutation) ResetTagQuestion() {
-	m.tag_question = nil
-	m.clearedtag_question = false
-	m.removedtag_question = nil
-}
-
 // Where appends a list predicates to the TagMutation builder.
 func (m *TagMutation) Where(ps ...predicate.Tag) {
 	m.predicates = append(m.predicates, ps...)
@@ -2170,12 +1545,9 @@ func (m *TagMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TagMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 1)
 	if m.questions != nil {
 		edges = append(edges, tag.EdgeQuestions)
-	}
-	if m.tag_question != nil {
-		edges = append(edges, tag.EdgeTagQuestion)
 	}
 	return edges
 }
@@ -2190,24 +1562,15 @@ func (m *TagMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case tag.EdgeTagQuestion:
-		ids := make([]ent.Value, 0, len(m.tag_question))
-		for id := range m.tag_question {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TagMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 1)
 	if m.removedquestions != nil {
 		edges = append(edges, tag.EdgeQuestions)
-	}
-	if m.removedtag_question != nil {
-		edges = append(edges, tag.EdgeTagQuestion)
 	}
 	return edges
 }
@@ -2222,24 +1585,15 @@ func (m *TagMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case tag.EdgeTagQuestion:
-		ids := make([]ent.Value, 0, len(m.removedtag_question))
-		for id := range m.removedtag_question {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TagMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 1)
 	if m.clearedquestions {
 		edges = append(edges, tag.EdgeQuestions)
-	}
-	if m.clearedtag_question {
-		edges = append(edges, tag.EdgeTagQuestion)
 	}
 	return edges
 }
@@ -2250,8 +1604,6 @@ func (m *TagMutation) EdgeCleared(name string) bool {
 	switch name {
 	case tag.EdgeQuestions:
 		return m.clearedquestions
-	case tag.EdgeTagQuestion:
-		return m.clearedtag_question
 	}
 	return false
 }
@@ -2270,9 +1622,6 @@ func (m *TagMutation) ResetEdge(name string) error {
 	switch name {
 	case tag.EdgeQuestions:
 		m.ResetQuestions()
-		return nil
-	case tag.EdgeTagQuestion:
-		m.ResetTagQuestion()
 		return nil
 	}
 	return fmt.Errorf("unknown Tag edge %s", name)

@@ -39,11 +39,9 @@ type QuestionEdges struct {
 	Author *User `json:"author,omitempty"`
 	// Tags holds the value of the tags edge.
 	Tags []*Tag `json:"tags,omitempty"`
-	// QuestionTag holds the value of the question_tag edge.
-	QuestionTag []*QuestionTag `json:"question_tag,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [3]bool
 }
 
 // AnswersOrErr returns the Answers value or an error if the edge
@@ -75,15 +73,6 @@ func (e QuestionEdges) TagsOrErr() ([]*Tag, error) {
 		return e.Tags, nil
 	}
 	return nil, &NotLoadedError{edge: "tags"}
-}
-
-// QuestionTagOrErr returns the QuestionTag value or an error if the edge
-// was not loaded in eager-loading.
-func (e QuestionEdges) QuestionTagOrErr() ([]*QuestionTag, error) {
-	if e.loadedTypes[3] {
-		return e.QuestionTag, nil
-	}
-	return nil, &NotLoadedError{edge: "question_tag"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -171,11 +160,6 @@ func (q *Question) QueryAuthor() *UserQuery {
 // QueryTags queries the "tags" edge of the Question entity.
 func (q *Question) QueryTags() *TagQuery {
 	return NewQuestionClient(q.config).QueryTags(q)
-}
-
-// QueryQuestionTag queries the "question_tag" edge of the Question entity.
-func (q *Question) QueryQuestionTag() *QuestionTagQuery {
-	return NewQuestionClient(q.config).QueryQuestionTag(q)
 }
 
 // Update returns a builder for updating this Question.

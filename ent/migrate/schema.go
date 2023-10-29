@@ -58,44 +58,6 @@ var (
 			},
 		},
 	}
-	// QuestionTagsColumns holds the columns for the "question_tags" table.
-	QuestionTagsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "question_id", Type: field.TypeInt},
-		{Name: "tag_id", Type: field.TypeInt},
-	}
-	// QuestionTagsTable holds the schema information for the "question_tags" table.
-	QuestionTagsTable = &schema.Table{
-		Name:       "question_tags",
-		Columns:    QuestionTagsColumns,
-		PrimaryKey: []*schema.Column{QuestionTagsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "question_tags_questions_question",
-				Columns:    []*schema.Column{QuestionTagsColumns[1]},
-				RefColumns: []*schema.Column{QuestionsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "question_tags_tags_tag",
-				Columns:    []*schema.Column{QuestionTagsColumns[2]},
-				RefColumns: []*schema.Column{TagsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "questiontag_tag_id",
-				Unique:  true,
-				Columns: []*schema.Column{QuestionTagsColumns[2]},
-			},
-			{
-				Name:    "questiontag_question_id_tag_id",
-				Unique:  true,
-				Columns: []*schema.Column{QuestionTagsColumns[1], QuestionTagsColumns[2]},
-			},
-		},
-	}
 	// TagsColumns holds the columns for the "tags" table.
 	TagsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -130,13 +92,38 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
+	// TagQuestionsColumns holds the columns for the "tag_questions" table.
+	TagQuestionsColumns = []*schema.Column{
+		{Name: "tag_id", Type: field.TypeInt},
+		{Name: "question_id", Type: field.TypeInt},
+	}
+	// TagQuestionsTable holds the schema information for the "tag_questions" table.
+	TagQuestionsTable = &schema.Table{
+		Name:       "tag_questions",
+		Columns:    TagQuestionsColumns,
+		PrimaryKey: []*schema.Column{TagQuestionsColumns[0], TagQuestionsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tag_questions_tag_id",
+				Columns:    []*schema.Column{TagQuestionsColumns[0]},
+				RefColumns: []*schema.Column{TagsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "tag_questions_question_id",
+				Columns:    []*schema.Column{TagQuestionsColumns[1]},
+				RefColumns: []*schema.Column{QuestionsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AnswersTable,
 		QuestionsTable,
-		QuestionTagsTable,
 		TagsTable,
 		UsersTable,
+		TagQuestionsTable,
 	}
 )
 
@@ -144,7 +131,7 @@ func init() {
 	AnswersTable.ForeignKeys[0].RefTable = QuestionsTable
 	AnswersTable.ForeignKeys[1].RefTable = UsersTable
 	QuestionsTable.ForeignKeys[0].RefTable = UsersTable
-	QuestionTagsTable.ForeignKeys[0].RefTable = QuestionsTable
-	QuestionTagsTable.ForeignKeys[1].RefTable = TagsTable
 	TagsTable.ForeignKeys[0].RefTable = UsersTable
+	TagQuestionsTable.ForeignKeys[0].RefTable = TagsTable
+	TagQuestionsTable.ForeignKeys[1].RefTable = QuestionsTable
 }

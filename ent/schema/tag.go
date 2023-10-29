@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -22,9 +21,6 @@ func (Tag) Fields() []ent.Field {
 // Edges of the Tag.
 func (Tag) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("questions", Question.Type).
-			Annotations(entsql.OnDelete(entsql.Cascade)).
-			Ref("tags").
-			Through("tag_question", QuestionTag.Type),
+		edge.To("questions", Question.Type),
 	}
 }

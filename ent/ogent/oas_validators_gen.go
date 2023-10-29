@@ -30,22 +30,6 @@ func (s ListQuestionOKApplicationJSON) Validate() error {
 	return nil
 }
 
-func (s ListQuestionQuestionTagOKApplicationJSON) Validate() error {
-	alias := ([]QuestionQuestionTagList)(s)
-	if alias == nil {
-		return errors.New("nil is invalid value")
-	}
-	return nil
-}
-
-func (s ListQuestionTagOKApplicationJSON) Validate() error {
-	alias := ([]QuestionTagList)(s)
-	if alias == nil {
-		return errors.New("nil is invalid value")
-	}
-	return nil
-}
-
 func (s ListQuestionTagsOKApplicationJSON) Validate() error {
 	alias := ([]QuestionTagsList)(s)
 	if alias == nil {
@@ -64,14 +48,6 @@ func (s ListTagOKApplicationJSON) Validate() error {
 
 func (s ListTagQuestionsOKApplicationJSON) Validate() error {
 	alias := ([]TagQuestionsList)(s)
-	if alias == nil {
-		return errors.New("nil is invalid value")
-	}
-	return nil
-}
-
-func (s ListTagTagQuestionOKApplicationJSON) Validate() error {
-	alias := ([]TagTagQuestionList)(s)
 	if alias == nil {
 		return errors.New("nil is invalid value")
 	}

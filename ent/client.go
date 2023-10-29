@@ -17,7 +17,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/sinisaos/chi-ent/ent/answer"
 	"github.com/sinisaos/chi-ent/ent/question"
-	"github.com/sinisaos/chi-ent/ent/questiontag"
 	"github.com/sinisaos/chi-ent/ent/tag"
 	"github.com/sinisaos/chi-ent/ent/user"
 )
@@ -31,8 +30,6 @@ type Client struct {
 	Answer *AnswerClient
 	// Question is the client for interacting with the Question builders.
 	Question *QuestionClient
-	// QuestionTag is the client for interacting with the QuestionTag builders.
-	QuestionTag *QuestionTagClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// User is the client for interacting with the User builders.
@@ -52,7 +49,6 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Answer = NewAnswerClient(c.config)
 	c.Question = NewQuestionClient(c.config)
-	c.QuestionTag = NewQuestionTagClient(c.config)
 	c.Tag = NewTagClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -138,13 +134,12 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		Answer:      NewAnswerClient(cfg),
-		Question:    NewQuestionClient(cfg),
-		QuestionTag: NewQuestionTagClient(cfg),
-		Tag:         NewTagClient(cfg),
-		User:        NewUserClient(cfg),
+		ctx:      ctx,
+		config:   cfg,
+		Answer:   NewAnswerClient(cfg),
+		Question: NewQuestionClient(cfg),
+		Tag:      NewTagClient(cfg),
+		User:     NewUserClient(cfg),
 	}, nil
 }
 
@@ -162,13 +157,12 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		Answer:      NewAnswerClient(cfg),
-		Question:    NewQuestionClient(cfg),
-		QuestionTag: NewQuestionTagClient(cfg),
-		Tag:         NewTagClient(cfg),
-		User:        NewUserClient(cfg),
+		ctx:      ctx,
+		config:   cfg,
+		Answer:   NewAnswerClient(cfg),
+		Question: NewQuestionClient(cfg),
+		Tag:      NewTagClient(cfg),
+		User:     NewUserClient(cfg),
 	}, nil
 }
 
@@ -199,7 +193,6 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Answer.Use(hooks...)
 	c.Question.Use(hooks...)
-	c.QuestionTag.Use(hooks...)
 	c.Tag.Use(hooks...)
 	c.User.Use(hooks...)
 }
@@ -209,7 +202,6 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Answer.Intercept(interceptors...)
 	c.Question.Intercept(interceptors...)
-	c.QuestionTag.Intercept(interceptors...)
 	c.Tag.Intercept(interceptors...)
 	c.User.Intercept(interceptors...)
 }
@@ -221,8 +213,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Answer.mutate(ctx, m)
 	case *QuestionMutation:
 		return c.Question.mutate(ctx, m)
-	case *QuestionTagMutation:
-		return c.QuestionTag.mutate(ctx, m)
 	case *TagMutation:
 		return c.Tag.mutate(ctx, m)
 	case *UserMutation:
@@ -545,23 +535,7 @@ func (c *QuestionClient) QueryTags(q *Question) *TagQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(question.Table, question.FieldID, id),
 			sqlgraph.To(tag.Table, tag.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, question.TagsTable, question.TagsPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(q.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryQuestionTag queries the question_tag edge of a Question.
-func (c *QuestionClient) QueryQuestionTag(q *Question) *QuestionTagQuery {
-	query := (&QuestionTagClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := q.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(question.Table, question.FieldID, id),
-			sqlgraph.To(questiontag.Table, questiontag.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, question.QuestionTagTable, question.QuestionTagColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, question.TagsTable, question.TagsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(q.driver.Dialect(), step)
 		return fromV, nil
@@ -591,171 +565,6 @@ func (c *QuestionClient) mutate(ctx context.Context, m *QuestionMutation) (Value
 		return (&QuestionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Question mutation op: %q", m.Op())
-	}
-}
-
-// QuestionTagClient is a client for the QuestionTag schema.
-type QuestionTagClient struct {
-	config
-}
-
-// NewQuestionTagClient returns a client for the QuestionTag from the given config.
-func NewQuestionTagClient(c config) *QuestionTagClient {
-	return &QuestionTagClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `questiontag.Hooks(f(g(h())))`.
-func (c *QuestionTagClient) Use(hooks ...Hook) {
-	c.hooks.QuestionTag = append(c.hooks.QuestionTag, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `questiontag.Intercept(f(g(h())))`.
-func (c *QuestionTagClient) Intercept(interceptors ...Interceptor) {
-	c.inters.QuestionTag = append(c.inters.QuestionTag, interceptors...)
-}
-
-// Create returns a builder for creating a QuestionTag entity.
-func (c *QuestionTagClient) Create() *QuestionTagCreate {
-	mutation := newQuestionTagMutation(c.config, OpCreate)
-	return &QuestionTagCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of QuestionTag entities.
-func (c *QuestionTagClient) CreateBulk(builders ...*QuestionTagCreate) *QuestionTagCreateBulk {
-	return &QuestionTagCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *QuestionTagClient) MapCreateBulk(slice any, setFunc func(*QuestionTagCreate, int)) *QuestionTagCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &QuestionTagCreateBulk{err: fmt.Errorf("calling to QuestionTagClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*QuestionTagCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &QuestionTagCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for QuestionTag.
-func (c *QuestionTagClient) Update() *QuestionTagUpdate {
-	mutation := newQuestionTagMutation(c.config, OpUpdate)
-	return &QuestionTagUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *QuestionTagClient) UpdateOne(qt *QuestionTag) *QuestionTagUpdateOne {
-	mutation := newQuestionTagMutation(c.config, OpUpdateOne, withQuestionTag(qt))
-	return &QuestionTagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *QuestionTagClient) UpdateOneID(id int) *QuestionTagUpdateOne {
-	mutation := newQuestionTagMutation(c.config, OpUpdateOne, withQuestionTagID(id))
-	return &QuestionTagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for QuestionTag.
-func (c *QuestionTagClient) Delete() *QuestionTagDelete {
-	mutation := newQuestionTagMutation(c.config, OpDelete)
-	return &QuestionTagDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *QuestionTagClient) DeleteOne(qt *QuestionTag) *QuestionTagDeleteOne {
-	return c.DeleteOneID(qt.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *QuestionTagClient) DeleteOneID(id int) *QuestionTagDeleteOne {
-	builder := c.Delete().Where(questiontag.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &QuestionTagDeleteOne{builder}
-}
-
-// Query returns a query builder for QuestionTag.
-func (c *QuestionTagClient) Query() *QuestionTagQuery {
-	return &QuestionTagQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeQuestionTag},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a QuestionTag entity by its id.
-func (c *QuestionTagClient) Get(ctx context.Context, id int) (*QuestionTag, error) {
-	return c.Query().Where(questiontag.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *QuestionTagClient) GetX(ctx context.Context, id int) *QuestionTag {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryQuestion queries the question edge of a QuestionTag.
-func (c *QuestionTagClient) QueryQuestion(qt *QuestionTag) *QuestionQuery {
-	query := (&QuestionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := qt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(questiontag.Table, questiontag.FieldID, id),
-			sqlgraph.To(question.Table, question.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, questiontag.QuestionTable, questiontag.QuestionColumn),
-		)
-		fromV = sqlgraph.Neighbors(qt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryTag queries the tag edge of a QuestionTag.
-func (c *QuestionTagClient) QueryTag(qt *QuestionTag) *TagQuery {
-	query := (&TagClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := qt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(questiontag.Table, questiontag.FieldID, id),
-			sqlgraph.To(tag.Table, tag.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, questiontag.TagTable, questiontag.TagColumn),
-		)
-		fromV = sqlgraph.Neighbors(qt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *QuestionTagClient) Hooks() []Hook {
-	return c.hooks.QuestionTag
-}
-
-// Interceptors returns the client interceptors.
-func (c *QuestionTagClient) Interceptors() []Interceptor {
-	return c.inters.QuestionTag
-}
-
-func (c *QuestionTagClient) mutate(ctx context.Context, m *QuestionTagMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&QuestionTagCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&QuestionTagUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&QuestionTagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&QuestionTagDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown QuestionTag mutation op: %q", m.Op())
 	}
 }
 
@@ -875,23 +684,7 @@ func (c *TagClient) QueryQuestions(t *Tag) *QuestionQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tag.Table, tag.FieldID, id),
 			sqlgraph.To(question.Table, question.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, tag.QuestionsTable, tag.QuestionsPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryTagQuestion queries the tag_question edge of a Tag.
-func (c *TagClient) QueryTagQuestion(t *Tag) *QuestionTagQuery {
-	query := (&QuestionTagClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := t.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(tag.Table, tag.FieldID, id),
-			sqlgraph.To(questiontag.Table, questiontag.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, tag.TagQuestionTable, tag.TagQuestionColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, tag.QuestionsTable, tag.QuestionsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -1108,9 +901,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Answer, Question, QuestionTag, Tag, User []ent.Hook
+		Answer, Question, Tag, User []ent.Hook
 	}
 	inters struct {
-		Answer, Question, QuestionTag, Tag, User []ent.Interceptor
+		Answer, Question, Tag, User []ent.Interceptor
 	}
 )

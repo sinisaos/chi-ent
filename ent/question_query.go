@@ -14,7 +14,6 @@ import (
 	"github.com/sinisaos/chi-ent/ent/answer"
 	"github.com/sinisaos/chi-ent/ent/predicate"
 	"github.com/sinisaos/chi-ent/ent/question"
-	"github.com/sinisaos/chi-ent/ent/questiontag"
 	"github.com/sinisaos/chi-ent/ent/tag"
 	"github.com/sinisaos/chi-ent/ent/user"
 )
@@ -22,15 +21,14 @@ import (
 // QuestionQuery is the builder for querying Question entities.
 type QuestionQuery struct {
 	config
-	ctx             *QueryContext
-	order           []question.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.Question
-	withAnswers     *AnswerQuery
-	withAuthor      *UserQuery
-	withTags        *TagQuery
-	withQuestionTag *QuestionTagQuery
-	withFKs         bool
+	ctx         *QueryContext
+	order       []question.OrderOption
+	inters      []Interceptor
+	predicates  []predicate.Question
+	withAnswers *AnswerQuery
+	withAuthor  *UserQuery
+	withTags    *TagQuery
+	withFKs     bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -125,29 +123,7 @@ func (qq *QuestionQuery) QueryTags() *TagQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(question.Table, question.FieldID, selector),
 			sqlgraph.To(tag.Table, tag.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, question.TagsTable, question.TagsPrimaryKey...),
-		)
-		fromU = sqlgraph.SetNeighbors(qq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryQuestionTag chains the current query on the "question_tag" edge.
-func (qq *QuestionQuery) QueryQuestionTag() *QuestionTagQuery {
-	query := (&QuestionTagClient{config: qq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := qq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := qq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(question.Table, question.FieldID, selector),
-			sqlgraph.To(questiontag.Table, questiontag.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, question.QuestionTagTable, question.QuestionTagColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, question.TagsTable, question.TagsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(qq.driver.Dialect(), step)
 		return fromU, nil
@@ -342,15 +318,14 @@ func (qq *QuestionQuery) Clone() *QuestionQuery {
 		return nil
 	}
 	return &QuestionQuery{
-		config:          qq.config,
-		ctx:             qq.ctx.Clone(),
-		order:           append([]question.OrderOption{}, qq.order...),
-		inters:          append([]Interceptor{}, qq.inters...),
-		predicates:      append([]predicate.Question{}, qq.predicates...),
-		withAnswers:     qq.withAnswers.Clone(),
-		withAuthor:      qq.withAuthor.Clone(),
-		withTags:        qq.withTags.Clone(),
-		withQuestionTag: qq.withQuestionTag.Clone(),
+		config:      qq.config,
+		ctx:         qq.ctx.Clone(),
+		order:       append([]question.OrderOption{}, qq.order...),
+		inters:      append([]Interceptor{}, qq.inters...),
+		predicates:  append([]predicate.Question{}, qq.predicates...),
+		withAnswers: qq.withAnswers.Clone(),
+		withAuthor:  qq.withAuthor.Clone(),
+		withTags:    qq.withTags.Clone(),
 		// clone intermediate query.
 		sql:  qq.sql.Clone(),
 		path: qq.path,
@@ -387,17 +362,6 @@ func (qq *QuestionQuery) WithTags(opts ...func(*TagQuery)) *QuestionQuery {
 		opt(query)
 	}
 	qq.withTags = query
-	return qq
-}
-
-// WithQuestionTag tells the query-builder to eager-load the nodes that are connected to
-// the "question_tag" edge. The optional arguments are used to configure the query builder of the edge.
-func (qq *QuestionQuery) WithQuestionTag(opts ...func(*QuestionTagQuery)) *QuestionQuery {
-	query := (&QuestionTagClient{config: qq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	qq.withQuestionTag = query
 	return qq
 }
 
@@ -480,11 +444,10 @@ func (qq *QuestionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Que
 		nodes       = []*Question{}
 		withFKs     = qq.withFKs
 		_spec       = qq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [3]bool{
 			qq.withAnswers != nil,
 			qq.withAuthor != nil,
 			qq.withTags != nil,
-			qq.withQuestionTag != nil,
 		}
 	)
 	if qq.withAuthor != nil {
@@ -528,13 +491,6 @@ func (qq *QuestionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Que
 		if err := qq.loadTags(ctx, query, nodes,
 			func(n *Question) { n.Edges.Tags = []*Tag{} },
 			func(n *Question, e *Tag) { n.Edges.Tags = append(n.Edges.Tags, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := qq.withQuestionTag; query != nil {
-		if err := qq.loadQuestionTag(ctx, query, nodes,
-			func(n *Question) { n.Edges.QuestionTag = []*QuestionTag{} },
-			func(n *Question, e *QuestionTag) { n.Edges.QuestionTag = append(n.Edges.QuestionTag, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -617,10 +573,10 @@ func (qq *QuestionQuery) loadTags(ctx context.Context, query *TagQuery, nodes []
 	}
 	query.Where(func(s *sql.Selector) {
 		joinT := sql.Table(question.TagsTable)
-		s.Join(joinT).On(s.C(tag.FieldID), joinT.C(question.TagsPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(question.TagsPrimaryKey[0]), edgeIDs...))
+		s.Join(joinT).On(s.C(tag.FieldID), joinT.C(question.TagsPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(question.TagsPrimaryKey[1]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(question.TagsPrimaryKey[0]))
+		s.Select(joinT.C(question.TagsPrimaryKey[1]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -662,36 +618,6 @@ func (qq *QuestionQuery) loadTags(ctx context.Context, query *TagQuery, nodes []
 		for kn := range nodes {
 			assign(kn, n)
 		}
-	}
-	return nil
-}
-func (qq *QuestionQuery) loadQuestionTag(ctx context.Context, query *QuestionTagQuery, nodes []*Question, init func(*Question), assign func(*Question, *QuestionTag)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Question)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(questiontag.FieldQuestionID)
-	}
-	query.Where(predicate.QuestionTag(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(question.QuestionTagColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.QuestionID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "question_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
 	}
 	return nil
 }

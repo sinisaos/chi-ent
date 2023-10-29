@@ -39,20 +39,6 @@ func encodeCreateQuestionRequest(
 	return nil
 }
 
-func encodeCreateQuestionTagRequest(
-	req *CreateQuestionTagReq,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := jx.GetEncoder()
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
 func encodeCreateTagRequest(
 	req *CreateTagReq,
 	r *http.Request,
@@ -97,20 +83,6 @@ func encodeUpdateAnswerRequest(
 
 func encodeUpdateQuestionRequest(
 	req *UpdateQuestionReq,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := jx.GetEncoder()
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
-func encodeUpdateQuestionTagRequest(
-	req *UpdateQuestionTagReq,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"
