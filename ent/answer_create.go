@@ -28,6 +28,20 @@ func (ac *AnswerCreate) SetContent(s string) *AnswerCreate {
 	return ac
 }
 
+// SetLikes sets the "likes" field.
+func (ac *AnswerCreate) SetLikes(i int) *AnswerCreate {
+	ac.mutation.SetLikes(i)
+	return ac
+}
+
+// SetNillableLikes sets the "likes" field if the given value is not nil.
+func (ac *AnswerCreate) SetNillableLikes(i *int) *AnswerCreate {
+	if i != nil {
+		ac.SetLikes(*i)
+	}
+	return ac
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (ac *AnswerCreate) SetCreatedAt(t time.Time) *AnswerCreate {
 	ac.mutation.SetCreatedAt(t)
@@ -38,6 +52,34 @@ func (ac *AnswerCreate) SetCreatedAt(t time.Time) *AnswerCreate {
 func (ac *AnswerCreate) SetNillableCreatedAt(t *time.Time) *AnswerCreate {
 	if t != nil {
 		ac.SetCreatedAt(*t)
+	}
+	return ac
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (ac *AnswerCreate) SetUpdatedAt(t time.Time) *AnswerCreate {
+	ac.mutation.SetUpdatedAt(t)
+	return ac
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (ac *AnswerCreate) SetNillableUpdatedAt(t *time.Time) *AnswerCreate {
+	if t != nil {
+		ac.SetUpdatedAt(*t)
+	}
+	return ac
+}
+
+// SetIsAcceptedAnswer sets the "is_accepted_answer" field.
+func (ac *AnswerCreate) SetIsAcceptedAnswer(b bool) *AnswerCreate {
+	ac.mutation.SetIsAcceptedAnswer(b)
+	return ac
+}
+
+// SetNillableIsAcceptedAnswer sets the "is_accepted_answer" field if the given value is not nil.
+func (ac *AnswerCreate) SetNillableIsAcceptedAnswer(b *bool) *AnswerCreate {
+	if b != nil {
+		ac.SetIsAcceptedAnswer(*b)
 	}
 	return ac
 }
@@ -115,9 +157,21 @@ func (ac *AnswerCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ac *AnswerCreate) defaults() {
+	if _, ok := ac.mutation.Likes(); !ok {
+		v := answer.DefaultLikes
+		ac.mutation.SetLikes(v)
+	}
 	if _, ok := ac.mutation.CreatedAt(); !ok {
 		v := answer.DefaultCreatedAt()
 		ac.mutation.SetCreatedAt(v)
+	}
+	if _, ok := ac.mutation.UpdatedAt(); !ok {
+		v := answer.DefaultUpdatedAt()
+		ac.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := ac.mutation.IsAcceptedAnswer(); !ok {
+		v := answer.DefaultIsAcceptedAnswer
+		ac.mutation.SetIsAcceptedAnswer(v)
 	}
 }
 
@@ -126,8 +180,17 @@ func (ac *AnswerCreate) check() error {
 	if _, ok := ac.mutation.Content(); !ok {
 		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Answer.content"`)}
 	}
+	if _, ok := ac.mutation.Likes(); !ok {
+		return &ValidationError{Name: "likes", err: errors.New(`ent: missing required field "Answer.likes"`)}
+	}
 	if _, ok := ac.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Answer.created_at"`)}
+	}
+	if _, ok := ac.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Answer.updated_at"`)}
+	}
+	if _, ok := ac.mutation.IsAcceptedAnswer(); !ok {
+		return &ValidationError{Name: "is_accepted_answer", err: errors.New(`ent: missing required field "Answer.is_accepted_answer"`)}
 	}
 	return nil
 }
@@ -159,9 +222,21 @@ func (ac *AnswerCreate) createSpec() (*Answer, *sqlgraph.CreateSpec) {
 		_spec.SetField(answer.FieldContent, field.TypeString, value)
 		_node.Content = value
 	}
+	if value, ok := ac.mutation.Likes(); ok {
+		_spec.SetField(answer.FieldLikes, field.TypeInt, value)
+		_node.Likes = value
+	}
 	if value, ok := ac.mutation.CreatedAt(); ok {
 		_spec.SetField(answer.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
+	}
+	if value, ok := ac.mutation.UpdatedAt(); ok {
+		_spec.SetField(answer.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := ac.mutation.IsAcceptedAnswer(); ok {
+		_spec.SetField(answer.FieldIsAcceptedAnswer, field.TypeBool, value)
+		_node.IsAcceptedAnswer = value
 	}
 	if nodes := ac.mutation.QuestionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

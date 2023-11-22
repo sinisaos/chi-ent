@@ -14,6 +14,7 @@ type AnswerAuthorRead struct {
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
+	LastLogin time.Time `json:"last_login"`
 }
 
 // GetID returns the value of ID.
@@ -36,6 +37,11 @@ func (s *AnswerAuthorRead) GetCreatedAt() time.Time {
 	return s.CreatedAt
 }
 
+// GetLastLogin returns the value of LastLogin.
+func (s *AnswerAuthorRead) GetLastLogin() time.Time {
+	return s.LastLogin
+}
+
 // SetID sets the value of ID.
 func (s *AnswerAuthorRead) SetID(val int) {
 	s.ID = val
@@ -56,13 +62,21 @@ func (s *AnswerAuthorRead) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
+// SetLastLogin sets the value of LastLogin.
+func (s *AnswerAuthorRead) SetLastLogin(val time.Time) {
+	s.LastLogin = val
+}
+
 func (*AnswerAuthorRead) readAnswerAuthorRes() {}
 
 // Ref: #/components/schemas/AnswerCreate
 type AnswerCreate struct {
-	ID        int       `json:"id"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
+	ID               int       `json:"id"`
+	Content          string    `json:"content"`
+	Likes            int       `json:"likes"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	IsAcceptedAnswer bool      `json:"is_accepted_answer"`
 }
 
 // GetID returns the value of ID.
@@ -75,9 +89,24 @@ func (s *AnswerCreate) GetContent() string {
 	return s.Content
 }
 
+// GetLikes returns the value of Likes.
+func (s *AnswerCreate) GetLikes() int {
+	return s.Likes
+}
+
 // GetCreatedAt returns the value of CreatedAt.
 func (s *AnswerCreate) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *AnswerCreate) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetIsAcceptedAnswer returns the value of IsAcceptedAnswer.
+func (s *AnswerCreate) GetIsAcceptedAnswer() bool {
+	return s.IsAcceptedAnswer
 }
 
 // SetID sets the value of ID.
@@ -90,18 +119,36 @@ func (s *AnswerCreate) SetContent(val string) {
 	s.Content = val
 }
 
+// SetLikes sets the value of Likes.
+func (s *AnswerCreate) SetLikes(val int) {
+	s.Likes = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *AnswerCreate) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *AnswerCreate) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetIsAcceptedAnswer sets the value of IsAcceptedAnswer.
+func (s *AnswerCreate) SetIsAcceptedAnswer(val bool) {
+	s.IsAcceptedAnswer = val
 }
 
 func (*AnswerCreate) createAnswerRes() {}
 
 // Ref: #/components/schemas/AnswerList
 type AnswerList struct {
-	ID        int       `json:"id"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
+	ID               int       `json:"id"`
+	Content          string    `json:"content"`
+	Likes            int       `json:"likes"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	IsAcceptedAnswer bool      `json:"is_accepted_answer"`
 }
 
 // GetID returns the value of ID.
@@ -114,9 +161,24 @@ func (s *AnswerList) GetContent() string {
 	return s.Content
 }
 
+// GetLikes returns the value of Likes.
+func (s *AnswerList) GetLikes() int {
+	return s.Likes
+}
+
 // GetCreatedAt returns the value of CreatedAt.
 func (s *AnswerList) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *AnswerList) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetIsAcceptedAnswer returns the value of IsAcceptedAnswer.
+func (s *AnswerList) GetIsAcceptedAnswer() bool {
+	return s.IsAcceptedAnswer
 }
 
 // SetID sets the value of ID.
@@ -129,17 +191,36 @@ func (s *AnswerList) SetContent(val string) {
 	s.Content = val
 }
 
+// SetLikes sets the value of Likes.
+func (s *AnswerList) SetLikes(val int) {
+	s.Likes = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *AnswerList) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *AnswerList) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetIsAcceptedAnswer sets the value of IsAcceptedAnswer.
+func (s *AnswerList) SetIsAcceptedAnswer(val bool) {
+	s.IsAcceptedAnswer = val
 }
 
 // Ref: #/components/schemas/Answer_QuestionRead
 type AnswerQuestionRead struct {
 	ID        int       `json:"id"`
 	Title     string    `json:"title"`
+	Slug      string    `json:"slug"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Views     int       `json:"views"`
+	Likes     int       `json:"likes"`
 }
 
 // GetID returns the value of ID.
@@ -152,6 +233,11 @@ func (s *AnswerQuestionRead) GetTitle() string {
 	return s.Title
 }
 
+// GetSlug returns the value of Slug.
+func (s *AnswerQuestionRead) GetSlug() string {
+	return s.Slug
+}
+
 // GetContent returns the value of Content.
 func (s *AnswerQuestionRead) GetContent() string {
 	return s.Content
@@ -160,6 +246,21 @@ func (s *AnswerQuestionRead) GetContent() string {
 // GetCreatedAt returns the value of CreatedAt.
 func (s *AnswerQuestionRead) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *AnswerQuestionRead) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetViews returns the value of Views.
+func (s *AnswerQuestionRead) GetViews() int {
+	return s.Views
+}
+
+// GetLikes returns the value of Likes.
+func (s *AnswerQuestionRead) GetLikes() int {
+	return s.Likes
 }
 
 // SetID sets the value of ID.
@@ -172,6 +273,11 @@ func (s *AnswerQuestionRead) SetTitle(val string) {
 	s.Title = val
 }
 
+// SetSlug sets the value of Slug.
+func (s *AnswerQuestionRead) SetSlug(val string) {
+	s.Slug = val
+}
+
 // SetContent sets the value of Content.
 func (s *AnswerQuestionRead) SetContent(val string) {
 	s.Content = val
@@ -182,13 +288,31 @@ func (s *AnswerQuestionRead) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *AnswerQuestionRead) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetViews sets the value of Views.
+func (s *AnswerQuestionRead) SetViews(val int) {
+	s.Views = val
+}
+
+// SetLikes sets the value of Likes.
+func (s *AnswerQuestionRead) SetLikes(val int) {
+	s.Likes = val
+}
+
 func (*AnswerQuestionRead) readAnswerQuestionRes() {}
 
 // Ref: #/components/schemas/AnswerRead
 type AnswerRead struct {
-	ID        int       `json:"id"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
+	ID               int       `json:"id"`
+	Content          string    `json:"content"`
+	Likes            int       `json:"likes"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	IsAcceptedAnswer bool      `json:"is_accepted_answer"`
 }
 
 // GetID returns the value of ID.
@@ -201,9 +325,24 @@ func (s *AnswerRead) GetContent() string {
 	return s.Content
 }
 
+// GetLikes returns the value of Likes.
+func (s *AnswerRead) GetLikes() int {
+	return s.Likes
+}
+
 // GetCreatedAt returns the value of CreatedAt.
 func (s *AnswerRead) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *AnswerRead) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetIsAcceptedAnswer returns the value of IsAcceptedAnswer.
+func (s *AnswerRead) GetIsAcceptedAnswer() bool {
+	return s.IsAcceptedAnswer
 }
 
 // SetID sets the value of ID.
@@ -216,18 +355,36 @@ func (s *AnswerRead) SetContent(val string) {
 	s.Content = val
 }
 
+// SetLikes sets the value of Likes.
+func (s *AnswerRead) SetLikes(val int) {
+	s.Likes = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *AnswerRead) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *AnswerRead) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetIsAcceptedAnswer sets the value of IsAcceptedAnswer.
+func (s *AnswerRead) SetIsAcceptedAnswer(val bool) {
+	s.IsAcceptedAnswer = val
 }
 
 func (*AnswerRead) readAnswerRes() {}
 
 // Ref: #/components/schemas/AnswerUpdate
 type AnswerUpdate struct {
-	ID        int       `json:"id"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
+	ID               int       `json:"id"`
+	Content          string    `json:"content"`
+	Likes            int       `json:"likes"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	IsAcceptedAnswer bool      `json:"is_accepted_answer"`
 }
 
 // GetID returns the value of ID.
@@ -240,9 +397,24 @@ func (s *AnswerUpdate) GetContent() string {
 	return s.Content
 }
 
+// GetLikes returns the value of Likes.
+func (s *AnswerUpdate) GetLikes() int {
+	return s.Likes
+}
+
 // GetCreatedAt returns the value of CreatedAt.
 func (s *AnswerUpdate) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *AnswerUpdate) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetIsAcceptedAnswer returns the value of IsAcceptedAnswer.
+func (s *AnswerUpdate) GetIsAcceptedAnswer() bool {
+	return s.IsAcceptedAnswer
 }
 
 // SetID sets the value of ID.
@@ -255,18 +427,36 @@ func (s *AnswerUpdate) SetContent(val string) {
 	s.Content = val
 }
 
+// SetLikes sets the value of Likes.
+func (s *AnswerUpdate) SetLikes(val int) {
+	s.Likes = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *AnswerUpdate) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *AnswerUpdate) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetIsAcceptedAnswer sets the value of IsAcceptedAnswer.
+func (s *AnswerUpdate) SetIsAcceptedAnswer(val bool) {
+	s.IsAcceptedAnswer = val
+}
+
 func (*AnswerUpdate) updateAnswerRes() {}
 
 type CreateAnswerReq struct {
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
-	Question  OptInt    `json:"question"`
-	Author    OptInt    `json:"author"`
+	Content          string    `json:"content"`
+	Likes            int       `json:"likes"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	IsAcceptedAnswer bool      `json:"is_accepted_answer"`
+	Question         OptInt    `json:"question"`
+	Author           OptInt    `json:"author"`
 }
 
 // GetContent returns the value of Content.
@@ -274,9 +464,24 @@ func (s *CreateAnswerReq) GetContent() string {
 	return s.Content
 }
 
+// GetLikes returns the value of Likes.
+func (s *CreateAnswerReq) GetLikes() int {
+	return s.Likes
+}
+
 // GetCreatedAt returns the value of CreatedAt.
 func (s *CreateAnswerReq) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *CreateAnswerReq) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetIsAcceptedAnswer returns the value of IsAcceptedAnswer.
+func (s *CreateAnswerReq) GetIsAcceptedAnswer() bool {
+	return s.IsAcceptedAnswer
 }
 
 // GetQuestion returns the value of Question.
@@ -294,9 +499,24 @@ func (s *CreateAnswerReq) SetContent(val string) {
 	s.Content = val
 }
 
+// SetLikes sets the value of Likes.
+func (s *CreateAnswerReq) SetLikes(val int) {
+	s.Likes = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *CreateAnswerReq) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *CreateAnswerReq) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetIsAcceptedAnswer sets the value of IsAcceptedAnswer.
+func (s *CreateAnswerReq) SetIsAcceptedAnswer(val bool) {
+	s.IsAcceptedAnswer = val
 }
 
 // SetQuestion sets the value of Question.
@@ -311,8 +531,12 @@ func (s *CreateAnswerReq) SetAuthor(val OptInt) {
 
 type CreateQuestionReq struct {
 	Title     string    `json:"title"`
+	Slug      string    `json:"slug"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Views     int       `json:"views"`
+	Likes     int       `json:"likes"`
 	Answers   []int     `json:"answers"`
 	Author    OptInt    `json:"author"`
 	Tags      []int     `json:"tags"`
@@ -323,6 +547,11 @@ func (s *CreateQuestionReq) GetTitle() string {
 	return s.Title
 }
 
+// GetSlug returns the value of Slug.
+func (s *CreateQuestionReq) GetSlug() string {
+	return s.Slug
+}
+
 // GetContent returns the value of Content.
 func (s *CreateQuestionReq) GetContent() string {
 	return s.Content
@@ -331,6 +560,21 @@ func (s *CreateQuestionReq) GetContent() string {
 // GetCreatedAt returns the value of CreatedAt.
 func (s *CreateQuestionReq) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *CreateQuestionReq) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetViews returns the value of Views.
+func (s *CreateQuestionReq) GetViews() int {
+	return s.Views
+}
+
+// GetLikes returns the value of Likes.
+func (s *CreateQuestionReq) GetLikes() int {
+	return s.Likes
 }
 
 // GetAnswers returns the value of Answers.
@@ -353,6 +597,11 @@ func (s *CreateQuestionReq) SetTitle(val string) {
 	s.Title = val
 }
 
+// SetSlug sets the value of Slug.
+func (s *CreateQuestionReq) SetSlug(val string) {
+	s.Slug = val
+}
+
 // SetContent sets the value of Content.
 func (s *CreateQuestionReq) SetContent(val string) {
 	s.Content = val
@@ -361,6 +610,21 @@ func (s *CreateQuestionReq) SetContent(val string) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *CreateQuestionReq) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *CreateQuestionReq) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetViews sets the value of Views.
+func (s *CreateQuestionReq) SetViews(val int) {
+	s.Views = val
+}
+
+// SetLikes sets the value of Likes.
+func (s *CreateQuestionReq) SetLikes(val int) {
+	s.Likes = val
 }
 
 // SetAnswers sets the value of Answers.
@@ -408,6 +672,7 @@ type CreateUserReq struct {
 	Email     string    `json:"email"`
 	Password  string    `json:"password"`
 	CreatedAt time.Time `json:"created_at"`
+	LastLogin time.Time `json:"last_login"`
 	Questions []int     `json:"questions"`
 	Answers   []int     `json:"answers"`
 	Tags      []int     `json:"tags"`
@@ -431,6 +696,11 @@ func (s *CreateUserReq) GetPassword() string {
 // GetCreatedAt returns the value of CreatedAt.
 func (s *CreateUserReq) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetLastLogin returns the value of LastLogin.
+func (s *CreateUserReq) GetLastLogin() time.Time {
+	return s.LastLogin
 }
 
 // GetQuestions returns the value of Questions.
@@ -466,6 +736,11 @@ func (s *CreateUserReq) SetPassword(val string) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *CreateUserReq) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetLastLogin sets the value of LastLogin.
+func (s *CreateUserReq) SetLastLogin(val time.Time) {
+	s.LastLogin = val
 }
 
 // SetQuestions sets the value of Questions.
@@ -542,6 +817,98 @@ func (*ListUserQuestionsOKApplicationJSON) listUserQuestionsRes() {}
 type ListUserTagsOKApplicationJSON []UserTagsList
 
 func (*ListUserTagsOKApplicationJSON) listUserTagsRes() {}
+
+// NewOptBool returns new OptBool with value set to v.
+func NewOptBool(v bool) OptBool {
+	return OptBool{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptBool is optional bool.
+type OptBool struct {
+	Value bool
+	Set   bool
+}
+
+// IsSet returns true if OptBool was set.
+func (o OptBool) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptBool) Reset() {
+	var v bool
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptBool) SetTo(v bool) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptBool) Get() (v bool, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptBool) Or(d bool) bool {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptDateTime returns new OptDateTime with value set to v.
+func NewOptDateTime(v time.Time) OptDateTime {
+	return OptDateTime{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptDateTime is optional time.Time.
+type OptDateTime struct {
+	Value time.Time
+	Set   bool
+}
+
+// IsSet returns true if OptDateTime was set.
+func (o OptDateTime) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptDateTime) Reset() {
+	var v time.Time
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptDateTime) SetTo(v time.Time) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptDateTime) Get() (v time.Time, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptDateTime) Or(d time.Time) time.Time {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
 
 // NewOptInt returns new OptInt with value set to v.
 func NewOptInt(v int) OptInt {
@@ -637,9 +1004,12 @@ func (o OptString) Or(d string) string {
 
 // Ref: #/components/schemas/Question_AnswersList
 type QuestionAnswersList struct {
-	ID        int       `json:"id"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
+	ID               int       `json:"id"`
+	Content          string    `json:"content"`
+	Likes            int       `json:"likes"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	IsAcceptedAnswer bool      `json:"is_accepted_answer"`
 }
 
 // GetID returns the value of ID.
@@ -652,9 +1022,24 @@ func (s *QuestionAnswersList) GetContent() string {
 	return s.Content
 }
 
+// GetLikes returns the value of Likes.
+func (s *QuestionAnswersList) GetLikes() int {
+	return s.Likes
+}
+
 // GetCreatedAt returns the value of CreatedAt.
 func (s *QuestionAnswersList) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *QuestionAnswersList) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetIsAcceptedAnswer returns the value of IsAcceptedAnswer.
+func (s *QuestionAnswersList) GetIsAcceptedAnswer() bool {
+	return s.IsAcceptedAnswer
 }
 
 // SetID sets the value of ID.
@@ -667,9 +1052,24 @@ func (s *QuestionAnswersList) SetContent(val string) {
 	s.Content = val
 }
 
+// SetLikes sets the value of Likes.
+func (s *QuestionAnswersList) SetLikes(val int) {
+	s.Likes = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *QuestionAnswersList) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *QuestionAnswersList) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetIsAcceptedAnswer sets the value of IsAcceptedAnswer.
+func (s *QuestionAnswersList) SetIsAcceptedAnswer(val bool) {
+	s.IsAcceptedAnswer = val
 }
 
 // Ref: #/components/schemas/Question_AuthorRead
@@ -678,6 +1078,7 @@ type QuestionAuthorRead struct {
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
+	LastLogin time.Time `json:"last_login"`
 }
 
 // GetID returns the value of ID.
@@ -700,6 +1101,11 @@ func (s *QuestionAuthorRead) GetCreatedAt() time.Time {
 	return s.CreatedAt
 }
 
+// GetLastLogin returns the value of LastLogin.
+func (s *QuestionAuthorRead) GetLastLogin() time.Time {
+	return s.LastLogin
+}
+
 // SetID sets the value of ID.
 func (s *QuestionAuthorRead) SetID(val int) {
 	s.ID = val
@@ -720,14 +1126,23 @@ func (s *QuestionAuthorRead) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
+// SetLastLogin sets the value of LastLogin.
+func (s *QuestionAuthorRead) SetLastLogin(val time.Time) {
+	s.LastLogin = val
+}
+
 func (*QuestionAuthorRead) readQuestionAuthorRes() {}
 
 // Ref: #/components/schemas/QuestionCreate
 type QuestionCreate struct {
 	ID        int       `json:"id"`
 	Title     string    `json:"title"`
+	Slug      string    `json:"slug"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Views     int       `json:"views"`
+	Likes     int       `json:"likes"`
 }
 
 // GetID returns the value of ID.
@@ -740,6 +1155,11 @@ func (s *QuestionCreate) GetTitle() string {
 	return s.Title
 }
 
+// GetSlug returns the value of Slug.
+func (s *QuestionCreate) GetSlug() string {
+	return s.Slug
+}
+
 // GetContent returns the value of Content.
 func (s *QuestionCreate) GetContent() string {
 	return s.Content
@@ -748,6 +1168,21 @@ func (s *QuestionCreate) GetContent() string {
 // GetCreatedAt returns the value of CreatedAt.
 func (s *QuestionCreate) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *QuestionCreate) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetViews returns the value of Views.
+func (s *QuestionCreate) GetViews() int {
+	return s.Views
+}
+
+// GetLikes returns the value of Likes.
+func (s *QuestionCreate) GetLikes() int {
+	return s.Likes
 }
 
 // SetID sets the value of ID.
@@ -760,6 +1195,11 @@ func (s *QuestionCreate) SetTitle(val string) {
 	s.Title = val
 }
 
+// SetSlug sets the value of Slug.
+func (s *QuestionCreate) SetSlug(val string) {
+	s.Slug = val
+}
+
 // SetContent sets the value of Content.
 func (s *QuestionCreate) SetContent(val string) {
 	s.Content = val
@@ -770,14 +1210,33 @@ func (s *QuestionCreate) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *QuestionCreate) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetViews sets the value of Views.
+func (s *QuestionCreate) SetViews(val int) {
+	s.Views = val
+}
+
+// SetLikes sets the value of Likes.
+func (s *QuestionCreate) SetLikes(val int) {
+	s.Likes = val
+}
+
 func (*QuestionCreate) createQuestionRes() {}
 
 // Ref: #/components/schemas/QuestionList
 type QuestionList struct {
 	ID        int       `json:"id"`
 	Title     string    `json:"title"`
+	Slug      string    `json:"slug"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Views     int       `json:"views"`
+	Likes     int       `json:"likes"`
 }
 
 // GetID returns the value of ID.
@@ -790,6 +1249,11 @@ func (s *QuestionList) GetTitle() string {
 	return s.Title
 }
 
+// GetSlug returns the value of Slug.
+func (s *QuestionList) GetSlug() string {
+	return s.Slug
+}
+
 // GetContent returns the value of Content.
 func (s *QuestionList) GetContent() string {
 	return s.Content
@@ -798,6 +1262,21 @@ func (s *QuestionList) GetContent() string {
 // GetCreatedAt returns the value of CreatedAt.
 func (s *QuestionList) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *QuestionList) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetViews returns the value of Views.
+func (s *QuestionList) GetViews() int {
+	return s.Views
+}
+
+// GetLikes returns the value of Likes.
+func (s *QuestionList) GetLikes() int {
+	return s.Likes
 }
 
 // SetID sets the value of ID.
@@ -810,6 +1289,11 @@ func (s *QuestionList) SetTitle(val string) {
 	s.Title = val
 }
 
+// SetSlug sets the value of Slug.
+func (s *QuestionList) SetSlug(val string) {
+	s.Slug = val
+}
+
 // SetContent sets the value of Content.
 func (s *QuestionList) SetContent(val string) {
 	s.Content = val
@@ -820,12 +1304,31 @@ func (s *QuestionList) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *QuestionList) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetViews sets the value of Views.
+func (s *QuestionList) SetViews(val int) {
+	s.Views = val
+}
+
+// SetLikes sets the value of Likes.
+func (s *QuestionList) SetLikes(val int) {
+	s.Likes = val
+}
+
 // Ref: #/components/schemas/QuestionRead
 type QuestionRead struct {
 	ID        int       `json:"id"`
 	Title     string    `json:"title"`
+	Slug      string    `json:"slug"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Views     int       `json:"views"`
+	Likes     int       `json:"likes"`
 }
 
 // GetID returns the value of ID.
@@ -838,6 +1341,11 @@ func (s *QuestionRead) GetTitle() string {
 	return s.Title
 }
 
+// GetSlug returns the value of Slug.
+func (s *QuestionRead) GetSlug() string {
+	return s.Slug
+}
+
 // GetContent returns the value of Content.
 func (s *QuestionRead) GetContent() string {
 	return s.Content
@@ -846,6 +1354,21 @@ func (s *QuestionRead) GetContent() string {
 // GetCreatedAt returns the value of CreatedAt.
 func (s *QuestionRead) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *QuestionRead) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetViews returns the value of Views.
+func (s *QuestionRead) GetViews() int {
+	return s.Views
+}
+
+// GetLikes returns the value of Likes.
+func (s *QuestionRead) GetLikes() int {
+	return s.Likes
 }
 
 // SetID sets the value of ID.
@@ -858,6 +1381,11 @@ func (s *QuestionRead) SetTitle(val string) {
 	s.Title = val
 }
 
+// SetSlug sets the value of Slug.
+func (s *QuestionRead) SetSlug(val string) {
+	s.Slug = val
+}
+
 // SetContent sets the value of Content.
 func (s *QuestionRead) SetContent(val string) {
 	s.Content = val
@@ -866,6 +1394,21 @@ func (s *QuestionRead) SetContent(val string) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *QuestionRead) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *QuestionRead) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetViews sets the value of Views.
+func (s *QuestionRead) SetViews(val int) {
+	s.Views = val
+}
+
+// SetLikes sets the value of Likes.
+func (s *QuestionRead) SetLikes(val int) {
+	s.Likes = val
 }
 
 func (*QuestionRead) readQuestionRes() {}
@@ -900,8 +1443,12 @@ func (s *QuestionTagsList) SetName(val string) {
 type QuestionUpdate struct {
 	ID        int       `json:"id"`
 	Title     string    `json:"title"`
+	Slug      string    `json:"slug"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Views     int       `json:"views"`
+	Likes     int       `json:"likes"`
 }
 
 // GetID returns the value of ID.
@@ -914,6 +1461,11 @@ func (s *QuestionUpdate) GetTitle() string {
 	return s.Title
 }
 
+// GetSlug returns the value of Slug.
+func (s *QuestionUpdate) GetSlug() string {
+	return s.Slug
+}
+
 // GetContent returns the value of Content.
 func (s *QuestionUpdate) GetContent() string {
 	return s.Content
@@ -922,6 +1474,21 @@ func (s *QuestionUpdate) GetContent() string {
 // GetCreatedAt returns the value of CreatedAt.
 func (s *QuestionUpdate) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *QuestionUpdate) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetViews returns the value of Views.
+func (s *QuestionUpdate) GetViews() int {
+	return s.Views
+}
+
+// GetLikes returns the value of Likes.
+func (s *QuestionUpdate) GetLikes() int {
+	return s.Likes
 }
 
 // SetID sets the value of ID.
@@ -934,6 +1501,11 @@ func (s *QuestionUpdate) SetTitle(val string) {
 	s.Title = val
 }
 
+// SetSlug sets the value of Slug.
+func (s *QuestionUpdate) SetSlug(val string) {
+	s.Slug = val
+}
+
 // SetContent sets the value of Content.
 func (s *QuestionUpdate) SetContent(val string) {
 	s.Content = val
@@ -942,6 +1514,21 @@ func (s *QuestionUpdate) SetContent(val string) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *QuestionUpdate) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *QuestionUpdate) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetViews sets the value of Views.
+func (s *QuestionUpdate) SetViews(val int) {
+	s.Views = val
+}
+
+// SetLikes sets the value of Likes.
+func (s *QuestionUpdate) SetLikes(val int) {
+	s.Likes = val
 }
 
 func (*QuestionUpdate) updateQuestionRes() {}
@@ -1264,8 +1851,12 @@ func (s *TagList) SetName(val string) {
 type TagQuestionsList struct {
 	ID        int       `json:"id"`
 	Title     string    `json:"title"`
+	Slug      string    `json:"slug"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Views     int       `json:"views"`
+	Likes     int       `json:"likes"`
 }
 
 // GetID returns the value of ID.
@@ -1278,6 +1869,11 @@ func (s *TagQuestionsList) GetTitle() string {
 	return s.Title
 }
 
+// GetSlug returns the value of Slug.
+func (s *TagQuestionsList) GetSlug() string {
+	return s.Slug
+}
+
 // GetContent returns the value of Content.
 func (s *TagQuestionsList) GetContent() string {
 	return s.Content
@@ -1286,6 +1882,21 @@ func (s *TagQuestionsList) GetContent() string {
 // GetCreatedAt returns the value of CreatedAt.
 func (s *TagQuestionsList) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *TagQuestionsList) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetViews returns the value of Views.
+func (s *TagQuestionsList) GetViews() int {
+	return s.Views
+}
+
+// GetLikes returns the value of Likes.
+func (s *TagQuestionsList) GetLikes() int {
+	return s.Likes
 }
 
 // SetID sets the value of ID.
@@ -1298,6 +1909,11 @@ func (s *TagQuestionsList) SetTitle(val string) {
 	s.Title = val
 }
 
+// SetSlug sets the value of Slug.
+func (s *TagQuestionsList) SetSlug(val string) {
+	s.Slug = val
+}
+
 // SetContent sets the value of Content.
 func (s *TagQuestionsList) SetContent(val string) {
 	s.Content = val
@@ -1306,6 +1922,21 @@ func (s *TagQuestionsList) SetContent(val string) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *TagQuestionsList) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *TagQuestionsList) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetViews sets the value of Views.
+func (s *TagQuestionsList) SetViews(val int) {
+	s.Views = val
+}
+
+// SetLikes sets the value of Likes.
+func (s *TagQuestionsList) SetLikes(val int) {
+	s.Likes = val
 }
 
 // Ref: #/components/schemas/TagRead
@@ -1365,14 +1996,32 @@ func (s *TagUpdate) SetName(val string) {
 func (*TagUpdate) updateTagRes() {}
 
 type UpdateAnswerReq struct {
-	Content  OptString `json:"content"`
-	Question OptInt    `json:"question"`
-	Author   OptInt    `json:"author"`
+	Content          OptString   `json:"content"`
+	Likes            OptInt      `json:"likes"`
+	UpdatedAt        OptDateTime `json:"updated_at"`
+	IsAcceptedAnswer OptBool     `json:"is_accepted_answer"`
+	Question         OptInt      `json:"question"`
+	Author           OptInt      `json:"author"`
 }
 
 // GetContent returns the value of Content.
 func (s *UpdateAnswerReq) GetContent() OptString {
 	return s.Content
+}
+
+// GetLikes returns the value of Likes.
+func (s *UpdateAnswerReq) GetLikes() OptInt {
+	return s.Likes
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *UpdateAnswerReq) GetUpdatedAt() OptDateTime {
+	return s.UpdatedAt
+}
+
+// GetIsAcceptedAnswer returns the value of IsAcceptedAnswer.
+func (s *UpdateAnswerReq) GetIsAcceptedAnswer() OptBool {
+	return s.IsAcceptedAnswer
 }
 
 // GetQuestion returns the value of Question.
@@ -1390,6 +2039,21 @@ func (s *UpdateAnswerReq) SetContent(val OptString) {
 	s.Content = val
 }
 
+// SetLikes sets the value of Likes.
+func (s *UpdateAnswerReq) SetLikes(val OptInt) {
+	s.Likes = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *UpdateAnswerReq) SetUpdatedAt(val OptDateTime) {
+	s.UpdatedAt = val
+}
+
+// SetIsAcceptedAnswer sets the value of IsAcceptedAnswer.
+func (s *UpdateAnswerReq) SetIsAcceptedAnswer(val OptBool) {
+	s.IsAcceptedAnswer = val
+}
+
 // SetQuestion sets the value of Question.
 func (s *UpdateAnswerReq) SetQuestion(val OptInt) {
 	s.Question = val
@@ -1401,11 +2065,15 @@ func (s *UpdateAnswerReq) SetAuthor(val OptInt) {
 }
 
 type UpdateQuestionReq struct {
-	Title   OptString `json:"title"`
-	Content OptString `json:"content"`
-	Answers []int     `json:"answers"`
-	Author  OptInt    `json:"author"`
-	Tags    []int     `json:"tags"`
+	Title     OptString   `json:"title"`
+	Slug      OptString   `json:"slug"`
+	Content   OptString   `json:"content"`
+	UpdatedAt OptDateTime `json:"updated_at"`
+	Views     OptInt      `json:"views"`
+	Likes     OptInt      `json:"likes"`
+	Answers   []int       `json:"answers"`
+	Author    OptInt      `json:"author"`
+	Tags      []int       `json:"tags"`
 }
 
 // GetTitle returns the value of Title.
@@ -1413,9 +2081,29 @@ func (s *UpdateQuestionReq) GetTitle() OptString {
 	return s.Title
 }
 
+// GetSlug returns the value of Slug.
+func (s *UpdateQuestionReq) GetSlug() OptString {
+	return s.Slug
+}
+
 // GetContent returns the value of Content.
 func (s *UpdateQuestionReq) GetContent() OptString {
 	return s.Content
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *UpdateQuestionReq) GetUpdatedAt() OptDateTime {
+	return s.UpdatedAt
+}
+
+// GetViews returns the value of Views.
+func (s *UpdateQuestionReq) GetViews() OptInt {
+	return s.Views
+}
+
+// GetLikes returns the value of Likes.
+func (s *UpdateQuestionReq) GetLikes() OptInt {
+	return s.Likes
 }
 
 // GetAnswers returns the value of Answers.
@@ -1438,9 +2126,29 @@ func (s *UpdateQuestionReq) SetTitle(val OptString) {
 	s.Title = val
 }
 
+// SetSlug sets the value of Slug.
+func (s *UpdateQuestionReq) SetSlug(val OptString) {
+	s.Slug = val
+}
+
 // SetContent sets the value of Content.
 func (s *UpdateQuestionReq) SetContent(val OptString) {
 	s.Content = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *UpdateQuestionReq) SetUpdatedAt(val OptDateTime) {
+	s.UpdatedAt = val
+}
+
+// SetViews sets the value of Views.
+func (s *UpdateQuestionReq) SetViews(val OptInt) {
+	s.Views = val
+}
+
+// SetLikes sets the value of Likes.
+func (s *UpdateQuestionReq) SetLikes(val OptInt) {
+	s.Likes = val
 }
 
 // SetAnswers sets the value of Answers.
@@ -1484,12 +2192,13 @@ func (s *UpdateTagReq) SetQuestions(val []int) {
 }
 
 type UpdateUserReq struct {
-	Username  OptString `json:"username"`
-	Email     OptString `json:"email"`
-	Password  OptString `json:"password"`
-	Questions []int     `json:"questions"`
-	Answers   []int     `json:"answers"`
-	Tags      []int     `json:"tags"`
+	Username  OptString   `json:"username"`
+	Email     OptString   `json:"email"`
+	Password  OptString   `json:"password"`
+	LastLogin OptDateTime `json:"last_login"`
+	Questions []int       `json:"questions"`
+	Answers   []int       `json:"answers"`
+	Tags      []int       `json:"tags"`
 }
 
 // GetUsername returns the value of Username.
@@ -1505,6 +2214,11 @@ func (s *UpdateUserReq) GetEmail() OptString {
 // GetPassword returns the value of Password.
 func (s *UpdateUserReq) GetPassword() OptString {
 	return s.Password
+}
+
+// GetLastLogin returns the value of LastLogin.
+func (s *UpdateUserReq) GetLastLogin() OptDateTime {
+	return s.LastLogin
 }
 
 // GetQuestions returns the value of Questions.
@@ -1537,6 +2251,11 @@ func (s *UpdateUserReq) SetPassword(val OptString) {
 	s.Password = val
 }
 
+// SetLastLogin sets the value of LastLogin.
+func (s *UpdateUserReq) SetLastLogin(val OptDateTime) {
+	s.LastLogin = val
+}
+
 // SetQuestions sets the value of Questions.
 func (s *UpdateUserReq) SetQuestions(val []int) {
 	s.Questions = val
@@ -1554,9 +2273,12 @@ func (s *UpdateUserReq) SetTags(val []int) {
 
 // Ref: #/components/schemas/User_AnswersList
 type UserAnswersList struct {
-	ID        int       `json:"id"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
+	ID               int       `json:"id"`
+	Content          string    `json:"content"`
+	Likes            int       `json:"likes"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	IsAcceptedAnswer bool      `json:"is_accepted_answer"`
 }
 
 // GetID returns the value of ID.
@@ -1569,9 +2291,24 @@ func (s *UserAnswersList) GetContent() string {
 	return s.Content
 }
 
+// GetLikes returns the value of Likes.
+func (s *UserAnswersList) GetLikes() int {
+	return s.Likes
+}
+
 // GetCreatedAt returns the value of CreatedAt.
 func (s *UserAnswersList) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *UserAnswersList) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetIsAcceptedAnswer returns the value of IsAcceptedAnswer.
+func (s *UserAnswersList) GetIsAcceptedAnswer() bool {
+	return s.IsAcceptedAnswer
 }
 
 // SetID sets the value of ID.
@@ -1584,9 +2321,24 @@ func (s *UserAnswersList) SetContent(val string) {
 	s.Content = val
 }
 
+// SetLikes sets the value of Likes.
+func (s *UserAnswersList) SetLikes(val int) {
+	s.Likes = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *UserAnswersList) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *UserAnswersList) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetIsAcceptedAnswer sets the value of IsAcceptedAnswer.
+func (s *UserAnswersList) SetIsAcceptedAnswer(val bool) {
+	s.IsAcceptedAnswer = val
 }
 
 // Ref: #/components/schemas/UserCreate
@@ -1595,6 +2347,7 @@ type UserCreate struct {
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
+	LastLogin time.Time `json:"last_login"`
 }
 
 // GetID returns the value of ID.
@@ -1617,6 +2370,11 @@ func (s *UserCreate) GetCreatedAt() time.Time {
 	return s.CreatedAt
 }
 
+// GetLastLogin returns the value of LastLogin.
+func (s *UserCreate) GetLastLogin() time.Time {
+	return s.LastLogin
+}
+
 // SetID sets the value of ID.
 func (s *UserCreate) SetID(val int) {
 	s.ID = val
@@ -1637,6 +2395,11 @@ func (s *UserCreate) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
+// SetLastLogin sets the value of LastLogin.
+func (s *UserCreate) SetLastLogin(val time.Time) {
+	s.LastLogin = val
+}
+
 func (*UserCreate) createUserRes() {}
 
 // Ref: #/components/schemas/UserList
@@ -1645,6 +2408,7 @@ type UserList struct {
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
+	LastLogin time.Time `json:"last_login"`
 }
 
 // GetID returns the value of ID.
@@ -1667,6 +2431,11 @@ func (s *UserList) GetCreatedAt() time.Time {
 	return s.CreatedAt
 }
 
+// GetLastLogin returns the value of LastLogin.
+func (s *UserList) GetLastLogin() time.Time {
+	return s.LastLogin
+}
+
 // SetID sets the value of ID.
 func (s *UserList) SetID(val int) {
 	s.ID = val
@@ -1687,12 +2456,21 @@ func (s *UserList) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
+// SetLastLogin sets the value of LastLogin.
+func (s *UserList) SetLastLogin(val time.Time) {
+	s.LastLogin = val
+}
+
 // Ref: #/components/schemas/User_QuestionsList
 type UserQuestionsList struct {
 	ID        int       `json:"id"`
 	Title     string    `json:"title"`
+	Slug      string    `json:"slug"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Views     int       `json:"views"`
+	Likes     int       `json:"likes"`
 }
 
 // GetID returns the value of ID.
@@ -1705,6 +2483,11 @@ func (s *UserQuestionsList) GetTitle() string {
 	return s.Title
 }
 
+// GetSlug returns the value of Slug.
+func (s *UserQuestionsList) GetSlug() string {
+	return s.Slug
+}
+
 // GetContent returns the value of Content.
 func (s *UserQuestionsList) GetContent() string {
 	return s.Content
@@ -1713,6 +2496,21 @@ func (s *UserQuestionsList) GetContent() string {
 // GetCreatedAt returns the value of CreatedAt.
 func (s *UserQuestionsList) GetCreatedAt() time.Time {
 	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *UserQuestionsList) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetViews returns the value of Views.
+func (s *UserQuestionsList) GetViews() int {
+	return s.Views
+}
+
+// GetLikes returns the value of Likes.
+func (s *UserQuestionsList) GetLikes() int {
+	return s.Likes
 }
 
 // SetID sets the value of ID.
@@ -1725,6 +2523,11 @@ func (s *UserQuestionsList) SetTitle(val string) {
 	s.Title = val
 }
 
+// SetSlug sets the value of Slug.
+func (s *UserQuestionsList) SetSlug(val string) {
+	s.Slug = val
+}
+
 // SetContent sets the value of Content.
 func (s *UserQuestionsList) SetContent(val string) {
 	s.Content = val
@@ -1735,12 +2538,28 @@ func (s *UserQuestionsList) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *UserQuestionsList) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetViews sets the value of Views.
+func (s *UserQuestionsList) SetViews(val int) {
+	s.Views = val
+}
+
+// SetLikes sets the value of Likes.
+func (s *UserQuestionsList) SetLikes(val int) {
+	s.Likes = val
+}
+
 // Ref: #/components/schemas/UserRead
 type UserRead struct {
 	ID        int       `json:"id"`
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
+	LastLogin time.Time `json:"last_login"`
 }
 
 // GetID returns the value of ID.
@@ -1763,6 +2582,11 @@ func (s *UserRead) GetCreatedAt() time.Time {
 	return s.CreatedAt
 }
 
+// GetLastLogin returns the value of LastLogin.
+func (s *UserRead) GetLastLogin() time.Time {
+	return s.LastLogin
+}
+
 // SetID sets the value of ID.
 func (s *UserRead) SetID(val int) {
 	s.ID = val
@@ -1781,6 +2605,11 @@ func (s *UserRead) SetEmail(val string) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *UserRead) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetLastLogin sets the value of LastLogin.
+func (s *UserRead) SetLastLogin(val time.Time) {
+	s.LastLogin = val
 }
 
 func (*UserRead) readUserRes() {}
@@ -1817,6 +2646,7 @@ type UserUpdate struct {
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
+	LastLogin time.Time `json:"last_login"`
 }
 
 // GetID returns the value of ID.
@@ -1839,6 +2669,11 @@ func (s *UserUpdate) GetCreatedAt() time.Time {
 	return s.CreatedAt
 }
 
+// GetLastLogin returns the value of LastLogin.
+func (s *UserUpdate) GetLastLogin() time.Time {
+	return s.LastLogin
+}
+
 // SetID sets the value of ID.
 func (s *UserUpdate) SetID(val int) {
 	s.ID = val
@@ -1857,6 +2692,11 @@ func (s *UserUpdate) SetEmail(val string) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *UserUpdate) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
+}
+
+// SetLastLogin sets the value of LastLogin.
+func (s *UserUpdate) SetLastLogin(val time.Time) {
+	s.LastLogin = val
 }
 
 func (*UserUpdate) updateUserRes() {}

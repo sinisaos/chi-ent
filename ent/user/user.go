@@ -22,6 +22,8 @@ const (
 	FieldPassword = "password"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
+	// FieldLastLogin holds the string denoting the last_login field in the database.
+	FieldLastLogin = "last_login"
 	// EdgeQuestions holds the string denoting the questions edge name in mutations.
 	EdgeQuestions = "questions"
 	// EdgeAnswers holds the string denoting the answers edge name in mutations.
@@ -60,6 +62,7 @@ var Columns = []string{
 	FieldEmail,
 	FieldPassword,
 	FieldCreatedAt,
+	FieldLastLogin,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -75,6 +78,10 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
+	// DefaultLastLogin holds the default value on creation for the "last_login" field.
+	DefaultLastLogin func() time.Time
+	// UpdateDefaultLastLogin holds the default value on update for the "last_login" field.
+	UpdateDefaultLastLogin func() time.Time
 )
 
 // OrderOption defines the ordering options for the User queries.
@@ -103,6 +110,11 @@ func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 // ByCreatedAt orders the results by the created_at field.
 func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByLastLogin orders the results by the last_login field.
+func ByLastLogin(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastLogin, opts...).ToFunc()
 }
 
 // ByQuestionsCount orders the results by questions count.

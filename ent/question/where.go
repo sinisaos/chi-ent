@@ -60,6 +60,11 @@ func Title(v string) predicate.Question {
 	return predicate.Question(sql.FieldEQ(FieldTitle, v))
 }
 
+// Slug applies equality check predicate on the "slug" field. It's identical to SlugEQ.
+func Slug(v string) predicate.Question {
+	return predicate.Question(sql.FieldEQ(FieldSlug, v))
+}
+
 // Content applies equality check predicate on the "content" field. It's identical to ContentEQ.
 func Content(v string) predicate.Question {
 	return predicate.Question(sql.FieldEQ(FieldContent, v))
@@ -68,6 +73,21 @@ func Content(v string) predicate.Question {
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Question {
 	return predicate.Question(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Question {
+	return predicate.Question(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// Views applies equality check predicate on the "views" field. It's identical to ViewsEQ.
+func Views(v int) predicate.Question {
+	return predicate.Question(sql.FieldEQ(FieldViews, v))
+}
+
+// Likes applies equality check predicate on the "likes" field. It's identical to LikesEQ.
+func Likes(v int) predicate.Question {
+	return predicate.Question(sql.FieldEQ(FieldLikes, v))
 }
 
 // TitleEQ applies the EQ predicate on the "title" field.
@@ -133,6 +153,71 @@ func TitleEqualFold(v string) predicate.Question {
 // TitleContainsFold applies the ContainsFold predicate on the "title" field.
 func TitleContainsFold(v string) predicate.Question {
 	return predicate.Question(sql.FieldContainsFold(FieldTitle, v))
+}
+
+// SlugEQ applies the EQ predicate on the "slug" field.
+func SlugEQ(v string) predicate.Question {
+	return predicate.Question(sql.FieldEQ(FieldSlug, v))
+}
+
+// SlugNEQ applies the NEQ predicate on the "slug" field.
+func SlugNEQ(v string) predicate.Question {
+	return predicate.Question(sql.FieldNEQ(FieldSlug, v))
+}
+
+// SlugIn applies the In predicate on the "slug" field.
+func SlugIn(vs ...string) predicate.Question {
+	return predicate.Question(sql.FieldIn(FieldSlug, vs...))
+}
+
+// SlugNotIn applies the NotIn predicate on the "slug" field.
+func SlugNotIn(vs ...string) predicate.Question {
+	return predicate.Question(sql.FieldNotIn(FieldSlug, vs...))
+}
+
+// SlugGT applies the GT predicate on the "slug" field.
+func SlugGT(v string) predicate.Question {
+	return predicate.Question(sql.FieldGT(FieldSlug, v))
+}
+
+// SlugGTE applies the GTE predicate on the "slug" field.
+func SlugGTE(v string) predicate.Question {
+	return predicate.Question(sql.FieldGTE(FieldSlug, v))
+}
+
+// SlugLT applies the LT predicate on the "slug" field.
+func SlugLT(v string) predicate.Question {
+	return predicate.Question(sql.FieldLT(FieldSlug, v))
+}
+
+// SlugLTE applies the LTE predicate on the "slug" field.
+func SlugLTE(v string) predicate.Question {
+	return predicate.Question(sql.FieldLTE(FieldSlug, v))
+}
+
+// SlugContains applies the Contains predicate on the "slug" field.
+func SlugContains(v string) predicate.Question {
+	return predicate.Question(sql.FieldContains(FieldSlug, v))
+}
+
+// SlugHasPrefix applies the HasPrefix predicate on the "slug" field.
+func SlugHasPrefix(v string) predicate.Question {
+	return predicate.Question(sql.FieldHasPrefix(FieldSlug, v))
+}
+
+// SlugHasSuffix applies the HasSuffix predicate on the "slug" field.
+func SlugHasSuffix(v string) predicate.Question {
+	return predicate.Question(sql.FieldHasSuffix(FieldSlug, v))
+}
+
+// SlugEqualFold applies the EqualFold predicate on the "slug" field.
+func SlugEqualFold(v string) predicate.Question {
+	return predicate.Question(sql.FieldEqualFold(FieldSlug, v))
+}
+
+// SlugContainsFold applies the ContainsFold predicate on the "slug" field.
+func SlugContainsFold(v string) predicate.Question {
+	return predicate.Question(sql.FieldContainsFold(FieldSlug, v))
 }
 
 // ContentEQ applies the EQ predicate on the "content" field.
@@ -238,6 +323,126 @@ func CreatedAtLT(v time.Time) predicate.Question {
 // CreatedAtLTE applies the LTE predicate on the "created_at" field.
 func CreatedAtLTE(v time.Time) predicate.Question {
 	return predicate.Question(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Question {
+	return predicate.Question(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Question {
+	return predicate.Question(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Question {
+	return predicate.Question(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Question {
+	return predicate.Question(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Question {
+	return predicate.Question(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Question {
+	return predicate.Question(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Question {
+	return predicate.Question(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Question {
+	return predicate.Question(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// ViewsEQ applies the EQ predicate on the "views" field.
+func ViewsEQ(v int) predicate.Question {
+	return predicate.Question(sql.FieldEQ(FieldViews, v))
+}
+
+// ViewsNEQ applies the NEQ predicate on the "views" field.
+func ViewsNEQ(v int) predicate.Question {
+	return predicate.Question(sql.FieldNEQ(FieldViews, v))
+}
+
+// ViewsIn applies the In predicate on the "views" field.
+func ViewsIn(vs ...int) predicate.Question {
+	return predicate.Question(sql.FieldIn(FieldViews, vs...))
+}
+
+// ViewsNotIn applies the NotIn predicate on the "views" field.
+func ViewsNotIn(vs ...int) predicate.Question {
+	return predicate.Question(sql.FieldNotIn(FieldViews, vs...))
+}
+
+// ViewsGT applies the GT predicate on the "views" field.
+func ViewsGT(v int) predicate.Question {
+	return predicate.Question(sql.FieldGT(FieldViews, v))
+}
+
+// ViewsGTE applies the GTE predicate on the "views" field.
+func ViewsGTE(v int) predicate.Question {
+	return predicate.Question(sql.FieldGTE(FieldViews, v))
+}
+
+// ViewsLT applies the LT predicate on the "views" field.
+func ViewsLT(v int) predicate.Question {
+	return predicate.Question(sql.FieldLT(FieldViews, v))
+}
+
+// ViewsLTE applies the LTE predicate on the "views" field.
+func ViewsLTE(v int) predicate.Question {
+	return predicate.Question(sql.FieldLTE(FieldViews, v))
+}
+
+// LikesEQ applies the EQ predicate on the "likes" field.
+func LikesEQ(v int) predicate.Question {
+	return predicate.Question(sql.FieldEQ(FieldLikes, v))
+}
+
+// LikesNEQ applies the NEQ predicate on the "likes" field.
+func LikesNEQ(v int) predicate.Question {
+	return predicate.Question(sql.FieldNEQ(FieldLikes, v))
+}
+
+// LikesIn applies the In predicate on the "likes" field.
+func LikesIn(vs ...int) predicate.Question {
+	return predicate.Question(sql.FieldIn(FieldLikes, vs...))
+}
+
+// LikesNotIn applies the NotIn predicate on the "likes" field.
+func LikesNotIn(vs ...int) predicate.Question {
+	return predicate.Question(sql.FieldNotIn(FieldLikes, vs...))
+}
+
+// LikesGT applies the GT predicate on the "likes" field.
+func LikesGT(v int) predicate.Question {
+	return predicate.Question(sql.FieldGT(FieldLikes, v))
+}
+
+// LikesGTE applies the GTE predicate on the "likes" field.
+func LikesGTE(v int) predicate.Question {
+	return predicate.Question(sql.FieldGTE(FieldLikes, v))
+}
+
+// LikesLT applies the LT predicate on the "likes" field.
+func LikesLT(v int) predicate.Question {
+	return predicate.Question(sql.FieldLT(FieldLikes, v))
+}
+
+// LikesLTE applies the LTE predicate on the "likes" field.
+func LikesLTE(v int) predicate.Question {
+	return predicate.Question(sql.FieldLTE(FieldLikes, v))
 }
 
 // HasAnswers applies the HasEdge predicate on the "answers" edge.

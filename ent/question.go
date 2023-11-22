@@ -20,10 +20,18 @@ type Question struct {
 	ID int `json:"id,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
+	// Slug holds the value of the "slug" field.
+	Slug string `json:"slug,omitempty"`
 	// Content holds the value of the "content" field.
 	Content string `json:"content,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// Views holds the value of the "views" field.
+	Views int `json:"views,omitempty"`
+	// Likes holds the value of the "likes" field.
+	Likes int `json:"likes,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the QuestionQuery when eager-loading is set.
 	Edges          QuestionEdges `json:"edges"`
@@ -80,11 +88,11 @@ func (*Question) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case question.FieldID:
+		case question.FieldID, question.FieldViews, question.FieldLikes:
 			values[i] = new(sql.NullInt64)
-		case question.FieldTitle, question.FieldContent:
+		case question.FieldTitle, question.FieldSlug, question.FieldContent:
 			values[i] = new(sql.NullString)
-		case question.FieldCreatedAt:
+		case question.FieldCreatedAt, question.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case question.ForeignKeys[0]: // user_questions
 			values[i] = new(sql.NullInt64)
@@ -115,6 +123,12 @@ func (q *Question) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				q.Title = value.String
 			}
+		case question.FieldSlug:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field slug", values[i])
+			} else if value.Valid {
+				q.Slug = value.String
+			}
 		case question.FieldContent:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field content", values[i])
@@ -126,6 +140,24 @@ func (q *Question) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				q.CreatedAt = value.Time
+			}
+		case question.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				q.UpdatedAt = value.Time
+			}
+		case question.FieldViews:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field views", values[i])
+			} else if value.Valid {
+				q.Views = int(value.Int64)
+			}
+		case question.FieldLikes:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field likes", values[i])
+			} else if value.Valid {
+				q.Likes = int(value.Int64)
 			}
 		case question.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -188,11 +220,23 @@ func (q *Question) String() string {
 	builder.WriteString("title=")
 	builder.WriteString(q.Title)
 	builder.WriteString(", ")
+	builder.WriteString("slug=")
+	builder.WriteString(q.Slug)
+	builder.WriteString(", ")
 	builder.WriteString("content=")
 	builder.WriteString(q.Content)
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(q.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(q.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("views=")
+	builder.WriteString(fmt.Sprintf("%v", q.Views))
+	builder.WriteString(", ")
+	builder.WriteString("likes=")
+	builder.WriteString(fmt.Sprintf("%v", q.Likes))
 	builder.WriteByte(')')
 	return builder.String()
 }

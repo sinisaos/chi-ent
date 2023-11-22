@@ -11,7 +11,10 @@ func NewAnswerCreate(e *ent.Answer) *AnswerCreate {
 	var ret AnswerCreate
 	ret.ID = e.ID
 	ret.Content = e.Content
+	ret.Likes = e.Likes
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.IsAcceptedAnswer = e.IsAcceptedAnswer
 	return &ret
 }
 
@@ -40,7 +43,10 @@ func NewAnswerList(e *ent.Answer) *AnswerList {
 	var ret AnswerList
 	ret.ID = e.ID
 	ret.Content = e.Content
+	ret.Likes = e.Likes
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.IsAcceptedAnswer = e.IsAcceptedAnswer
 	return &ret
 }
 
@@ -69,7 +75,10 @@ func NewAnswerRead(e *ent.Answer) *AnswerRead {
 	var ret AnswerRead
 	ret.ID = e.ID
 	ret.Content = e.Content
+	ret.Likes = e.Likes
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.IsAcceptedAnswer = e.IsAcceptedAnswer
 	return &ret
 }
 
@@ -98,7 +107,10 @@ func NewAnswerUpdate(e *ent.Answer) *AnswerUpdate {
 	var ret AnswerUpdate
 	ret.ID = e.ID
 	ret.Content = e.Content
+	ret.Likes = e.Likes
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.IsAcceptedAnswer = e.IsAcceptedAnswer
 	return &ret
 }
 
@@ -129,6 +141,7 @@ func NewAnswerAuthorRead(e *ent.User) *AnswerAuthorRead {
 	ret.Username = e.Username
 	ret.Email = e.Email
 	ret.CreatedAt = e.CreatedAt
+	ret.LastLogin = e.LastLogin
 	return &ret
 }
 
@@ -157,8 +170,12 @@ func NewAnswerQuestionRead(e *ent.Question) *AnswerQuestionRead {
 	var ret AnswerQuestionRead
 	ret.ID = e.ID
 	ret.Title = e.Title
+	ret.Slug = e.Slug
 	ret.Content = e.Content
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.Views = e.Views
+	ret.Likes = e.Likes
 	return &ret
 }
 
@@ -187,8 +204,12 @@ func NewQuestionCreate(e *ent.Question) *QuestionCreate {
 	var ret QuestionCreate
 	ret.ID = e.ID
 	ret.Title = e.Title
+	ret.Slug = e.Slug
 	ret.Content = e.Content
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.Views = e.Views
+	ret.Likes = e.Likes
 	return &ret
 }
 
@@ -217,8 +238,12 @@ func NewQuestionList(e *ent.Question) *QuestionList {
 	var ret QuestionList
 	ret.ID = e.ID
 	ret.Title = e.Title
+	ret.Slug = e.Slug
 	ret.Content = e.Content
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.Views = e.Views
+	ret.Likes = e.Likes
 	return &ret
 }
 
@@ -247,8 +272,12 @@ func NewQuestionRead(e *ent.Question) *QuestionRead {
 	var ret QuestionRead
 	ret.ID = e.ID
 	ret.Title = e.Title
+	ret.Slug = e.Slug
 	ret.Content = e.Content
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.Views = e.Views
+	ret.Likes = e.Likes
 	return &ret
 }
 
@@ -277,8 +306,12 @@ func NewQuestionUpdate(e *ent.Question) *QuestionUpdate {
 	var ret QuestionUpdate
 	ret.ID = e.ID
 	ret.Title = e.Title
+	ret.Slug = e.Slug
 	ret.Content = e.Content
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.Views = e.Views
+	ret.Likes = e.Likes
 	return &ret
 }
 
@@ -307,7 +340,10 @@ func NewQuestionAnswersList(e *ent.Answer) *QuestionAnswersList {
 	var ret QuestionAnswersList
 	ret.ID = e.ID
 	ret.Content = e.Content
+	ret.Likes = e.Likes
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.IsAcceptedAnswer = e.IsAcceptedAnswer
 	return &ret
 }
 
@@ -338,6 +374,7 @@ func NewQuestionAuthorRead(e *ent.User) *QuestionAuthorRead {
 	ret.Username = e.Username
 	ret.Email = e.Email
 	ret.CreatedAt = e.CreatedAt
+	ret.LastLogin = e.LastLogin
 	return &ret
 }
 
@@ -506,8 +543,12 @@ func NewTagQuestionsList(e *ent.Question) *TagQuestionsList {
 	var ret TagQuestionsList
 	ret.ID = e.ID
 	ret.Title = e.Title
+	ret.Slug = e.Slug
 	ret.Content = e.Content
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.Views = e.Views
+	ret.Likes = e.Likes
 	return &ret
 }
 
@@ -538,6 +579,7 @@ func NewUserCreate(e *ent.User) *UserCreate {
 	ret.Username = e.Username
 	ret.Email = e.Email
 	ret.CreatedAt = e.CreatedAt
+	ret.LastLogin = e.LastLogin
 	return &ret
 }
 
@@ -568,6 +610,7 @@ func NewUserList(e *ent.User) *UserList {
 	ret.Username = e.Username
 	ret.Email = e.Email
 	ret.CreatedAt = e.CreatedAt
+	ret.LastLogin = e.LastLogin
 	return &ret
 }
 
@@ -598,6 +641,7 @@ func NewUserRead(e *ent.User) *UserRead {
 	ret.Username = e.Username
 	ret.Email = e.Email
 	ret.CreatedAt = e.CreatedAt
+	ret.LastLogin = e.LastLogin
 	return &ret
 }
 
@@ -628,6 +672,7 @@ func NewUserUpdate(e *ent.User) *UserUpdate {
 	ret.Username = e.Username
 	ret.Email = e.Email
 	ret.CreatedAt = e.CreatedAt
+	ret.LastLogin = e.LastLogin
 	return &ret
 }
 
@@ -656,7 +701,10 @@ func NewUserAnswersList(e *ent.Answer) *UserAnswersList {
 	var ret UserAnswersList
 	ret.ID = e.ID
 	ret.Content = e.Content
+	ret.Likes = e.Likes
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.IsAcceptedAnswer = e.IsAcceptedAnswer
 	return &ret
 }
 
@@ -685,8 +733,12 @@ func NewUserQuestionsList(e *ent.Question) *UserQuestionsList {
 	var ret UserQuestionsList
 	ret.ID = e.ID
 	ret.Title = e.Title
+	ret.Slug = e.Slug
 	ret.Content = e.Content
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.Views = e.Views
+	ret.Likes = e.Likes
 	return &ret
 }
 

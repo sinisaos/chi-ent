@@ -16,10 +16,18 @@ const (
 	FieldID = "id"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
+	// FieldSlug holds the string denoting the slug field in the database.
+	FieldSlug = "slug"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldViews holds the string denoting the views field in the database.
+	FieldViews = "views"
+	// FieldLikes holds the string denoting the likes field in the database.
+	FieldLikes = "likes"
 	// EdgeAnswers holds the string denoting the answers edge name in mutations.
 	EdgeAnswers = "answers"
 	// EdgeAuthor holds the string denoting the author edge name in mutations.
@@ -53,8 +61,12 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldTitle,
+	FieldSlug,
 	FieldContent,
 	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldViews,
+	FieldLikes,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "questions"
@@ -85,8 +97,18 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	TitleValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultViews holds the default value on creation for the "views" field.
+	DefaultViews int
+	// DefaultLikes holds the default value on creation for the "likes" field.
+	DefaultLikes int
 )
 
 // OrderOption defines the ordering options for the Question queries.
@@ -102,6 +124,11 @@ func ByTitle(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTitle, opts...).ToFunc()
 }
 
+// BySlug orders the results by the slug field.
+func BySlug(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSlug, opts...).ToFunc()
+}
+
 // ByContent orders the results by the content field.
 func ByContent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldContent, opts...).ToFunc()
@@ -110,6 +137,21 @@ func ByContent(opts ...sql.OrderTermOption) OrderOption {
 // ByCreatedAt orders the results by the created_at field.
 func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByViews orders the results by the views field.
+func ByViews(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldViews, opts...).ToFunc()
+}
+
+// ByLikes orders the results by the likes field.
+func ByLikes(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLikes, opts...).ToFunc()
 }
 
 // ByAnswersCount orders the results by answers count.

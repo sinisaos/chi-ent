@@ -48,17 +48,6 @@ func (s TagService) GetTag(id int) (*ent.Tag, error) {
 	return tag, nil
 }
 
-func (s TagService) CreateTag(payload *model.NewTagInput) (*ent.Tag, error) {
-	tag, err := s.Client.Tag.Create().
-		SetName(payload.Name).
-		Save(context.Background())
-	if err != nil {
-		return nil, err
-	}
-
-	return tag, nil
-}
-
 func (s TagService) UpdateTag(id int, payload *model.UpdateTagInput) (*ent.Tag, error) {
 	tag, err := s.Client.Tag.UpdateOneID(id).
 		SetName(payload.Name).

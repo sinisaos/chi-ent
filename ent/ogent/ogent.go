@@ -34,7 +34,10 @@ func (h *OgentHandler) CreateAnswer(ctx context.Context, req *CreateAnswerReq) (
 	b := h.client.Answer.Create()
 	// Add all fields.
 	b.SetContent(req.Content)
+	b.SetLikes(req.Likes)
 	b.SetCreatedAt(req.CreatedAt)
+	b.SetUpdatedAt(req.UpdatedAt)
+	b.SetIsAcceptedAnswer(req.IsAcceptedAnswer)
 	// Add all edges.
 	if v, ok := req.Question.Get(); ok {
 		b.SetQuestionID(v)
@@ -105,6 +108,15 @@ func (h *OgentHandler) UpdateAnswer(ctx context.Context, req *UpdateAnswerReq, p
 	// Add all fields.
 	if v, ok := req.Content.Get(); ok {
 		b.SetContent(v)
+	}
+	if v, ok := req.Likes.Get(); ok {
+		b.SetLikes(v)
+	}
+	if v, ok := req.UpdatedAt.Get(); ok {
+		b.SetUpdatedAt(v)
+	}
+	if v, ok := req.IsAcceptedAnswer.Get(); ok {
+		b.SetIsAcceptedAnswer(v)
 	}
 	// Add all edges.
 	if v, ok := req.Question.Get(); ok {
@@ -264,8 +276,12 @@ func (h *OgentHandler) CreateQuestion(ctx context.Context, req *CreateQuestionRe
 	b := h.client.Question.Create()
 	// Add all fields.
 	b.SetTitle(req.Title)
+	b.SetSlug(req.Slug)
 	b.SetContent(req.Content)
 	b.SetCreatedAt(req.CreatedAt)
+	b.SetUpdatedAt(req.UpdatedAt)
+	b.SetViews(req.Views)
+	b.SetLikes(req.Likes)
 	// Add all edges.
 	b.AddAnswerIDs(req.Answers...)
 	if v, ok := req.Author.Get(); ok {
@@ -336,8 +352,20 @@ func (h *OgentHandler) UpdateQuestion(ctx context.Context, req *UpdateQuestionRe
 	if v, ok := req.Title.Get(); ok {
 		b.SetTitle(v)
 	}
+	if v, ok := req.Slug.Get(); ok {
+		b.SetSlug(v)
+	}
 	if v, ok := req.Content.Get(); ok {
 		b.SetContent(v)
+	}
+	if v, ok := req.UpdatedAt.Get(); ok {
+		b.SetUpdatedAt(v)
+	}
+	if v, ok := req.Views.Get(); ok {
+		b.SetViews(v)
+	}
+	if v, ok := req.Likes.Get(); ok {
+		b.SetLikes(v)
 	}
 	// Add all edges.
 	if req.Answers != nil {
@@ -754,6 +782,7 @@ func (h *OgentHandler) CreateUser(ctx context.Context, req *CreateUserReq) (Crea
 	b.SetEmail(req.Email)
 	b.SetPassword(req.Password)
 	b.SetCreatedAt(req.CreatedAt)
+	b.SetLastLogin(req.LastLogin)
 	// Add all edges.
 	b.AddQuestionIDs(req.Questions...)
 	b.AddAnswerIDs(req.Answers...)
@@ -827,6 +856,9 @@ func (h *OgentHandler) UpdateUser(ctx context.Context, req *UpdateUserReq, param
 	}
 	if v, ok := req.Password.Get(); ok {
 		b.SetPassword(v)
+	}
+	if v, ok := req.LastLogin.Get(); ok {
+		b.SetLastLogin(v)
 	}
 	// Add all edges.
 	if req.Questions != nil {

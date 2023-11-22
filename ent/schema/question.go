@@ -17,11 +17,21 @@ type Question struct {
 // Fields of the Question.
 func (Question) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("title"),
+		field.String("title").
+			MaxLen(256),
+		field.String("slug").
+			Unique(),
 		field.Text("content"),
 		field.Time("created_at").
 			Immutable().
 			Default(time.Now),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
+		field.Int("views").
+			Default(0),
+		field.Int("likes").
+			Default(0),
 	}
 }
 

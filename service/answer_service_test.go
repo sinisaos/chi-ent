@@ -3,6 +3,7 @@ package service
 import (
 	"testing"
 
+	"github.com/gosimple/slug"
 	"github.com/sinisaos/chi-ent/ent/enttest"
 	"github.com/sinisaos/chi-ent/model"
 
@@ -25,7 +26,8 @@ func TestAnswerService(t *testing.T) {
 	assert.NoError(t, err)
 	// Insert question
 	q, err := questionService.CreateQuestion(&model.NewQuestionInput{
-		Title:   "TestQuestion1",
+		Title:   "Test Question 1",
+		Slug:    slug.Make("Test Question 1"),
 		Author:  u.ID,
 		Content: "Content of question one",
 	})
@@ -98,5 +100,5 @@ func TestAnswerService(t *testing.T) {
 
 	answerQuestion, _ := answerService.GetAnswerQuestion(a.ID)
 	assert.Equal(t, answerQuestion.Edges.Question.ID, 1)
-	assert.Equal(t, answerQuestion.Edges.Question.Title, "TestQuestion1")
+	assert.Equal(t, answerQuestion.Edges.Question.Title, "Test Question 1")
 }

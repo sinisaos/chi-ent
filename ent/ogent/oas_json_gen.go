@@ -5,6 +5,7 @@ package ogent
 import (
 	"math/bits"
 	"strconv"
+	"time"
 
 	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
@@ -38,13 +39,18 @@ func (s *AnswerAuthorRead) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("last_login")
+		json.EncodeDateTime(e, s.LastLogin)
+	}
 }
 
-var jsonFieldsNameOfAnswerAuthorRead = [4]string{
+var jsonFieldsNameOfAnswerAuthorRead = [5]string{
 	0: "id",
 	1: "username",
 	2: "email",
 	3: "created_at",
+	4: "last_login",
 }
 
 // Decode decodes AnswerAuthorRead from json.
@@ -104,6 +110,18 @@ func (s *AnswerAuthorRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
+		case "last_login":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastLogin = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_login\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -114,7 +132,7 @@ func (s *AnswerAuthorRead) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -178,15 +196,30 @@ func (s *AnswerCreate) encodeFields(e *jx.Encoder) {
 		e.Str(s.Content)
 	}
 	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
+	{
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("is_accepted_answer")
+		e.Bool(s.IsAcceptedAnswer)
+	}
 }
 
-var jsonFieldsNameOfAnswerCreate = [3]string{
+var jsonFieldsNameOfAnswerCreate = [6]string{
 	0: "id",
 	1: "content",
-	2: "created_at",
+	2: "likes",
+	3: "created_at",
+	4: "updated_at",
+	5: "is_accepted_answer",
 }
 
 // Decode decodes AnswerCreate from json.
@@ -222,8 +255,20 @@ func (s *AnswerCreate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
-		case "created_at":
+		case "likes":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
+			}
+		case "created_at":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -233,6 +278,30 @@ func (s *AnswerCreate) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "is_accepted_answer":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Bool()
+				s.IsAcceptedAnswer = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"is_accepted_answer\"")
 			}
 		default:
 			return d.Skip()
@@ -244,7 +313,7 @@ func (s *AnswerCreate) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -308,15 +377,30 @@ func (s *AnswerList) encodeFields(e *jx.Encoder) {
 		e.Str(s.Content)
 	}
 	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
+	{
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("is_accepted_answer")
+		e.Bool(s.IsAcceptedAnswer)
+	}
 }
 
-var jsonFieldsNameOfAnswerList = [3]string{
+var jsonFieldsNameOfAnswerList = [6]string{
 	0: "id",
 	1: "content",
-	2: "created_at",
+	2: "likes",
+	3: "created_at",
+	4: "updated_at",
+	5: "is_accepted_answer",
 }
 
 // Decode decodes AnswerList from json.
@@ -352,8 +436,20 @@ func (s *AnswerList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
-		case "created_at":
+		case "likes":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
+			}
+		case "created_at":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -363,6 +459,30 @@ func (s *AnswerList) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "is_accepted_answer":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Bool()
+				s.IsAcceptedAnswer = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"is_accepted_answer\"")
 			}
 		default:
 			return d.Skip()
@@ -374,7 +494,7 @@ func (s *AnswerList) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -438,6 +558,10 @@ func (s *AnswerQuestionRead) encodeFields(e *jx.Encoder) {
 		e.Str(s.Title)
 	}
 	{
+		e.FieldStart("slug")
+		e.Str(s.Slug)
+	}
+	{
 		e.FieldStart("content")
 		e.Str(s.Content)
 	}
@@ -445,13 +569,29 @@ func (s *AnswerQuestionRead) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("views")
+		e.Int(s.Views)
+	}
+	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
 }
 
-var jsonFieldsNameOfAnswerQuestionRead = [4]string{
+var jsonFieldsNameOfAnswerQuestionRead = [8]string{
 	0: "id",
 	1: "title",
-	2: "content",
-	3: "created_at",
+	2: "slug",
+	3: "content",
+	4: "created_at",
+	5: "updated_at",
+	6: "views",
+	7: "likes",
 }
 
 // Decode decodes AnswerQuestionRead from json.
@@ -487,8 +627,20 @@ func (s *AnswerQuestionRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"title\"")
 			}
-		case "content":
+		case "slug":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Slug = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slug\"")
+			}
+		case "content":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
 				s.Content = string(v)
@@ -500,7 +652,7 @@ func (s *AnswerQuestionRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
 		case "created_at":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -510,6 +662,42 @@ func (s *AnswerQuestionRead) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "views":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.Views = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"views\"")
+			}
+		case "likes":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
 			}
 		default:
 			return d.Skip()
@@ -521,7 +709,7 @@ func (s *AnswerQuestionRead) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b11111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -585,15 +773,30 @@ func (s *AnswerRead) encodeFields(e *jx.Encoder) {
 		e.Str(s.Content)
 	}
 	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
+	{
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("is_accepted_answer")
+		e.Bool(s.IsAcceptedAnswer)
+	}
 }
 
-var jsonFieldsNameOfAnswerRead = [3]string{
+var jsonFieldsNameOfAnswerRead = [6]string{
 	0: "id",
 	1: "content",
-	2: "created_at",
+	2: "likes",
+	3: "created_at",
+	4: "updated_at",
+	5: "is_accepted_answer",
 }
 
 // Decode decodes AnswerRead from json.
@@ -629,8 +832,20 @@ func (s *AnswerRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
-		case "created_at":
+		case "likes":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
+			}
+		case "created_at":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -640,6 +855,30 @@ func (s *AnswerRead) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "is_accepted_answer":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Bool()
+				s.IsAcceptedAnswer = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"is_accepted_answer\"")
 			}
 		default:
 			return d.Skip()
@@ -651,7 +890,7 @@ func (s *AnswerRead) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -715,15 +954,30 @@ func (s *AnswerUpdate) encodeFields(e *jx.Encoder) {
 		e.Str(s.Content)
 	}
 	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
+	{
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("is_accepted_answer")
+		e.Bool(s.IsAcceptedAnswer)
+	}
 }
 
-var jsonFieldsNameOfAnswerUpdate = [3]string{
+var jsonFieldsNameOfAnswerUpdate = [6]string{
 	0: "id",
 	1: "content",
-	2: "created_at",
+	2: "likes",
+	3: "created_at",
+	4: "updated_at",
+	5: "is_accepted_answer",
 }
 
 // Decode decodes AnswerUpdate from json.
@@ -759,8 +1013,20 @@ func (s *AnswerUpdate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
-		case "created_at":
+		case "likes":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
+			}
+		case "created_at":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -770,6 +1036,30 @@ func (s *AnswerUpdate) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "is_accepted_answer":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Bool()
+				s.IsAcceptedAnswer = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"is_accepted_answer\"")
 			}
 		default:
 			return d.Skip()
@@ -781,7 +1071,7 @@ func (s *AnswerUpdate) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -841,8 +1131,20 @@ func (s *CreateAnswerReq) encodeFields(e *jx.Encoder) {
 		e.Str(s.Content)
 	}
 	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
+	{
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
+	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("is_accepted_answer")
+		e.Bool(s.IsAcceptedAnswer)
 	}
 	{
 		if s.Question.Set {
@@ -858,11 +1160,14 @@ func (s *CreateAnswerReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateAnswerReq = [4]string{
+var jsonFieldsNameOfCreateAnswerReq = [7]string{
 	0: "content",
-	1: "created_at",
-	2: "question",
-	3: "author",
+	1: "likes",
+	2: "created_at",
+	3: "updated_at",
+	4: "is_accepted_answer",
+	5: "question",
+	6: "author",
 }
 
 // Decode decodes CreateAnswerReq from json.
@@ -886,8 +1191,20 @@ func (s *CreateAnswerReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
-		case "created_at":
+		case "likes":
 			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
+			}
+		case "created_at":
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -897,6 +1214,30 @@ func (s *CreateAnswerReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "is_accepted_answer":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Bool()
+				s.IsAcceptedAnswer = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"is_accepted_answer\"")
 			}
 		case "question":
 			if err := func() error {
@@ -928,7 +1269,7 @@ func (s *CreateAnswerReq) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -988,12 +1329,28 @@ func (s *CreateQuestionReq) encodeFields(e *jx.Encoder) {
 		e.Str(s.Title)
 	}
 	{
+		e.FieldStart("slug")
+		e.Str(s.Slug)
+	}
+	{
 		e.FieldStart("content")
 		e.Str(s.Content)
 	}
 	{
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
+	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("views")
+		e.Int(s.Views)
+	}
+	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
 	}
 	{
 		if s.Answers != nil {
@@ -1023,13 +1380,17 @@ func (s *CreateQuestionReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateQuestionReq = [6]string{
+var jsonFieldsNameOfCreateQuestionReq = [10]string{
 	0: "title",
-	1: "content",
-	2: "created_at",
-	3: "answers",
-	4: "author",
-	5: "tags",
+	1: "slug",
+	2: "content",
+	3: "created_at",
+	4: "updated_at",
+	5: "views",
+	6: "likes",
+	7: "answers",
+	8: "author",
+	9: "tags",
 }
 
 // Decode decodes CreateQuestionReq from json.
@@ -1037,7 +1398,7 @@ func (s *CreateQuestionReq) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode CreateQuestionReq to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -1053,8 +1414,20 @@ func (s *CreateQuestionReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"title\"")
 			}
-		case "content":
+		case "slug":
 			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Slug = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slug\"")
+			}
+		case "content":
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
 				v, err := d.Str()
 				s.Content = string(v)
@@ -1066,7 +1439,7 @@ func (s *CreateQuestionReq) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
 		case "created_at":
-			requiredBitSet[0] |= 1 << 2
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -1076,6 +1449,42 @@ func (s *CreateQuestionReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "views":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Int()
+				s.Views = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"views\"")
+			}
+		case "likes":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
 			}
 		case "answers":
 			if err := func() error {
@@ -1134,8 +1543,9 @@ func (s *CreateQuestionReq) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000111,
+	for i, mask := range [2]uint8{
+		0b01111111,
+		0b00000000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1333,6 +1743,10 @@ func (s *CreateUserReq) encodeFields(e *jx.Encoder) {
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
 	{
+		e.FieldStart("last_login")
+		json.EncodeDateTime(e, s.LastLogin)
+	}
+	{
 		if s.Questions != nil {
 			e.FieldStart("questions")
 			e.ArrStart()
@@ -1364,14 +1778,15 @@ func (s *CreateUserReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateUserReq = [7]string{
+var jsonFieldsNameOfCreateUserReq = [8]string{
 	0: "username",
 	1: "email",
 	2: "password",
 	3: "created_at",
-	4: "questions",
-	5: "answers",
-	6: "tags",
+	4: "last_login",
+	5: "questions",
+	6: "answers",
+	7: "tags",
 }
 
 // Decode decodes CreateUserReq from json.
@@ -1430,6 +1845,18 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "last_login":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastLogin = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_login\"")
 			}
 		case "questions":
 			if err := func() error {
@@ -1498,7 +1925,7 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2044,6 +2471,76 @@ func (s *ListUserTagsOKApplicationJSON) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes bool as json.
+func (o OptBool) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Bool(bool(o.Value))
+}
+
+// Decode decodes bool from json.
+func (o *OptBool) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptBool to nil")
+	}
+	o.Set = true
+	v, err := d.Bool()
+	if err != nil {
+		return err
+	}
+	o.Value = bool(v)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptBool) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptBool) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes time.Time as json.
+func (o OptDateTime) Encode(e *jx.Encoder, format func(*jx.Encoder, time.Time)) {
+	if !o.Set {
+		return
+	}
+	format(e, o.Value)
+}
+
+// Decode decodes time.Time from json.
+func (o *OptDateTime) Decode(d *jx.Decoder, format func(*jx.Decoder) (time.Time, error)) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptDateTime to nil")
+	}
+	o.Set = true
+	v, err := format(d)
+	if err != nil {
+		return err
+	}
+	o.Value = v
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptDateTime) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e, json.EncodeDateTime)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptDateTime) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d, json.DecodeDateTime)
+}
+
 // Encode encodes int as json.
 func (o OptInt) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -2132,15 +2629,30 @@ func (s *QuestionAnswersList) encodeFields(e *jx.Encoder) {
 		e.Str(s.Content)
 	}
 	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
+	{
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("is_accepted_answer")
+		e.Bool(s.IsAcceptedAnswer)
+	}
 }
 
-var jsonFieldsNameOfQuestionAnswersList = [3]string{
+var jsonFieldsNameOfQuestionAnswersList = [6]string{
 	0: "id",
 	1: "content",
-	2: "created_at",
+	2: "likes",
+	3: "created_at",
+	4: "updated_at",
+	5: "is_accepted_answer",
 }
 
 // Decode decodes QuestionAnswersList from json.
@@ -2176,8 +2688,20 @@ func (s *QuestionAnswersList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
-		case "created_at":
+		case "likes":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
+			}
+		case "created_at":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -2187,6 +2711,30 @@ func (s *QuestionAnswersList) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "is_accepted_answer":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Bool()
+				s.IsAcceptedAnswer = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"is_accepted_answer\"")
 			}
 		default:
 			return d.Skip()
@@ -2198,7 +2746,7 @@ func (s *QuestionAnswersList) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2269,13 +2817,18 @@ func (s *QuestionAuthorRead) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("last_login")
+		json.EncodeDateTime(e, s.LastLogin)
+	}
 }
 
-var jsonFieldsNameOfQuestionAuthorRead = [4]string{
+var jsonFieldsNameOfQuestionAuthorRead = [5]string{
 	0: "id",
 	1: "username",
 	2: "email",
 	3: "created_at",
+	4: "last_login",
 }
 
 // Decode decodes QuestionAuthorRead from json.
@@ -2335,6 +2888,18 @@ func (s *QuestionAuthorRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
+		case "last_login":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastLogin = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_login\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -2345,7 +2910,7 @@ func (s *QuestionAuthorRead) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2409,6 +2974,10 @@ func (s *QuestionCreate) encodeFields(e *jx.Encoder) {
 		e.Str(s.Title)
 	}
 	{
+		e.FieldStart("slug")
+		e.Str(s.Slug)
+	}
+	{
 		e.FieldStart("content")
 		e.Str(s.Content)
 	}
@@ -2416,13 +2985,29 @@ func (s *QuestionCreate) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("views")
+		e.Int(s.Views)
+	}
+	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
 }
 
-var jsonFieldsNameOfQuestionCreate = [4]string{
+var jsonFieldsNameOfQuestionCreate = [8]string{
 	0: "id",
 	1: "title",
-	2: "content",
-	3: "created_at",
+	2: "slug",
+	3: "content",
+	4: "created_at",
+	5: "updated_at",
+	6: "views",
+	7: "likes",
 }
 
 // Decode decodes QuestionCreate from json.
@@ -2458,8 +3043,20 @@ func (s *QuestionCreate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"title\"")
 			}
-		case "content":
+		case "slug":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Slug = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slug\"")
+			}
+		case "content":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
 				s.Content = string(v)
@@ -2471,7 +3068,7 @@ func (s *QuestionCreate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
 		case "created_at":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -2481,6 +3078,42 @@ func (s *QuestionCreate) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "views":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.Views = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"views\"")
+			}
+		case "likes":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
 			}
 		default:
 			return d.Skip()
@@ -2492,7 +3125,7 @@ func (s *QuestionCreate) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b11111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2556,6 +3189,10 @@ func (s *QuestionList) encodeFields(e *jx.Encoder) {
 		e.Str(s.Title)
 	}
 	{
+		e.FieldStart("slug")
+		e.Str(s.Slug)
+	}
+	{
 		e.FieldStart("content")
 		e.Str(s.Content)
 	}
@@ -2563,13 +3200,29 @@ func (s *QuestionList) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("views")
+		e.Int(s.Views)
+	}
+	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
 }
 
-var jsonFieldsNameOfQuestionList = [4]string{
+var jsonFieldsNameOfQuestionList = [8]string{
 	0: "id",
 	1: "title",
-	2: "content",
-	3: "created_at",
+	2: "slug",
+	3: "content",
+	4: "created_at",
+	5: "updated_at",
+	6: "views",
+	7: "likes",
 }
 
 // Decode decodes QuestionList from json.
@@ -2605,8 +3258,20 @@ func (s *QuestionList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"title\"")
 			}
-		case "content":
+		case "slug":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Slug = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slug\"")
+			}
+		case "content":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
 				s.Content = string(v)
@@ -2618,7 +3283,7 @@ func (s *QuestionList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
 		case "created_at":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -2628,6 +3293,42 @@ func (s *QuestionList) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "views":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.Views = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"views\"")
+			}
+		case "likes":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
 			}
 		default:
 			return d.Skip()
@@ -2639,7 +3340,7 @@ func (s *QuestionList) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b11111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2703,6 +3404,10 @@ func (s *QuestionRead) encodeFields(e *jx.Encoder) {
 		e.Str(s.Title)
 	}
 	{
+		e.FieldStart("slug")
+		e.Str(s.Slug)
+	}
+	{
 		e.FieldStart("content")
 		e.Str(s.Content)
 	}
@@ -2710,13 +3415,29 @@ func (s *QuestionRead) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("views")
+		e.Int(s.Views)
+	}
+	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
 }
 
-var jsonFieldsNameOfQuestionRead = [4]string{
+var jsonFieldsNameOfQuestionRead = [8]string{
 	0: "id",
 	1: "title",
-	2: "content",
-	3: "created_at",
+	2: "slug",
+	3: "content",
+	4: "created_at",
+	5: "updated_at",
+	6: "views",
+	7: "likes",
 }
 
 // Decode decodes QuestionRead from json.
@@ -2752,8 +3473,20 @@ func (s *QuestionRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"title\"")
 			}
-		case "content":
+		case "slug":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Slug = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slug\"")
+			}
+		case "content":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
 				s.Content = string(v)
@@ -2765,7 +3498,7 @@ func (s *QuestionRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
 		case "created_at":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -2775,6 +3508,42 @@ func (s *QuestionRead) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "views":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.Views = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"views\"")
+			}
+		case "likes":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
 			}
 		default:
 			return d.Skip()
@@ -2786,7 +3555,7 @@ func (s *QuestionRead) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b11111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2963,6 +3732,10 @@ func (s *QuestionUpdate) encodeFields(e *jx.Encoder) {
 		e.Str(s.Title)
 	}
 	{
+		e.FieldStart("slug")
+		e.Str(s.Slug)
+	}
+	{
 		e.FieldStart("content")
 		e.Str(s.Content)
 	}
@@ -2970,13 +3743,29 @@ func (s *QuestionUpdate) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("views")
+		e.Int(s.Views)
+	}
+	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
 }
 
-var jsonFieldsNameOfQuestionUpdate = [4]string{
+var jsonFieldsNameOfQuestionUpdate = [8]string{
 	0: "id",
 	1: "title",
-	2: "content",
-	3: "created_at",
+	2: "slug",
+	3: "content",
+	4: "created_at",
+	5: "updated_at",
+	6: "views",
+	7: "likes",
 }
 
 // Decode decodes QuestionUpdate from json.
@@ -3012,8 +3801,20 @@ func (s *QuestionUpdate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"title\"")
 			}
-		case "content":
+		case "slug":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Slug = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slug\"")
+			}
+		case "content":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
 				s.Content = string(v)
@@ -3025,7 +3826,7 @@ func (s *QuestionUpdate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
 		case "created_at":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -3035,6 +3836,42 @@ func (s *QuestionUpdate) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "views":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.Views = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"views\"")
+			}
+		case "likes":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
 			}
 		default:
 			return d.Skip()
@@ -3046,7 +3883,7 @@ func (s *QuestionUpdate) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b11111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -3860,6 +4697,10 @@ func (s *TagQuestionsList) encodeFields(e *jx.Encoder) {
 		e.Str(s.Title)
 	}
 	{
+		e.FieldStart("slug")
+		e.Str(s.Slug)
+	}
+	{
 		e.FieldStart("content")
 		e.Str(s.Content)
 	}
@@ -3867,13 +4708,29 @@ func (s *TagQuestionsList) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("views")
+		e.Int(s.Views)
+	}
+	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
 }
 
-var jsonFieldsNameOfTagQuestionsList = [4]string{
+var jsonFieldsNameOfTagQuestionsList = [8]string{
 	0: "id",
 	1: "title",
-	2: "content",
-	3: "created_at",
+	2: "slug",
+	3: "content",
+	4: "created_at",
+	5: "updated_at",
+	6: "views",
+	7: "likes",
 }
 
 // Decode decodes TagQuestionsList from json.
@@ -3909,8 +4766,20 @@ func (s *TagQuestionsList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"title\"")
 			}
-		case "content":
+		case "slug":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Slug = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slug\"")
+			}
+		case "content":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
 				s.Content = string(v)
@@ -3922,7 +4791,7 @@ func (s *TagQuestionsList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
 		case "created_at":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -3932,6 +4801,42 @@ func (s *TagQuestionsList) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "views":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.Views = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"views\"")
+			}
+		case "likes":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
 			}
 		default:
 			return d.Skip()
@@ -3943,7 +4848,7 @@ func (s *TagQuestionsList) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b11111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -4231,6 +5136,24 @@ func (s *UpdateAnswerReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Likes.Set {
+			e.FieldStart("likes")
+			s.Likes.Encode(e)
+		}
+	}
+	{
+		if s.UpdatedAt.Set {
+			e.FieldStart("updated_at")
+			s.UpdatedAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+	{
+		if s.IsAcceptedAnswer.Set {
+			e.FieldStart("is_accepted_answer")
+			s.IsAcceptedAnswer.Encode(e)
+		}
+	}
+	{
 		if s.Question.Set {
 			e.FieldStart("question")
 			s.Question.Encode(e)
@@ -4244,10 +5167,13 @@ func (s *UpdateAnswerReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUpdateAnswerReq = [3]string{
+var jsonFieldsNameOfUpdateAnswerReq = [6]string{
 	0: "content",
-	1: "question",
-	2: "author",
+	1: "likes",
+	2: "updated_at",
+	3: "is_accepted_answer",
+	4: "question",
+	5: "author",
 }
 
 // Decode decodes UpdateAnswerReq from json.
@@ -4267,6 +5193,36 @@ func (s *UpdateAnswerReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
+			}
+		case "likes":
+			if err := func() error {
+				s.Likes.Reset()
+				if err := s.Likes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
+			}
+		case "updated_at":
+			if err := func() error {
+				s.UpdatedAt.Reset()
+				if err := s.UpdatedAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "is_accepted_answer":
+			if err := func() error {
+				s.IsAcceptedAnswer.Reset()
+				if err := s.IsAcceptedAnswer.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"is_accepted_answer\"")
 			}
 		case "question":
 			if err := func() error {
@@ -4328,9 +5284,33 @@ func (s *UpdateQuestionReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Slug.Set {
+			e.FieldStart("slug")
+			s.Slug.Encode(e)
+		}
+	}
+	{
 		if s.Content.Set {
 			e.FieldStart("content")
 			s.Content.Encode(e)
+		}
+	}
+	{
+		if s.UpdatedAt.Set {
+			e.FieldStart("updated_at")
+			s.UpdatedAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+	{
+		if s.Views.Set {
+			e.FieldStart("views")
+			s.Views.Encode(e)
+		}
+	}
+	{
+		if s.Likes.Set {
+			e.FieldStart("likes")
+			s.Likes.Encode(e)
 		}
 	}
 	{
@@ -4361,12 +5341,16 @@ func (s *UpdateQuestionReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUpdateQuestionReq = [5]string{
+var jsonFieldsNameOfUpdateQuestionReq = [9]string{
 	0: "title",
-	1: "content",
-	2: "answers",
-	3: "author",
-	4: "tags",
+	1: "slug",
+	2: "content",
+	3: "updated_at",
+	4: "views",
+	5: "likes",
+	6: "answers",
+	7: "author",
+	8: "tags",
 }
 
 // Decode decodes UpdateQuestionReq from json.
@@ -4387,6 +5371,16 @@ func (s *UpdateQuestionReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"title\"")
 			}
+		case "slug":
+			if err := func() error {
+				s.Slug.Reset()
+				if err := s.Slug.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slug\"")
+			}
 		case "content":
 			if err := func() error {
 				s.Content.Reset()
@@ -4396,6 +5390,36 @@ func (s *UpdateQuestionReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
+			}
+		case "updated_at":
+			if err := func() error {
+				s.UpdatedAt.Reset()
+				if err := s.UpdatedAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "views":
+			if err := func() error {
+				s.Views.Reset()
+				if err := s.Views.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"views\"")
+			}
+		case "likes":
+			if err := func() error {
+				s.Likes.Reset()
+				if err := s.Likes.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
 			}
 		case "answers":
 			if err := func() error {
@@ -4590,6 +5614,12 @@ func (s *UpdateUserReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.LastLogin.Set {
+			e.FieldStart("last_login")
+			s.LastLogin.Encode(e, json.EncodeDateTime)
+		}
+	}
+	{
 		if s.Questions != nil {
 			e.FieldStart("questions")
 			e.ArrStart()
@@ -4621,13 +5651,14 @@ func (s *UpdateUserReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUpdateUserReq = [6]string{
+var jsonFieldsNameOfUpdateUserReq = [7]string{
 	0: "username",
 	1: "email",
 	2: "password",
-	3: "questions",
-	4: "answers",
-	5: "tags",
+	3: "last_login",
+	4: "questions",
+	5: "answers",
+	6: "tags",
 }
 
 // Decode decodes UpdateUserReq from json.
@@ -4667,6 +5698,16 @@ func (s *UpdateUserReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"password\"")
+			}
+		case "last_login":
+			if err := func() error {
+				s.LastLogin.Reset()
+				if err := s.LastLogin.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_login\"")
 			}
 		case "questions":
 			if err := func() error {
@@ -4767,15 +5808,30 @@ func (s *UserAnswersList) encodeFields(e *jx.Encoder) {
 		e.Str(s.Content)
 	}
 	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
+	{
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("is_accepted_answer")
+		e.Bool(s.IsAcceptedAnswer)
+	}
 }
 
-var jsonFieldsNameOfUserAnswersList = [3]string{
+var jsonFieldsNameOfUserAnswersList = [6]string{
 	0: "id",
 	1: "content",
-	2: "created_at",
+	2: "likes",
+	3: "created_at",
+	4: "updated_at",
+	5: "is_accepted_answer",
 }
 
 // Decode decodes UserAnswersList from json.
@@ -4811,8 +5867,20 @@ func (s *UserAnswersList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
-		case "created_at":
+		case "likes":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
+			}
+		case "created_at":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -4822,6 +5890,30 @@ func (s *UserAnswersList) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "is_accepted_answer":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Bool()
+				s.IsAcceptedAnswer = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"is_accepted_answer\"")
 			}
 		default:
 			return d.Skip()
@@ -4833,7 +5925,7 @@ func (s *UserAnswersList) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -4904,13 +5996,18 @@ func (s *UserCreate) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("last_login")
+		json.EncodeDateTime(e, s.LastLogin)
+	}
 }
 
-var jsonFieldsNameOfUserCreate = [4]string{
+var jsonFieldsNameOfUserCreate = [5]string{
 	0: "id",
 	1: "username",
 	2: "email",
 	3: "created_at",
+	4: "last_login",
 }
 
 // Decode decodes UserCreate from json.
@@ -4970,6 +6067,18 @@ func (s *UserCreate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
+		case "last_login":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastLogin = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_login\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -4980,7 +6089,7 @@ func (s *UserCreate) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -5051,13 +6160,18 @@ func (s *UserList) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("last_login")
+		json.EncodeDateTime(e, s.LastLogin)
+	}
 }
 
-var jsonFieldsNameOfUserList = [4]string{
+var jsonFieldsNameOfUserList = [5]string{
 	0: "id",
 	1: "username",
 	2: "email",
 	3: "created_at",
+	4: "last_login",
 }
 
 // Decode decodes UserList from json.
@@ -5117,6 +6231,18 @@ func (s *UserList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
+		case "last_login":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastLogin = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_login\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -5127,7 +6253,7 @@ func (s *UserList) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -5191,6 +6317,10 @@ func (s *UserQuestionsList) encodeFields(e *jx.Encoder) {
 		e.Str(s.Title)
 	}
 	{
+		e.FieldStart("slug")
+		e.Str(s.Slug)
+	}
+	{
 		e.FieldStart("content")
 		e.Str(s.Content)
 	}
@@ -5198,13 +6328,29 @@ func (s *UserQuestionsList) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		e.FieldStart("views")
+		e.Int(s.Views)
+	}
+	{
+		e.FieldStart("likes")
+		e.Int(s.Likes)
+	}
 }
 
-var jsonFieldsNameOfUserQuestionsList = [4]string{
+var jsonFieldsNameOfUserQuestionsList = [8]string{
 	0: "id",
 	1: "title",
-	2: "content",
-	3: "created_at",
+	2: "slug",
+	3: "content",
+	4: "created_at",
+	5: "updated_at",
+	6: "views",
+	7: "likes",
 }
 
 // Decode decodes UserQuestionsList from json.
@@ -5240,8 +6386,20 @@ func (s *UserQuestionsList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"title\"")
 			}
-		case "content":
+		case "slug":
 			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Slug = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"slug\"")
+			}
+		case "content":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
 				s.Content = string(v)
@@ -5253,7 +6411,7 @@ func (s *UserQuestionsList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
 		case "created_at":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -5263,6 +6421,42 @@ func (s *UserQuestionsList) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "views":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.Views = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"views\"")
+			}
+		case "likes":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.Likes = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"likes\"")
 			}
 		default:
 			return d.Skip()
@@ -5274,7 +6468,7 @@ func (s *UserQuestionsList) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b11111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -5345,13 +6539,18 @@ func (s *UserRead) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("last_login")
+		json.EncodeDateTime(e, s.LastLogin)
+	}
 }
 
-var jsonFieldsNameOfUserRead = [4]string{
+var jsonFieldsNameOfUserRead = [5]string{
 	0: "id",
 	1: "username",
 	2: "email",
 	3: "created_at",
+	4: "last_login",
 }
 
 // Decode decodes UserRead from json.
@@ -5411,6 +6610,18 @@ func (s *UserRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
+		case "last_login":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastLogin = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_login\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -5421,7 +6632,7 @@ func (s *UserRead) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -5605,13 +6816,18 @@ func (s *UserUpdate) encodeFields(e *jx.Encoder) {
 		e.FieldStart("created_at")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
+	{
+		e.FieldStart("last_login")
+		json.EncodeDateTime(e, s.LastLogin)
+	}
 }
 
-var jsonFieldsNameOfUserUpdate = [4]string{
+var jsonFieldsNameOfUserUpdate = [5]string{
 	0: "id",
 	1: "username",
 	2: "email",
 	3: "created_at",
+	4: "last_login",
 }
 
 // Decode decodes UserUpdate from json.
@@ -5671,6 +6887,18 @@ func (s *UserUpdate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
+		case "last_login":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastLogin = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_login\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -5681,7 +6909,7 @@ func (s *UserUpdate) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
