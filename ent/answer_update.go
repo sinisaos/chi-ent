@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -32,6 +33,47 @@ func (au *AnswerUpdate) Where(ps ...predicate.Answer) *AnswerUpdate {
 // SetContent sets the "content" field.
 func (au *AnswerUpdate) SetContent(s string) *AnswerUpdate {
 	au.mutation.SetContent(s)
+	return au
+}
+
+// SetLikes sets the "likes" field.
+func (au *AnswerUpdate) SetLikes(i int) *AnswerUpdate {
+	au.mutation.ResetLikes()
+	au.mutation.SetLikes(i)
+	return au
+}
+
+// SetNillableLikes sets the "likes" field if the given value is not nil.
+func (au *AnswerUpdate) SetNillableLikes(i *int) *AnswerUpdate {
+	if i != nil {
+		au.SetLikes(*i)
+	}
+	return au
+}
+
+// AddLikes adds i to the "likes" field.
+func (au *AnswerUpdate) AddLikes(i int) *AnswerUpdate {
+	au.mutation.AddLikes(i)
+	return au
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (au *AnswerUpdate) SetUpdatedAt(t time.Time) *AnswerUpdate {
+	au.mutation.SetUpdatedAt(t)
+	return au
+}
+
+// SetIsAcceptedAnswer sets the "is_accepted_answer" field.
+func (au *AnswerUpdate) SetIsAcceptedAnswer(b bool) *AnswerUpdate {
+	au.mutation.SetIsAcceptedAnswer(b)
+	return au
+}
+
+// SetNillableIsAcceptedAnswer sets the "is_accepted_answer" field if the given value is not nil.
+func (au *AnswerUpdate) SetNillableIsAcceptedAnswer(b *bool) *AnswerUpdate {
+	if b != nil {
+		au.SetIsAcceptedAnswer(*b)
+	}
 	return au
 }
 
@@ -92,6 +134,7 @@ func (au *AnswerUpdate) ClearAuthor() *AnswerUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (au *AnswerUpdate) Save(ctx context.Context) (int, error) {
+	au.defaults()
 	return withHooks(ctx, au.sqlSave, au.mutation, au.hooks)
 }
 
@@ -117,6 +160,14 @@ func (au *AnswerUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (au *AnswerUpdate) defaults() {
+	if _, ok := au.mutation.UpdatedAt(); !ok {
+		v := answer.UpdateDefaultUpdatedAt()
+		au.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (au *AnswerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(answer.Table, answer.Columns, sqlgraph.NewFieldSpec(answer.FieldID, field.TypeInt))
 	if ps := au.mutation.predicates; len(ps) > 0 {
@@ -128,6 +179,18 @@ func (au *AnswerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.Content(); ok {
 		_spec.SetField(answer.FieldContent, field.TypeString, value)
+	}
+	if value, ok := au.mutation.Likes(); ok {
+		_spec.SetField(answer.FieldLikes, field.TypeInt, value)
+	}
+	if value, ok := au.mutation.AddedLikes(); ok {
+		_spec.AddField(answer.FieldLikes, field.TypeInt, value)
+	}
+	if value, ok := au.mutation.UpdatedAt(); ok {
+		_spec.SetField(answer.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := au.mutation.IsAcceptedAnswer(); ok {
+		_spec.SetField(answer.FieldIsAcceptedAnswer, field.TypeBool, value)
 	}
 	if au.mutation.QuestionCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -213,6 +276,47 @@ func (auo *AnswerUpdateOne) SetContent(s string) *AnswerUpdateOne {
 	return auo
 }
 
+// SetLikes sets the "likes" field.
+func (auo *AnswerUpdateOne) SetLikes(i int) *AnswerUpdateOne {
+	auo.mutation.ResetLikes()
+	auo.mutation.SetLikes(i)
+	return auo
+}
+
+// SetNillableLikes sets the "likes" field if the given value is not nil.
+func (auo *AnswerUpdateOne) SetNillableLikes(i *int) *AnswerUpdateOne {
+	if i != nil {
+		auo.SetLikes(*i)
+	}
+	return auo
+}
+
+// AddLikes adds i to the "likes" field.
+func (auo *AnswerUpdateOne) AddLikes(i int) *AnswerUpdateOne {
+	auo.mutation.AddLikes(i)
+	return auo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (auo *AnswerUpdateOne) SetUpdatedAt(t time.Time) *AnswerUpdateOne {
+	auo.mutation.SetUpdatedAt(t)
+	return auo
+}
+
+// SetIsAcceptedAnswer sets the "is_accepted_answer" field.
+func (auo *AnswerUpdateOne) SetIsAcceptedAnswer(b bool) *AnswerUpdateOne {
+	auo.mutation.SetIsAcceptedAnswer(b)
+	return auo
+}
+
+// SetNillableIsAcceptedAnswer sets the "is_accepted_answer" field if the given value is not nil.
+func (auo *AnswerUpdateOne) SetNillableIsAcceptedAnswer(b *bool) *AnswerUpdateOne {
+	if b != nil {
+		auo.SetIsAcceptedAnswer(*b)
+	}
+	return auo
+}
+
 // SetQuestionID sets the "question" edge to the Question entity by ID.
 func (auo *AnswerUpdateOne) SetQuestionID(id int) *AnswerUpdateOne {
 	auo.mutation.SetQuestionID(id)
@@ -283,6 +387,7 @@ func (auo *AnswerUpdateOne) Select(field string, fields ...string) *AnswerUpdate
 
 // Save executes the query and returns the updated Answer entity.
 func (auo *AnswerUpdateOne) Save(ctx context.Context) (*Answer, error) {
+	auo.defaults()
 	return withHooks(ctx, auo.sqlSave, auo.mutation, auo.hooks)
 }
 
@@ -305,6 +410,14 @@ func (auo *AnswerUpdateOne) Exec(ctx context.Context) error {
 func (auo *AnswerUpdateOne) ExecX(ctx context.Context) {
 	if err := auo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (auo *AnswerUpdateOne) defaults() {
+	if _, ok := auo.mutation.UpdatedAt(); !ok {
+		v := answer.UpdateDefaultUpdatedAt()
+		auo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -336,6 +449,18 @@ func (auo *AnswerUpdateOne) sqlSave(ctx context.Context) (_node *Answer, err err
 	}
 	if value, ok := auo.mutation.Content(); ok {
 		_spec.SetField(answer.FieldContent, field.TypeString, value)
+	}
+	if value, ok := auo.mutation.Likes(); ok {
+		_spec.SetField(answer.FieldLikes, field.TypeInt, value)
+	}
+	if value, ok := auo.mutation.AddedLikes(); ok {
+		_spec.AddField(answer.FieldLikes, field.TypeInt, value)
+	}
+	if value, ok := auo.mutation.UpdatedAt(); ok {
+		_spec.SetField(answer.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := auo.mutation.IsAcceptedAnswer(); ok {
+		_spec.SetField(answer.FieldIsAcceptedAnswer, field.TypeBool, value)
 	}
 	if auo.mutation.QuestionCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -16,8 +16,14 @@ const (
 	FieldID = "id"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
+	// FieldLikes holds the string denoting the likes field in the database.
+	FieldLikes = "likes"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldIsAcceptedAnswer holds the string denoting the is_accepted_answer field in the database.
+	FieldIsAcceptedAnswer = "is_accepted_answer"
 	// EdgeQuestion holds the string denoting the question edge name in mutations.
 	EdgeQuestion = "question"
 	// EdgeAuthor holds the string denoting the author edge name in mutations.
@@ -44,7 +50,10 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldContent,
+	FieldLikes,
 	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldIsAcceptedAnswer,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "answers"
@@ -70,8 +79,16 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultLikes holds the default value on creation for the "likes" field.
+	DefaultLikes int
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultIsAcceptedAnswer holds the default value on creation for the "is_accepted_answer" field.
+	DefaultIsAcceptedAnswer bool
 )
 
 // OrderOption defines the ordering options for the Answer queries.
@@ -87,9 +104,24 @@ func ByContent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldContent, opts...).ToFunc()
 }
 
+// ByLikes orders the results by the likes field.
+func ByLikes(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLikes, opts...).ToFunc()
+}
+
 // ByCreatedAt orders the results by the created_at field.
 func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByIsAcceptedAnswer orders the results by the is_accepted_answer field.
+func ByIsAcceptedAnswer(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsAcceptedAnswer, opts...).ToFunc()
 }
 
 // ByQuestionField orders the results by question field.

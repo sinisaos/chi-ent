@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -36,9 +37,63 @@ func (qu *QuestionUpdate) SetTitle(s string) *QuestionUpdate {
 	return qu
 }
 
+// SetSlug sets the "slug" field.
+func (qu *QuestionUpdate) SetSlug(s string) *QuestionUpdate {
+	qu.mutation.SetSlug(s)
+	return qu
+}
+
 // SetContent sets the "content" field.
 func (qu *QuestionUpdate) SetContent(s string) *QuestionUpdate {
 	qu.mutation.SetContent(s)
+	return qu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (qu *QuestionUpdate) SetUpdatedAt(t time.Time) *QuestionUpdate {
+	qu.mutation.SetUpdatedAt(t)
+	return qu
+}
+
+// SetViews sets the "views" field.
+func (qu *QuestionUpdate) SetViews(i int) *QuestionUpdate {
+	qu.mutation.ResetViews()
+	qu.mutation.SetViews(i)
+	return qu
+}
+
+// SetNillableViews sets the "views" field if the given value is not nil.
+func (qu *QuestionUpdate) SetNillableViews(i *int) *QuestionUpdate {
+	if i != nil {
+		qu.SetViews(*i)
+	}
+	return qu
+}
+
+// AddViews adds i to the "views" field.
+func (qu *QuestionUpdate) AddViews(i int) *QuestionUpdate {
+	qu.mutation.AddViews(i)
+	return qu
+}
+
+// SetLikes sets the "likes" field.
+func (qu *QuestionUpdate) SetLikes(i int) *QuestionUpdate {
+	qu.mutation.ResetLikes()
+	qu.mutation.SetLikes(i)
+	return qu
+}
+
+// SetNillableLikes sets the "likes" field if the given value is not nil.
+func (qu *QuestionUpdate) SetNillableLikes(i *int) *QuestionUpdate {
+	if i != nil {
+		qu.SetLikes(*i)
+	}
+	return qu
+}
+
+// AddLikes adds i to the "likes" field.
+func (qu *QuestionUpdate) AddLikes(i int) *QuestionUpdate {
+	qu.mutation.AddLikes(i)
 	return qu
 }
 
@@ -146,6 +201,7 @@ func (qu *QuestionUpdate) RemoveTags(t ...*Tag) *QuestionUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (qu *QuestionUpdate) Save(ctx context.Context) (int, error) {
+	qu.defaults()
 	return withHooks(ctx, qu.sqlSave, qu.mutation, qu.hooks)
 }
 
@@ -171,7 +227,28 @@ func (qu *QuestionUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (qu *QuestionUpdate) defaults() {
+	if _, ok := qu.mutation.UpdatedAt(); !ok {
+		v := question.UpdateDefaultUpdatedAt()
+		qu.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (qu *QuestionUpdate) check() error {
+	if v, ok := qu.mutation.Title(); ok {
+		if err := question.TitleValidator(v); err != nil {
+			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Question.title": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (qu *QuestionUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := qu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(question.Table, question.Columns, sqlgraph.NewFieldSpec(question.FieldID, field.TypeInt))
 	if ps := qu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -183,8 +260,26 @@ func (qu *QuestionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := qu.mutation.Title(); ok {
 		_spec.SetField(question.FieldTitle, field.TypeString, value)
 	}
+	if value, ok := qu.mutation.Slug(); ok {
+		_spec.SetField(question.FieldSlug, field.TypeString, value)
+	}
 	if value, ok := qu.mutation.Content(); ok {
 		_spec.SetField(question.FieldContent, field.TypeString, value)
+	}
+	if value, ok := qu.mutation.UpdatedAt(); ok {
+		_spec.SetField(question.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := qu.mutation.Views(); ok {
+		_spec.SetField(question.FieldViews, field.TypeInt, value)
+	}
+	if value, ok := qu.mutation.AddedViews(); ok {
+		_spec.AddField(question.FieldViews, field.TypeInt, value)
+	}
+	if value, ok := qu.mutation.Likes(); ok {
+		_spec.SetField(question.FieldLikes, field.TypeInt, value)
+	}
+	if value, ok := qu.mutation.AddedLikes(); ok {
+		_spec.AddField(question.FieldLikes, field.TypeInt, value)
 	}
 	if qu.mutation.AnswersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -331,9 +426,63 @@ func (quo *QuestionUpdateOne) SetTitle(s string) *QuestionUpdateOne {
 	return quo
 }
 
+// SetSlug sets the "slug" field.
+func (quo *QuestionUpdateOne) SetSlug(s string) *QuestionUpdateOne {
+	quo.mutation.SetSlug(s)
+	return quo
+}
+
 // SetContent sets the "content" field.
 func (quo *QuestionUpdateOne) SetContent(s string) *QuestionUpdateOne {
 	quo.mutation.SetContent(s)
+	return quo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (quo *QuestionUpdateOne) SetUpdatedAt(t time.Time) *QuestionUpdateOne {
+	quo.mutation.SetUpdatedAt(t)
+	return quo
+}
+
+// SetViews sets the "views" field.
+func (quo *QuestionUpdateOne) SetViews(i int) *QuestionUpdateOne {
+	quo.mutation.ResetViews()
+	quo.mutation.SetViews(i)
+	return quo
+}
+
+// SetNillableViews sets the "views" field if the given value is not nil.
+func (quo *QuestionUpdateOne) SetNillableViews(i *int) *QuestionUpdateOne {
+	if i != nil {
+		quo.SetViews(*i)
+	}
+	return quo
+}
+
+// AddViews adds i to the "views" field.
+func (quo *QuestionUpdateOne) AddViews(i int) *QuestionUpdateOne {
+	quo.mutation.AddViews(i)
+	return quo
+}
+
+// SetLikes sets the "likes" field.
+func (quo *QuestionUpdateOne) SetLikes(i int) *QuestionUpdateOne {
+	quo.mutation.ResetLikes()
+	quo.mutation.SetLikes(i)
+	return quo
+}
+
+// SetNillableLikes sets the "likes" field if the given value is not nil.
+func (quo *QuestionUpdateOne) SetNillableLikes(i *int) *QuestionUpdateOne {
+	if i != nil {
+		quo.SetLikes(*i)
+	}
+	return quo
+}
+
+// AddLikes adds i to the "likes" field.
+func (quo *QuestionUpdateOne) AddLikes(i int) *QuestionUpdateOne {
+	quo.mutation.AddLikes(i)
 	return quo
 }
 
@@ -454,6 +603,7 @@ func (quo *QuestionUpdateOne) Select(field string, fields ...string) *QuestionUp
 
 // Save executes the query and returns the updated Question entity.
 func (quo *QuestionUpdateOne) Save(ctx context.Context) (*Question, error) {
+	quo.defaults()
 	return withHooks(ctx, quo.sqlSave, quo.mutation, quo.hooks)
 }
 
@@ -479,7 +629,28 @@ func (quo *QuestionUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (quo *QuestionUpdateOne) defaults() {
+	if _, ok := quo.mutation.UpdatedAt(); !ok {
+		v := question.UpdateDefaultUpdatedAt()
+		quo.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (quo *QuestionUpdateOne) check() error {
+	if v, ok := quo.mutation.Title(); ok {
+		if err := question.TitleValidator(v); err != nil {
+			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Question.title": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (quo *QuestionUpdateOne) sqlSave(ctx context.Context) (_node *Question, err error) {
+	if err := quo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(question.Table, question.Columns, sqlgraph.NewFieldSpec(question.FieldID, field.TypeInt))
 	id, ok := quo.mutation.ID()
 	if !ok {
@@ -508,8 +679,26 @@ func (quo *QuestionUpdateOne) sqlSave(ctx context.Context) (_node *Question, err
 	if value, ok := quo.mutation.Title(); ok {
 		_spec.SetField(question.FieldTitle, field.TypeString, value)
 	}
+	if value, ok := quo.mutation.Slug(); ok {
+		_spec.SetField(question.FieldSlug, field.TypeString, value)
+	}
 	if value, ok := quo.mutation.Content(); ok {
 		_spec.SetField(question.FieldContent, field.TypeString, value)
+	}
+	if value, ok := quo.mutation.UpdatedAt(); ok {
+		_spec.SetField(question.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := quo.mutation.Views(); ok {
+		_spec.SetField(question.FieldViews, field.TypeInt, value)
+	}
+	if value, ok := quo.mutation.AddedViews(); ok {
+		_spec.AddField(question.FieldViews, field.TypeInt, value)
+	}
+	if value, ok := quo.mutation.Likes(); ok {
+		_spec.SetField(question.FieldLikes, field.TypeInt, value)
+	}
+	if value, ok := quo.mutation.AddedLikes(); ok {
+		_spec.AddField(question.FieldLikes, field.TypeInt, value)
 	}
 	if quo.mutation.AnswersCleared() {
 		edge := &sqlgraph.EdgeSpec{

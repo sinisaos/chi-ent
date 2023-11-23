@@ -29,6 +29,12 @@ func (qc *QuestionCreate) SetTitle(s string) *QuestionCreate {
 	return qc
 }
 
+// SetSlug sets the "slug" field.
+func (qc *QuestionCreate) SetSlug(s string) *QuestionCreate {
+	qc.mutation.SetSlug(s)
+	return qc
+}
+
 // SetContent sets the "content" field.
 func (qc *QuestionCreate) SetContent(s string) *QuestionCreate {
 	qc.mutation.SetContent(s)
@@ -45,6 +51,48 @@ func (qc *QuestionCreate) SetCreatedAt(t time.Time) *QuestionCreate {
 func (qc *QuestionCreate) SetNillableCreatedAt(t *time.Time) *QuestionCreate {
 	if t != nil {
 		qc.SetCreatedAt(*t)
+	}
+	return qc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (qc *QuestionCreate) SetUpdatedAt(t time.Time) *QuestionCreate {
+	qc.mutation.SetUpdatedAt(t)
+	return qc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (qc *QuestionCreate) SetNillableUpdatedAt(t *time.Time) *QuestionCreate {
+	if t != nil {
+		qc.SetUpdatedAt(*t)
+	}
+	return qc
+}
+
+// SetViews sets the "views" field.
+func (qc *QuestionCreate) SetViews(i int) *QuestionCreate {
+	qc.mutation.SetViews(i)
+	return qc
+}
+
+// SetNillableViews sets the "views" field if the given value is not nil.
+func (qc *QuestionCreate) SetNillableViews(i *int) *QuestionCreate {
+	if i != nil {
+		qc.SetViews(*i)
+	}
+	return qc
+}
+
+// SetLikes sets the "likes" field.
+func (qc *QuestionCreate) SetLikes(i int) *QuestionCreate {
+	qc.mutation.SetLikes(i)
+	return qc
+}
+
+// SetNillableLikes sets the "likes" field if the given value is not nil.
+func (qc *QuestionCreate) SetNillableLikes(i *int) *QuestionCreate {
+	if i != nil {
+		qc.SetLikes(*i)
 	}
 	return qc
 }
@@ -137,6 +185,18 @@ func (qc *QuestionCreate) defaults() {
 		v := question.DefaultCreatedAt()
 		qc.mutation.SetCreatedAt(v)
 	}
+	if _, ok := qc.mutation.UpdatedAt(); !ok {
+		v := question.DefaultUpdatedAt()
+		qc.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := qc.mutation.Views(); !ok {
+		v := question.DefaultViews
+		qc.mutation.SetViews(v)
+	}
+	if _, ok := qc.mutation.Likes(); !ok {
+		v := question.DefaultLikes
+		qc.mutation.SetLikes(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -144,11 +204,28 @@ func (qc *QuestionCreate) check() error {
 	if _, ok := qc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Question.title"`)}
 	}
+	if v, ok := qc.mutation.Title(); ok {
+		if err := question.TitleValidator(v); err != nil {
+			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Question.title": %w`, err)}
+		}
+	}
+	if _, ok := qc.mutation.Slug(); !ok {
+		return &ValidationError{Name: "slug", err: errors.New(`ent: missing required field "Question.slug"`)}
+	}
 	if _, ok := qc.mutation.Content(); !ok {
 		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Question.content"`)}
 	}
 	if _, ok := qc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Question.created_at"`)}
+	}
+	if _, ok := qc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Question.updated_at"`)}
+	}
+	if _, ok := qc.mutation.Views(); !ok {
+		return &ValidationError{Name: "views", err: errors.New(`ent: missing required field "Question.views"`)}
+	}
+	if _, ok := qc.mutation.Likes(); !ok {
+		return &ValidationError{Name: "likes", err: errors.New(`ent: missing required field "Question.likes"`)}
 	}
 	return nil
 }
@@ -180,6 +257,10 @@ func (qc *QuestionCreate) createSpec() (*Question, *sqlgraph.CreateSpec) {
 		_spec.SetField(question.FieldTitle, field.TypeString, value)
 		_node.Title = value
 	}
+	if value, ok := qc.mutation.Slug(); ok {
+		_spec.SetField(question.FieldSlug, field.TypeString, value)
+		_node.Slug = value
+	}
 	if value, ok := qc.mutation.Content(); ok {
 		_spec.SetField(question.FieldContent, field.TypeString, value)
 		_node.Content = value
@@ -187,6 +268,18 @@ func (qc *QuestionCreate) createSpec() (*Question, *sqlgraph.CreateSpec) {
 	if value, ok := qc.mutation.CreatedAt(); ok {
 		_spec.SetField(question.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
+	}
+	if value, ok := qc.mutation.UpdatedAt(); ok {
+		_spec.SetField(question.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := qc.mutation.Views(); ok {
+		_spec.SetField(question.FieldViews, field.TypeInt, value)
+		_node.Views = value
+	}
+	if value, ok := qc.mutation.Likes(); ok {
+		_spec.SetField(question.FieldLikes, field.TypeInt, value)
+		_node.Likes = value
 	}
 	if nodes := qc.mutation.AnswersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

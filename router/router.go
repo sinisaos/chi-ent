@@ -84,7 +84,6 @@ func SetupRoutes(app chi.Router) {
 		app.Get("/tags/{id}/question", tagHandler.GetTagQuestionHandler)
 		app.Group(func(r chi.Router) {
 			r.Use(middleware.AuthMiddleware)
-			r.Post("/tags", tagHandler.CreateTagHandler)
 			r.Patch("/tags/{id}", tagHandler.UpdateTagHandler)
 			r.Delete("/tags/{id}", tagHandler.DeleteTagHandler)
 		})

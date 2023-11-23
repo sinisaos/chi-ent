@@ -17,16 +17,17 @@ type LoginUserInput struct {
 }
 
 type NewQuestionInput struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
-	Author  int    `json:"author"`
-	Tags    []int  `json:"tags"`
+	Title   string   `json:"title"`
+	Content string   `json:"content"`
+	Slug    string   `json:"slug"`
+	Author  int      `json:"author"`
+	Tags    []string `json:"tags"`
 }
 
 type UpdateQuestionInput struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
-	Tags    []int  `json:"tags"`
+	Title   string   `json:"title"`
+	Content string   `json:"content"`
+	Tags    []string `json:"tags"`
 }
 
 type NewAnswerInput struct {

@@ -17,20 +17,58 @@ import (
 func init() {
 	answerFields := schema.Answer{}.Fields()
 	_ = answerFields
+	// answerDescLikes is the schema descriptor for likes field.
+	answerDescLikes := answerFields[1].Descriptor()
+	// answer.DefaultLikes holds the default value on creation for the likes field.
+	answer.DefaultLikes = answerDescLikes.Default.(int)
 	// answerDescCreatedAt is the schema descriptor for created_at field.
-	answerDescCreatedAt := answerFields[1].Descriptor()
+	answerDescCreatedAt := answerFields[2].Descriptor()
 	// answer.DefaultCreatedAt holds the default value on creation for the created_at field.
 	answer.DefaultCreatedAt = answerDescCreatedAt.Default.(func() time.Time)
+	// answerDescUpdatedAt is the schema descriptor for updated_at field.
+	answerDescUpdatedAt := answerFields[3].Descriptor()
+	// answer.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	answer.DefaultUpdatedAt = answerDescUpdatedAt.Default.(func() time.Time)
+	// answer.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	answer.UpdateDefaultUpdatedAt = answerDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// answerDescIsAcceptedAnswer is the schema descriptor for is_accepted_answer field.
+	answerDescIsAcceptedAnswer := answerFields[4].Descriptor()
+	// answer.DefaultIsAcceptedAnswer holds the default value on creation for the is_accepted_answer field.
+	answer.DefaultIsAcceptedAnswer = answerDescIsAcceptedAnswer.Default.(bool)
 	questionFields := schema.Question{}.Fields()
 	_ = questionFields
+	// questionDescTitle is the schema descriptor for title field.
+	questionDescTitle := questionFields[0].Descriptor()
+	// question.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	question.TitleValidator = questionDescTitle.Validators[0].(func(string) error)
 	// questionDescCreatedAt is the schema descriptor for created_at field.
-	questionDescCreatedAt := questionFields[2].Descriptor()
+	questionDescCreatedAt := questionFields[3].Descriptor()
 	// question.DefaultCreatedAt holds the default value on creation for the created_at field.
 	question.DefaultCreatedAt = questionDescCreatedAt.Default.(func() time.Time)
+	// questionDescUpdatedAt is the schema descriptor for updated_at field.
+	questionDescUpdatedAt := questionFields[4].Descriptor()
+	// question.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	question.DefaultUpdatedAt = questionDescUpdatedAt.Default.(func() time.Time)
+	// question.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	question.UpdateDefaultUpdatedAt = questionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// questionDescViews is the schema descriptor for views field.
+	questionDescViews := questionFields[5].Descriptor()
+	// question.DefaultViews holds the default value on creation for the views field.
+	question.DefaultViews = questionDescViews.Default.(int)
+	// questionDescLikes is the schema descriptor for likes field.
+	questionDescLikes := questionFields[6].Descriptor()
+	// question.DefaultLikes holds the default value on creation for the likes field.
+	question.DefaultLikes = questionDescLikes.Default.(int)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.
 	userDescCreatedAt := userFields[3].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
+	// userDescLastLogin is the schema descriptor for last_login field.
+	userDescLastLogin := userFields[4].Descriptor()
+	// user.DefaultLastLogin holds the default value on creation for the last_login field.
+	user.DefaultLastLogin = userDescLastLogin.Default.(func() time.Time)
+	// user.UpdateDefaultLastLogin holds the default value on update for the last_login field.
+	user.UpdateDefaultLastLogin = userDescLastLogin.UpdateDefault.(func() time.Time)
 }

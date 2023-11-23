@@ -9,6 +9,7 @@ import (
 	"github.com/sinisaos/chi-ent/model"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/gosimple/slug"
 )
 
 type QuestionService struct {
@@ -49,16 +50,32 @@ func (s QuestionService) GetQuestion(id int) (*ent.Question, error) {
 		return nil, err
 	}
 
+	s.Client.Question.UpdateOneID(question.ID).
+		SetViews(question.Views + 1).
+		Save(context.Background())
+
 	return question, nil
 }
 
 func (s QuestionService) CreateQuestion(payload *model.NewQuestionInput) (*ent.Question, error) {
+	var tags []*ent.Tag
+	for _, v := range payload.Tags {
+		tag, err := s.Client.Tag.Create().
+			SetName(v).
+			Save(context.Background())
+		if err != nil {
+			return nil, err
+		}
+		tags = append(tags, tag)
+	}
+
 	question, err := s.Client.Question.Create().
 		SetTitle(payload.Title).
+		SetSlug(slug.Make(payload.Content)).
 		SetContent(payload.Content).
 		SetCreatedAt(time.Now()).
 		SetAuthorID(payload.Author).
-		AddTagIDs(payload.Tags...).
+		AddTags(tags...).
 		Save(context.Background())
 	if err != nil {
 		return nil, err
@@ -76,17 +93,23 @@ func (s QuestionService) UpdateQuestion(id int, payload *model.UpdateQuestionInp
 		return nil, err
 	}
 
-	var tagsSlice []int
-
-	for i := range existingQuestion.Edges.Tags {
-		tagsSlice = append(tagsSlice, existingQuestion.Edges.Tags[i].ID)
+	var newTags []*ent.Tag
+	for _, v := range payload.Tags {
+		tag, err := s.Client.Tag.Create().
+			SetName(v).
+			Save(context.Background())
+		if err != nil {
+			return nil, err
+		}
+		newTags = append(newTags, tag)
 	}
 
 	question, err := existingQuestion.Update().
 		SetTitle(payload.Title).
+		SetSlug(slug.Make(payload.Content)).
 		SetContent(payload.Content).
-		RemoveTagIDs(tagsSlice...).
-		AddTagIDs(payload.Tags...).
+		RemoveTags(existingQuestion.Edges.Tags...).
+		AddTags(newTags...).
 		Save(context.Background())
 	if err != nil {
 		return nil, err
@@ -107,7 +130,9 @@ func (s QuestionService) DeleteQuestion(id int) error {
 func (s QuestionService) GetQuestionAnswers(id int) (*ent.Question, error) {
 	question, _ := s.Client.Question.Query().
 		Where(question.IDEQ(id)).
+		WithAuthor().
 		WithAnswers().
+		WithTags().
 		Only(context.Background())
 
 	return question, nil

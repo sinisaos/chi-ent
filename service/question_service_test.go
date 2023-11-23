@@ -3,6 +3,7 @@ package service
 import (
 	"testing"
 
+	"github.com/gosimple/slug"
 	"github.com/sinisaos/chi-ent/ent/enttest"
 	"github.com/sinisaos/chi-ent/model"
 
@@ -15,7 +16,7 @@ func TestQuestionService(t *testing.T) {
 	defer client.Close()
 	userService := NewUserService(client)
 	questionService := NewQuestionService(client)
-	tagService := NewTagService(client)
+	// tagService := NewTagService(client)
 	answerService := NewAnswerService(client)
 	// Insert user
 	u, err := userService.CreateUser(&model.NewUserInput{
@@ -24,23 +25,15 @@ func TestQuestionService(t *testing.T) {
 		Password: "pass123",
 	})
 	assert.NoError(t, err)
-	// Insert tags
-	firstTag, err := tagService.CreateTag(&model.NewTagInput{
-		Name: "TestTag1",
-	})
-	assert.NoError(t, err)
 
-	secondTag, err := tagService.CreateTag(&model.NewTagInput{
-		Name: "TestTag2",
-	})
-	assert.NoError(t, err)
 	// Tags slice
-	var tags []int
-	tags = append(tags, firstTag.ID, secondTag.ID)
+	var tags []string
+	tags = append(tags, "TestTag1", "TestTag2")
 
 	// Insert question
 	q, err := questionService.CreateQuestion(&model.NewQuestionInput{
-		Title:   "TestQuestion1",
+		Title:   "Test Question 1",
+		Slug:    slug.Make("Test Question 1"),
 		Content: "Content od question one",
 		Author:  u.ID,
 		Tags:    tags,
@@ -49,7 +42,8 @@ func TestQuestionService(t *testing.T) {
 	assert.NoError(t, err)
 
 	_, err = questionService.CreateQuestion(&model.NewQuestionInput{
-		Title:   "TestQuestion2",
+		Title:   "Test Question 2",
+		Slug:    slug.Make("Test Question 2"),
 		Content: "Content od question two",
 		Author:  u.ID,
 		Tags:    tags,
@@ -70,29 +64,19 @@ func TestQuestionService(t *testing.T) {
 
 	// Single question
 	resultSingleQuestion, _ := questionService.GetQuestion(1)
-	assert.Contains(t, resultSingleQuestion.Title, "TestQuestion1")
+	assert.Contains(t, resultSingleQuestion.Title, "Test Question 1")
 
 	// Return error if Question does not exist
 	_, err = questionService.GetQuestion(10)
 	assert.Error(t, err)
 
-	// Insert updated tags
-	thirdTag, err := tagService.CreateTag(&model.NewTagInput{
-		Name: "TestTag3",
-	})
-	assert.NoError(t, err)
-
-	fourthTag, err := tagService.CreateTag(&model.NewTagInput{
-		Name: "TestTag4",
-	})
-	assert.NoError(t, err)
 	// Update tags slice
-	var updatedTags []int
-	updatedTags = append(updatedTags, thirdTag.ID, fourthTag.ID)
+	var updatedTags []string
+	updatedTags = append(updatedTags, "TestTag3", "TestTag4")
 
 	// Update question if exist
 	_, err = questionService.UpdateQuestion(2, &model.UpdateQuestionInput{
-		Title:   "TestQuestion2Updated",
+		Title:   "Test Question2 Updated",
 		Content: "Updated content od question two",
 		Tags:    updatedTags,
 	})

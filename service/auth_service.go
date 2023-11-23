@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/sinisaos/chi-ent/ent"
 	"github.com/sinisaos/chi-ent/ent/user"
@@ -25,6 +26,10 @@ func (s AuthService) Login(payload *model.LoginUserInput) (*ent.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	// update last login time
+	s.Client.User.UpdateOneID(user.ID).
+		SetLastLogin(time.Now()).
+		Save(context.Background())
 
 	return user, nil
 }

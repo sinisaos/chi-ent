@@ -3,6 +3,7 @@ package service
 import (
 	"testing"
 
+	"github.com/gosimple/slug"
 	"github.com/sinisaos/chi-ent/ent/enttest"
 	"github.com/sinisaos/chi-ent/model"
 
@@ -16,14 +17,26 @@ func TestTagService(t *testing.T) {
 	tagService := NewTagService(client)
 	userService := NewUserService(client)
 	questionService := NewQuestionService(client)
-	// Insert tag
-	_, err := tagService.CreateTag(&model.NewTagInput{
-		Name: "TestTag1",
+
+	// Insert user for checking tags questions
+	u, err := userService.CreateUser(&model.NewUserInput{
+		UserName: "TestUser1",
+		Email:    "testuser1@gmail.com",
+		Password: "pass123",
 	})
 	assert.NoError(t, err)
 
-	_, err = tagService.CreateTag(&model.NewTagInput{
-		Name: "TestTag2",
+	// Tags as slice of strings
+	var tags []string
+	tags = append(tags, "TestTag1", "TestTag2")
+
+	// Insert question with tags from tags slice, for checking tags questions
+	_, err = questionService.CreateQuestion(&model.NewQuestionInput{
+		Title:   "Test Question 1",
+		Slug:    slug.Make("Test Question 1"),
+		Author:  u.ID,
+		Content: "Content of question one",
+		Tags:    tags,
 	})
 	assert.NoError(t, err)
 
@@ -71,41 +84,10 @@ func TestTagService(t *testing.T) {
 	deletedTagResult, _ := tagService.GetAllTags(1, 1)
 	assert.Len(t, deletedTagResult, 1)
 
-	// Insert user for checking tags questions
-	u, err := userService.CreateUser(&model.NewUserInput{
-		UserName: "TestUser1",
-		Email:    "testuser1@gmail.com",
-		Password: "pass123",
-	})
-	assert.NoError(t, err)
-
-	// Insert tags
-	firstTag, err := tagService.CreateTag(&model.NewTagInput{
-		Name: "TestTag1",
-	})
-	assert.NoError(t, err)
-
-	secondTag, err := tagService.CreateTag(&model.NewTagInput{
-		Name: "TestTag2",
-	})
-	assert.NoError(t, err)
-	// Tags slice
-	var tags []int
-	tags = append(tags, firstTag.ID, secondTag.ID)
-
-	// Insert question for checking tags questions
-	_, err = questionService.CreateQuestion(&model.NewQuestionInput{
-		Title:   "TestQuestion1",
-		Author:  u.ID,
-		Content: "Content of question one",
-		Tags:    tags,
-	})
-	assert.NoError(t, err)
-
 	// Checking tag questions
-	tagQuestions, _ := tagService.GetTagQuestions(firstTag.ID)
+	tagQuestions, _ := tagService.GetTagQuestions(1)
 	assert.Equal(t, tagQuestions.Edges.Questions[0].ID, 1)
-	assert.Equal(t, tagQuestions.Edges.Questions[0].Title, "TestQuestion1")
+	assert.Equal(t, tagQuestions.Edges.Questions[0].Title, "Test Question 1")
 	assert.Len(t, tagQuestions.Edges.Questions, 1)
 
 }

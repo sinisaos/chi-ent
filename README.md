@@ -6,7 +6,7 @@ Clone the repo.
 ```
 $ git clone https://github.com/sinisaos/chi-ent.git
 $ cd chi-ent
-$ cp .env.example .env && rm .env.example
+$ cp .env.example .env && rm .env.example # WARNING: change the DSN to your credentials and database name
 $ make server
 ```
 

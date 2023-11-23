@@ -12,7 +12,10 @@ var (
 	AnswersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "content", Type: field.TypeString, Size: 2147483647},
+		{Name: "likes", Type: field.TypeInt, Default: 0},
 		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "is_accepted_answer", Type: field.TypeBool, Default: false},
 		{Name: "question_answers", Type: field.TypeInt, Nullable: true},
 		{Name: "user_answers", Type: field.TypeInt, Nullable: true},
 	}
@@ -24,13 +27,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "answers_questions_answers",
-				Columns:    []*schema.Column{AnswersColumns[3]},
+				Columns:    []*schema.Column{AnswersColumns[6]},
 				RefColumns: []*schema.Column{QuestionsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "answers_users_answers",
-				Columns:    []*schema.Column{AnswersColumns[4]},
+				Columns:    []*schema.Column{AnswersColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -39,9 +42,13 @@ var (
 	// QuestionsColumns holds the columns for the "questions" table.
 	QuestionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "title", Type: field.TypeString},
+		{Name: "title", Type: field.TypeString, Size: 256},
+		{Name: "slug", Type: field.TypeString, Unique: true},
 		{Name: "content", Type: field.TypeString, Size: 2147483647},
 		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "views", Type: field.TypeInt, Default: 0},
+		{Name: "likes", Type: field.TypeInt, Default: 0},
 		{Name: "user_questions", Type: field.TypeInt, Nullable: true},
 	}
 	// QuestionsTable holds the schema information for the "questions" table.
@@ -52,7 +59,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "questions_users_questions",
-				Columns:    []*schema.Column{QuestionsColumns[4]},
+				Columns:    []*schema.Column{QuestionsColumns[8]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -85,6 +92,7 @@ var (
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
+		{Name: "last_login", Type: field.TypeTime},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

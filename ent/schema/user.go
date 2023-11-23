@@ -25,6 +25,9 @@ func (User) Fields() []ent.Field {
 		field.Time("created_at").
 			Immutable().
 			Default(time.Now),
+		field.Time("last_login").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

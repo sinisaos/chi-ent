@@ -36,19 +36,23 @@ const (
 // AnswerMutation represents an operation that mutates the Answer nodes in the graph.
 type AnswerMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *int
-	content         *string
-	created_at      *time.Time
-	clearedFields   map[string]struct{}
-	question        *int
-	clearedquestion bool
-	author          *int
-	clearedauthor   bool
-	done            bool
-	oldValue        func(context.Context) (*Answer, error)
-	predicates      []predicate.Answer
+	op                 Op
+	typ                string
+	id                 *int
+	content            *string
+	likes              *int
+	addlikes           *int
+	created_at         *time.Time
+	updated_at         *time.Time
+	is_accepted_answer *bool
+	clearedFields      map[string]struct{}
+	question           *int
+	clearedquestion    bool
+	author             *int
+	clearedauthor      bool
+	done               bool
+	oldValue           func(context.Context) (*Answer, error)
+	predicates         []predicate.Answer
 }
 
 var _ ent.Mutation = (*AnswerMutation)(nil)
@@ -185,6 +189,62 @@ func (m *AnswerMutation) ResetContent() {
 	m.content = nil
 }
 
+// SetLikes sets the "likes" field.
+func (m *AnswerMutation) SetLikes(i int) {
+	m.likes = &i
+	m.addlikes = nil
+}
+
+// Likes returns the value of the "likes" field in the mutation.
+func (m *AnswerMutation) Likes() (r int, exists bool) {
+	v := m.likes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLikes returns the old "likes" field's value of the Answer entity.
+// If the Answer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AnswerMutation) OldLikes(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLikes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLikes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLikes: %w", err)
+	}
+	return oldValue.Likes, nil
+}
+
+// AddLikes adds i to the "likes" field.
+func (m *AnswerMutation) AddLikes(i int) {
+	if m.addlikes != nil {
+		*m.addlikes += i
+	} else {
+		m.addlikes = &i
+	}
+}
+
+// AddedLikes returns the value that was added to the "likes" field in this mutation.
+func (m *AnswerMutation) AddedLikes() (r int, exists bool) {
+	v := m.addlikes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLikes resets all changes to the "likes" field.
+func (m *AnswerMutation) ResetLikes() {
+	m.likes = nil
+	m.addlikes = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *AnswerMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -219,6 +279,78 @@ func (m *AnswerMutation) OldCreatedAt(ctx context.Context) (v time.Time, err err
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *AnswerMutation) ResetCreatedAt() {
 	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AnswerMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AnswerMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Answer entity.
+// If the Answer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AnswerMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AnswerMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetIsAcceptedAnswer sets the "is_accepted_answer" field.
+func (m *AnswerMutation) SetIsAcceptedAnswer(b bool) {
+	m.is_accepted_answer = &b
+}
+
+// IsAcceptedAnswer returns the value of the "is_accepted_answer" field in the mutation.
+func (m *AnswerMutation) IsAcceptedAnswer() (r bool, exists bool) {
+	v := m.is_accepted_answer
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsAcceptedAnswer returns the old "is_accepted_answer" field's value of the Answer entity.
+// If the Answer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AnswerMutation) OldIsAcceptedAnswer(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsAcceptedAnswer is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsAcceptedAnswer requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsAcceptedAnswer: %w", err)
+	}
+	return oldValue.IsAcceptedAnswer, nil
+}
+
+// ResetIsAcceptedAnswer resets all changes to the "is_accepted_answer" field.
+func (m *AnswerMutation) ResetIsAcceptedAnswer() {
+	m.is_accepted_answer = nil
 }
 
 // SetQuestionID sets the "question" edge to the Question entity by id.
@@ -333,12 +465,21 @@ func (m *AnswerMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AnswerMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 5)
 	if m.content != nil {
 		fields = append(fields, answer.FieldContent)
 	}
+	if m.likes != nil {
+		fields = append(fields, answer.FieldLikes)
+	}
 	if m.created_at != nil {
 		fields = append(fields, answer.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, answer.FieldUpdatedAt)
+	}
+	if m.is_accepted_answer != nil {
+		fields = append(fields, answer.FieldIsAcceptedAnswer)
 	}
 	return fields
 }
@@ -350,8 +491,14 @@ func (m *AnswerMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case answer.FieldContent:
 		return m.Content()
+	case answer.FieldLikes:
+		return m.Likes()
 	case answer.FieldCreatedAt:
 		return m.CreatedAt()
+	case answer.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case answer.FieldIsAcceptedAnswer:
+		return m.IsAcceptedAnswer()
 	}
 	return nil, false
 }
@@ -363,8 +510,14 @@ func (m *AnswerMutation) OldField(ctx context.Context, name string) (ent.Value, 
 	switch name {
 	case answer.FieldContent:
 		return m.OldContent(ctx)
+	case answer.FieldLikes:
+		return m.OldLikes(ctx)
 	case answer.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case answer.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case answer.FieldIsAcceptedAnswer:
+		return m.OldIsAcceptedAnswer(ctx)
 	}
 	return nil, fmt.Errorf("unknown Answer field %s", name)
 }
@@ -381,12 +534,33 @@ func (m *AnswerMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetContent(v)
 		return nil
+	case answer.FieldLikes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLikes(v)
+		return nil
 	case answer.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
+		return nil
+	case answer.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case answer.FieldIsAcceptedAnswer:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsAcceptedAnswer(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Answer field %s", name)
@@ -395,13 +569,21 @@ func (m *AnswerMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *AnswerMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addlikes != nil {
+		fields = append(fields, answer.FieldLikes)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *AnswerMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case answer.FieldLikes:
+		return m.AddedLikes()
+	}
 	return nil, false
 }
 
@@ -410,6 +592,13 @@ func (m *AnswerMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *AnswerMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case answer.FieldLikes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLikes(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Answer numeric field %s", name)
 }
@@ -440,8 +629,17 @@ func (m *AnswerMutation) ResetField(name string) error {
 	case answer.FieldContent:
 		m.ResetContent()
 		return nil
+	case answer.FieldLikes:
+		m.ResetLikes()
+		return nil
 	case answer.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case answer.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case answer.FieldIsAcceptedAnswer:
+		m.ResetIsAcceptedAnswer()
 		return nil
 	}
 	return fmt.Errorf("unknown Answer field %s", name)
@@ -546,8 +744,14 @@ type QuestionMutation struct {
 	typ            string
 	id             *int
 	title          *string
+	slug           *string
 	content        *string
 	created_at     *time.Time
+	updated_at     *time.Time
+	views          *int
+	addviews       *int
+	likes          *int
+	addlikes       *int
 	clearedFields  map[string]struct{}
 	answers        map[int]struct{}
 	removedanswers map[int]struct{}
@@ -696,6 +900,42 @@ func (m *QuestionMutation) ResetTitle() {
 	m.title = nil
 }
 
+// SetSlug sets the "slug" field.
+func (m *QuestionMutation) SetSlug(s string) {
+	m.slug = &s
+}
+
+// Slug returns the value of the "slug" field in the mutation.
+func (m *QuestionMutation) Slug() (r string, exists bool) {
+	v := m.slug
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSlug returns the old "slug" field's value of the Question entity.
+// If the Question object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *QuestionMutation) OldSlug(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSlug is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSlug requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSlug: %w", err)
+	}
+	return oldValue.Slug, nil
+}
+
+// ResetSlug resets all changes to the "slug" field.
+func (m *QuestionMutation) ResetSlug() {
+	m.slug = nil
+}
+
 // SetContent sets the "content" field.
 func (m *QuestionMutation) SetContent(s string) {
 	m.content = &s
@@ -766,6 +1006,154 @@ func (m *QuestionMutation) OldCreatedAt(ctx context.Context) (v time.Time, err e
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *QuestionMutation) ResetCreatedAt() {
 	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *QuestionMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *QuestionMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Question entity.
+// If the Question object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *QuestionMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *QuestionMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetViews sets the "views" field.
+func (m *QuestionMutation) SetViews(i int) {
+	m.views = &i
+	m.addviews = nil
+}
+
+// Views returns the value of the "views" field in the mutation.
+func (m *QuestionMutation) Views() (r int, exists bool) {
+	v := m.views
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldViews returns the old "views" field's value of the Question entity.
+// If the Question object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *QuestionMutation) OldViews(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldViews is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldViews requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldViews: %w", err)
+	}
+	return oldValue.Views, nil
+}
+
+// AddViews adds i to the "views" field.
+func (m *QuestionMutation) AddViews(i int) {
+	if m.addviews != nil {
+		*m.addviews += i
+	} else {
+		m.addviews = &i
+	}
+}
+
+// AddedViews returns the value that was added to the "views" field in this mutation.
+func (m *QuestionMutation) AddedViews() (r int, exists bool) {
+	v := m.addviews
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetViews resets all changes to the "views" field.
+func (m *QuestionMutation) ResetViews() {
+	m.views = nil
+	m.addviews = nil
+}
+
+// SetLikes sets the "likes" field.
+func (m *QuestionMutation) SetLikes(i int) {
+	m.likes = &i
+	m.addlikes = nil
+}
+
+// Likes returns the value of the "likes" field in the mutation.
+func (m *QuestionMutation) Likes() (r int, exists bool) {
+	v := m.likes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLikes returns the old "likes" field's value of the Question entity.
+// If the Question object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *QuestionMutation) OldLikes(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLikes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLikes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLikes: %w", err)
+	}
+	return oldValue.Likes, nil
+}
+
+// AddLikes adds i to the "likes" field.
+func (m *QuestionMutation) AddLikes(i int) {
+	if m.addlikes != nil {
+		*m.addlikes += i
+	} else {
+		m.addlikes = &i
+	}
+}
+
+// AddedLikes returns the value that was added to the "likes" field in this mutation.
+func (m *QuestionMutation) AddedLikes() (r int, exists bool) {
+	v := m.addlikes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLikes resets all changes to the "likes" field.
+func (m *QuestionMutation) ResetLikes() {
+	m.likes = nil
+	m.addlikes = nil
 }
 
 // AddAnswerIDs adds the "answers" edge to the Answer entity by ids.
@@ -949,15 +1337,27 @@ func (m *QuestionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *QuestionMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 7)
 	if m.title != nil {
 		fields = append(fields, question.FieldTitle)
+	}
+	if m.slug != nil {
+		fields = append(fields, question.FieldSlug)
 	}
 	if m.content != nil {
 		fields = append(fields, question.FieldContent)
 	}
 	if m.created_at != nil {
 		fields = append(fields, question.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, question.FieldUpdatedAt)
+	}
+	if m.views != nil {
+		fields = append(fields, question.FieldViews)
+	}
+	if m.likes != nil {
+		fields = append(fields, question.FieldLikes)
 	}
 	return fields
 }
@@ -969,10 +1369,18 @@ func (m *QuestionMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case question.FieldTitle:
 		return m.Title()
+	case question.FieldSlug:
+		return m.Slug()
 	case question.FieldContent:
 		return m.Content()
 	case question.FieldCreatedAt:
 		return m.CreatedAt()
+	case question.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case question.FieldViews:
+		return m.Views()
+	case question.FieldLikes:
+		return m.Likes()
 	}
 	return nil, false
 }
@@ -984,10 +1392,18 @@ func (m *QuestionMutation) OldField(ctx context.Context, name string) (ent.Value
 	switch name {
 	case question.FieldTitle:
 		return m.OldTitle(ctx)
+	case question.FieldSlug:
+		return m.OldSlug(ctx)
 	case question.FieldContent:
 		return m.OldContent(ctx)
 	case question.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case question.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case question.FieldViews:
+		return m.OldViews(ctx)
+	case question.FieldLikes:
+		return m.OldLikes(ctx)
 	}
 	return nil, fmt.Errorf("unknown Question field %s", name)
 }
@@ -1004,6 +1420,13 @@ func (m *QuestionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTitle(v)
 		return nil
+	case question.FieldSlug:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSlug(v)
+		return nil
 	case question.FieldContent:
 		v, ok := value.(string)
 		if !ok {
@@ -1018,6 +1441,27 @@ func (m *QuestionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedAt(v)
 		return nil
+	case question.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case question.FieldViews:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetViews(v)
+		return nil
+	case question.FieldLikes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLikes(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Question field %s", name)
 }
@@ -1025,13 +1469,26 @@ func (m *QuestionMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *QuestionMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addviews != nil {
+		fields = append(fields, question.FieldViews)
+	}
+	if m.addlikes != nil {
+		fields = append(fields, question.FieldLikes)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *QuestionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case question.FieldViews:
+		return m.AddedViews()
+	case question.FieldLikes:
+		return m.AddedLikes()
+	}
 	return nil, false
 }
 
@@ -1040,6 +1497,20 @@ func (m *QuestionMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *QuestionMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case question.FieldViews:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddViews(v)
+		return nil
+	case question.FieldLikes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLikes(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Question numeric field %s", name)
 }
@@ -1070,11 +1541,23 @@ func (m *QuestionMutation) ResetField(name string) error {
 	case question.FieldTitle:
 		m.ResetTitle()
 		return nil
+	case question.FieldSlug:
+		m.ResetSlug()
+		return nil
 	case question.FieldContent:
 		m.ResetContent()
 		return nil
 	case question.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case question.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case question.FieldViews:
+		m.ResetViews()
+		return nil
+	case question.FieldLikes:
+		m.ResetLikes()
 		return nil
 	}
 	return fmt.Errorf("unknown Question field %s", name)
@@ -1637,6 +2120,7 @@ type UserMutation struct {
 	email            *string
 	password         *string
 	created_at       *time.Time
+	last_login       *time.Time
 	clearedFields    map[string]struct{}
 	questions        map[int]struct{}
 	removedquestions map[int]struct{}
@@ -1894,6 +2378,42 @@ func (m *UserMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
+// SetLastLogin sets the "last_login" field.
+func (m *UserMutation) SetLastLogin(t time.Time) {
+	m.last_login = &t
+}
+
+// LastLogin returns the value of the "last_login" field in the mutation.
+func (m *UserMutation) LastLogin() (r time.Time, exists bool) {
+	v := m.last_login
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastLogin returns the old "last_login" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldLastLogin(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastLogin is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastLogin requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastLogin: %w", err)
+	}
+	return oldValue.LastLogin, nil
+}
+
+// ResetLastLogin resets all changes to the "last_login" field.
+func (m *UserMutation) ResetLastLogin() {
+	m.last_login = nil
+}
+
 // AddQuestionIDs adds the "questions" edge to the Question entity by ids.
 func (m *UserMutation) AddQuestionIDs(ids ...int) {
 	if m.questions == nil {
@@ -2090,7 +2610,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.username != nil {
 		fields = append(fields, user.FieldUsername)
 	}
@@ -2102,6 +2622,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
+	}
+	if m.last_login != nil {
+		fields = append(fields, user.FieldLastLogin)
 	}
 	return fields
 }
@@ -2119,6 +2642,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Password()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
+	case user.FieldLastLogin:
+		return m.LastLogin()
 	}
 	return nil, false
 }
@@ -2136,6 +2661,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPassword(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case user.FieldLastLogin:
+		return m.OldLastLogin(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -2172,6 +2699,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
+		return nil
+	case user.FieldLastLogin:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastLogin(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -2233,6 +2767,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case user.FieldLastLogin:
+		m.ResetLastLogin()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

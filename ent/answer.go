@@ -21,8 +21,14 @@ type Answer struct {
 	ID int `json:"id,omitempty"`
 	// Content holds the value of the "content" field.
 	Content string `json:"content,omitempty"`
+	// Likes holds the value of the "likes" field.
+	Likes int `json:"likes,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// IsAcceptedAnswer holds the value of the "is_accepted_answer" field.
+	IsAcceptedAnswer bool `json:"is_accepted_answer,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AnswerQuery when eager-loading is set.
 	Edges            AnswerEdges `json:"edges"`
@@ -73,11 +79,13 @@ func (*Answer) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case answer.FieldID:
+		case answer.FieldIsAcceptedAnswer:
+			values[i] = new(sql.NullBool)
+		case answer.FieldID, answer.FieldLikes:
 			values[i] = new(sql.NullInt64)
 		case answer.FieldContent:
 			values[i] = new(sql.NullString)
-		case answer.FieldCreatedAt:
+		case answer.FieldCreatedAt, answer.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case answer.ForeignKeys[0]: // question_answers
 			values[i] = new(sql.NullInt64)
@@ -110,11 +118,29 @@ func (a *Answer) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.Content = value.String
 			}
+		case answer.FieldLikes:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field likes", values[i])
+			} else if value.Valid {
+				a.Likes = int(value.Int64)
+			}
 		case answer.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				a.CreatedAt = value.Time
+			}
+		case answer.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				a.UpdatedAt = value.Time
+			}
+		case answer.FieldIsAcceptedAnswer:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_accepted_answer", values[i])
+			} else if value.Valid {
+				a.IsAcceptedAnswer = value.Bool
 			}
 		case answer.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -179,8 +205,17 @@ func (a *Answer) String() string {
 	builder.WriteString("content=")
 	builder.WriteString(a.Content)
 	builder.WriteString(", ")
+	builder.WriteString("likes=")
+	builder.WriteString(fmt.Sprintf("%v", a.Likes))
+	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(a.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(a.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("is_accepted_answer=")
+	builder.WriteString(fmt.Sprintf("%v", a.IsAcceptedAnswer))
 	builder.WriteByte(')')
 	return builder.String()
 }

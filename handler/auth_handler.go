@@ -8,6 +8,7 @@ import (
 	"github.com/sinisaos/chi-ent/database"
 	"github.com/sinisaos/chi-ent/model"
 	"github.com/sinisaos/chi-ent/service"
+	"github.com/sinisaos/chi-ent/utils"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -28,18 +29,21 @@ func (h AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	payload := new(model.LoginUserInput)
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.JSONErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	// Check email
 	newUser, err := h.AuthService.Login(payload)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
+		utils.JSONErrorResponse(w, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	// Check password
 	if err := bcrypt.CompareHashAndPassword([]byte(newUser.Password), []byte(payload.Password)); err != nil {
-		respondWithError(w, http.StatusUnauthorized, err.Error())
+		utils.JSONErrorResponse(w, http.StatusUnauthorized, err.Error())
+		return
 	}
 
 	// Create a token for the user with the correct email and password
@@ -52,10 +56,11 @@ func (h AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	jwtToken, err := token.SignedString([]byte(database.Config("SECRET_KEY")))
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.JSONErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return
 	}
 
-	respondwithJSON(w, http.StatusOK,
+	utils.JSONResponse(w, http.StatusOK,
 		map[string]interface{}{
 			"message": "Successfully logged in",
 			"token":   jwtToken,
