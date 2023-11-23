@@ -27,7 +27,6 @@ func (s QuestionService) GetAllQuestions(page int, itemsPerPage int) ([]*ent.Que
 	questions, _ := s.Client.Question.Query().
 		WithAuthor().
 		WithTags().
-		WithAnswers().
 		Order(
 			question.ByID(
 				sql.OrderDesc(),
