@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/sinisaos/chi-ent/utils"
+	"github.com/sinisaos/chi-ent/pkg/utils"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {

@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/sinisaos/chi-ent/database"
-	"github.com/sinisaos/chi-ent/model"
-	"github.com/sinisaos/chi-ent/service"
-	"github.com/sinisaos/chi-ent/utils"
+	"github.com/sinisaos/chi-ent/pkg/database"
+	"github.com/sinisaos/chi-ent/pkg/model"
+	"github.com/sinisaos/chi-ent/pkg/service"
+	"github.com/sinisaos/chi-ent/pkg/utils"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"

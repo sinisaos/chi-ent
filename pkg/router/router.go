@@ -1,10 +1,10 @@
 package router
 
 import (
-	"github.com/sinisaos/chi-ent/database"
-	"github.com/sinisaos/chi-ent/handler"
-	"github.com/sinisaos/chi-ent/middleware"
-	"github.com/sinisaos/chi-ent/service"
+	"github.com/sinisaos/chi-ent/pkg/database"
+	"github.com/sinisaos/chi-ent/pkg/handler"
+	"github.com/sinisaos/chi-ent/pkg/middleware"
+	"github.com/sinisaos/chi-ent/pkg/service"
 
 	"github.com/go-chi/chi/v5"
 )

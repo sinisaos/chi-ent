@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/sinisaos/chi-ent/ent/enttest"
-	"github.com/sinisaos/chi-ent/model"
+	"github.com/sinisaos/chi-ent/pkg/model"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"

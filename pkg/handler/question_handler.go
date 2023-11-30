@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/sinisaos/chi-ent/model"
-	"github.com/sinisaos/chi-ent/service"
-	"github.com/sinisaos/chi-ent/utils"
+	"github.com/sinisaos/chi-ent/pkg/model"
+	"github.com/sinisaos/chi-ent/pkg/service"
+	"github.com/sinisaos/chi-ent/pkg/utils"
 
 	"github.com/go-chi/chi/v5"
 )

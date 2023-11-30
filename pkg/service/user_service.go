@@ -6,7 +6,7 @@ import (
 
 	"github.com/sinisaos/chi-ent/ent"
 	"github.com/sinisaos/chi-ent/ent/user"
-	"github.com/sinisaos/chi-ent/model"
+	"github.com/sinisaos/chi-ent/pkg/model"
 
 	"entgo.io/ent/dialect/sql"
 	"golang.org/x/crypto/bcrypt"

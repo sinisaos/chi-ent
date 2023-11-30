@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/sinisaos/chi-ent/database"
+	"github.com/sinisaos/chi-ent/pkg/database"
 
 	"github.com/golang-jwt/jwt/v5"
 )
