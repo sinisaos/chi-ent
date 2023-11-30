@@ -26,4 +26,4 @@ After application is running you can visit ``localhost:8000/swagger/`` and use i
 
 ## Service layer
 
-This application uses the [Chi](https://github.com/go-chi/chi) router, but since all database interaction is in the [service layer](https://github.com/sinisaos/chi-ent/tree/main/service), you can use any other router or framework for web part.
+This application uses the [Chi](https://github.com/go-chi/chi) router, but since all database interaction is in the [service layer](https://github.com/sinisaos/chi-ent/tree/main/pkg/service), you can use any other router or framework for web part.
